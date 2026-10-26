@@ -109,24 +109,27 @@
   }
 
   /* ---------- panel enter ---------- */
-  function enterPanel(panel, delay = 0) {
+  const INTRO_TIMING = { word: 1000, stagger: 45, text: 250, button: 380, fade: 900 };
+  const SWITCH_TIMING = { word: 800, stagger: 30, text: 120, button: 200, fade: 700 };
+
+  function enterPanel(panel, delay = 0, t = INTRO_TIMING) {
     const words = $$('.w__in', panel);
     const text = $('.panel__text', panel);
     const btn = $('.btn', panel);
 
     words.forEach((w, i) =>
-      from(w, { transform: 'translateY(105%)' }, { duration: 1000, delay: delay + i * 45 })
+      from(w, { transform: 'translateY(105%)' }, { duration: t.word, delay: delay + i * t.stagger })
     );
-    lightUp(panel, delay + 250);
+    lightUp(panel, delay + t.text);
 
     from(text, { opacity: 0, transform: 'translateY(16px)', filter: 'blur(6px)' }, {
-      duration: 900,
-      delay: delay + 250,
+      duration: t.fade,
+      delay: delay + t.text,
     });
 
     return from(btn, { opacity: 0, transform: 'translateY(16px)', clipPath: 'inset(100% 0 0 0)' }, {
-      duration: 900,
-      delay: delay + 380,
+      duration: t.fade,
+      delay: delay + t.button,
     }).finished;
   }
 
@@ -151,8 +154,8 @@
   /* ---------- background wipe ---------- */
   // A hairline sweeps across the hero from right to left and repaints it with the next background.
   const wipeLine = $('.hero__wipe');
-  const WIPE = 1300;
-  const WIPE_EASE = 'cubic-bezier(0.7, 0, 0.25, 1)';
+  const WIPE = 1100;
+  const WIPE_EASE = 'cubic-bezier(0.6, 0, 0.3, 1)';
 
   function wipeBackground(next) {
     const prevBg = bgs.find((b) => b.dataset.bg === current);
@@ -188,6 +191,20 @@
       duration: WIPE,
       easing: WIPE_EASE,
       fill: 'forwards',
+    });
+  }
+
+  // Resolves once the erase clip has passed the element's left edge (nothing of it is visible).
+  function fullyErased(erase, el) {
+    const width = el.getBoundingClientRect().width;
+    return new Promise((resolve) => {
+      const check = () => {
+        const inset = getComputedStyle(el).clipPath.match(/inset\(([^)]*)\)/);
+        const right = inset ? parseFloat(inset[1].split(/\s+/)[1]) : 0;
+        if (right >= width || erase.playState === 'finished') resolve();
+        else requestAnimationFrame(check);
+      };
+      requestAnimationFrame(check);
     });
   }
 
@@ -232,23 +249,23 @@
 
     // 1. the line sweeps across, repainting the background and erasing the old copy as it goes
     const content = $('.hero__content');
-    const wiped = Promise.all([wipeBackground(next), eraseBehindLine(content).finished]);
+    const wiped = wipeBackground(next);
+    await fullyErased(eraseBehindLine(content), content);
     current = next;
     hero.dataset.state = next;
-    await wiped;
 
     prevPanel.classList.remove('is-active');
     prevPanel.setAttribute('aria-hidden', 'true');
     dimDown(prevPanel);
     content.getAnimations().forEach((a) => a.cancel());
 
-    // 2. a beat on the clean new background, then the new copy and active states come in
-    await timeout(250);
+    // 2. as soon as the line has cleared the copy, the new copy and active states come in
+    //    (the line finishes its last stretch over the empty left margin meanwhile)
     markActive();
     nextPanel.classList.add('is-active');
     nextPanel.removeAttribute('aria-hidden');
-    from($('[data-intro="rating"]'), { opacity: 0, transform: 'translateY(12px)' }, { duration: 900 });
-    await enterPanel(nextPanel, 100);
+    from($('[data-intro="rating"]'), { opacity: 0, transform: 'translateY(10px)' }, { duration: 700 });
+    await Promise.all([enterPanel(nextPanel, 60, SWITCH_TIMING), wiped]);
     busy = false;
   }
 
