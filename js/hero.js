@@ -20,12 +20,26 @@
   let current = hero.dataset.state;
   let busy = false;
 
+  // The element's current CSS values for the properties in `keyframe`.
+  // Explicit keyframes are needed: Chrome ignores backwards fill on implicit ones during the delay.
+  const cssState = (el, keyframe, pseudoElement) => {
+    const cs = getComputedStyle(el, pseudoElement);
+    return Object.fromEntries(Object.keys(keyframe).map((k) => [k, cs[k]]));
+  };
   // `from` animates from the given state to the element's own CSS state and lets go afterwards
-  const from = (el, keyframe, opts) =>
-    el.animate([keyframe], { fill: 'backwards', easing: EASE_OUT, ...opts });
+  const from = (el, keyframe, opts = {}) =>
+    el.animate([keyframe, cssState(el, keyframe, opts.pseudoElement)], {
+      fill: 'backwards',
+      easing: EASE_OUT,
+      ...opts,
+    });
   // `to` animates away from the CSS state and holds the end state until cancelled
-  const to = (el, keyframe, opts) =>
-    el.animate([keyframe], { fill: 'forwards', easing: EASE_OUT, ...opts });
+  const to = (el, keyframe, opts = {}) =>
+    el.animate([cssState(el, keyframe, opts.pseudoElement), keyframe], {
+      fill: 'forwards',
+      easing: EASE_OUT,
+      ...opts,
+    });
 
   /* ---------- dots icon ---------- */
   const dotsTpl = document.getElementById('dots-icon');
@@ -160,7 +174,7 @@
   /* ---------- switch state ---------- */
   async function setState(next) {
     if (next === current || busy || !STATES.includes(next)) return;
-    if (hero.classList.contains('is-loading') || hero.classList.contains('is-handoff')) return;
+    if (hero.classList.contains('is-loading')) return;
     busy = true;
 
     const prevPanel = panels.find((p) => p.dataset.panel === current);
@@ -279,7 +293,6 @@
   // The loader video runs once per tab session; its last frame stays as the Business background.
   const video = $('.hero__video');
   const LOADER_KEY = 'pigeonm:loader-seen';
-  const HANDOFF = 1.2; // seconds before the end when the hero UI starts coming in
 
   const loaderSeen = () => {
     try { return sessionStorage.getItem(LOADER_KEY) === '1'; } catch { return false; }
@@ -295,31 +308,21 @@
     hero.classList.add('is-ready', 'is-loading');
     from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
 
-    let introStarted = false;
     let finished = false;
 
-    const startIntro = () => {
-      if (introStarted) return;
-      introStarted = true;
-      markLoaderSeen();
-      hero.classList.add('is-handoff');
-      // fonts are long loaded by now, but never split/measure before they are
-      Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: true }));
-    };
-
-    // swap the paused last frame for the identical still image
+    // The hero UI comes in only once the video has stopped on its last frame.
+    // That frame is swapped for the identical still image, so nothing visibly changes.
     const finish = () => {
       if (finished) return;
       finished = true;
-      startIntro();
-      hero.classList.remove('is-handoff');
+      markLoaderSeen();
+      const played = video.currentTime > 0;
       video.pause();
       video.remove();
+      // fonts are long loaded by now, but never split/measure before they are
+      Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: played }));
     };
 
-    video.addEventListener('timeupdate', () => {
-      if (video.duration && video.currentTime >= video.duration - HANDOFF) startIntro();
-    });
     video.addEventListener('ended', finish, { once: true });
     video.addEventListener('error', finish, { once: true });
 
