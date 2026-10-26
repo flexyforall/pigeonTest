@@ -362,10 +362,30 @@
     }
   }
 
+  // Fibre lines in the first video frame breathe: brighter and slightly taller, from the bottom.
+  // settle() eases back to the untouched frame so the video can start on it seamlessly.
+  function startPulse() {
+    const bg = $('.countdown__bg', countdown);
+    const rest = { filter: 'brightness(1)', transform: 'scaleY(1)' };
+    from(bg, { opacity: 0 }, { duration: 1200, easing: 'ease' });
+    const beat = bg.animate(
+      [rest, { filter: 'brightness(1.7)', transform: 'scaleY(1.06)' }, rest],
+      { duration: 1600, iterations: Infinity, easing: 'ease-in-out' }
+    );
+    return {
+      settle() {
+        const now = cssState(bg, rest);
+        beat.cancel();
+        return bg.animate([now, rest], { duration: 500, easing: 'ease-out' });
+      },
+    };
+  }
+
   async function runCountdown(download) {
     // digits are set in Outfit; don't show a fallback face if it's quick to arrive
     if (document.fonts) await Promise.race([document.fonts.load('300 72px Outfit'), timeout(1500)]);
     hero.classList.add('is-ticking');
+    const pulse = startPulse();
     from($('.countdown__box', countdown), { opacity: 0, transform: 'scale(0.92)' }, { duration: 900 });
     from($('.countdown__bar', countdown), { opacity: 0 }, { duration: 900, delay: 200 });
 
@@ -380,6 +400,7 @@
     const out = [
       to($('.countdown__box', countdown), { opacity: 0, transform: 'scale(1.06)' }, { duration: 500 }),
       to($('.countdown__bar', countdown), { opacity: 0 }, { duration: 400 }),
+      pulse.settle(),
     ];
     await Promise.all(out.map((a) => a.finished));
     return url;
