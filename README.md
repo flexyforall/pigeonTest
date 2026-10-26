@@ -14,9 +14,7 @@ python3 -m http.server 8000
 - `js/hero.js` — loader, intro animation and Business ↔ Residential switching
 - `assets/` — images, icons and loader video exported from Figma
 
-On the first visit in a tab session a 3-2-1 countdown runs over the video's
-first frame (`assets/img/loader-start.jpg`, fibre lines pulsing) while the loader
-video (`assets/video/loader.*`) downloads in full; "1" holds until it has.
-Then the video plays; its last frame is `assets/img/hero-business.jpg`, which
-stays as the Business background. With reduced motion enabled, or if the video
-can't load within 12 s, the hero opens straight on that still image.
+The loader video (`assets/video/loader.*`) plays once per tab session; its last
+frame is `assets/img/hero-business.jpg`, which stays as the Business background.
+With reduced motion enabled, or if the video can't start within 3 s, the hero
+opens straight on that still image.
