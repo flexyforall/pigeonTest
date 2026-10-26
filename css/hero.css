@@ -206,8 +206,9 @@ h1, h2, p { margin: 0; }
     var(--c-fill);
   background-repeat: no-repeat;
 }
+/* moves in step with the background wipe line (--wipe-* set from js/hero.js) */
 .audience__indicator.is-animated {
-  transition: transform 0.6s var(--ease-out), width 0.6s var(--ease-out);
+  transition: transform var(--wipe-duration) var(--wipe-ease), width var(--wipe-duration) var(--wipe-ease);
 }
 
 /* Right-side actions */
@@ -398,7 +399,7 @@ h1, h2, p { margin: 0; }
   z-index: 1;
 }
 .cards__highlight.is-animated {
-  transition: transform 0.7s var(--ease-out), width 0.7s var(--ease-out);
+  transition: transform var(--wipe-duration) var(--wipe-ease), width var(--wipe-duration) var(--wipe-ease);
 }
 
 .card {

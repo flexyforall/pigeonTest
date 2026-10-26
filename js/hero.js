@@ -195,6 +195,9 @@
   const wipeLine = $('.hero__wipe');
   const WIPE = 1100;
   const WIPE_EASE = 'cubic-bezier(0.6, 0, 0.3, 1)';
+  // the tab pill and card highlight move with the same timing as the line
+  hero.style.setProperty('--wipe-duration', `${WIPE}ms`);
+  hero.style.setProperty('--wipe-ease', WIPE_EASE);
 
   function wipeBackground(next) {
     const prevBg = bgs.find((b) => b.dataset.bg === current);
