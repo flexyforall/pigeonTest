@@ -72,6 +72,28 @@ h1, h2, p { margin: 0; }
 }
 .hero__bg-img.is-active { opacity: 1; }
 
+/* Loader video: plays once, its last frame equals hero-business.jpg */
+.hero__video {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: none;
+}
+.hero.is-loading .hero__video,
+.hero.is-handoff .hero__video { display: block; }
+
+/* While the loader plays only the logo is on screen */
+.hero.is-loading .hero__frame > :not(.header),
+.hero.is-loading .header > :not(.header__logo) { opacity: 0; }
+.hero.is-loading .hero__frame::before,
+.hero.is-loading .header::after { opacity: 0; }
+.hero.is-loading .hero__frame > :not(.header),
+.hero.is-loading .header > :not(.header__logo) { pointer-events: none; }
+
 /* Frame: 1px outline drawn by ::before so it can be animated */
 .hero__frame {
   position: absolute;

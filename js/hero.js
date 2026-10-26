@@ -160,6 +160,7 @@
   /* ---------- switch state ---------- */
   async function setState(next) {
     if (next === current || busy || !STATES.includes(next)) return;
+    if (hero.classList.contains('is-loading') || hero.classList.contains('is-handoff')) return;
     busy = true;
 
     const prevPanel = panels.find((p) => p.dataset.panel === current);
@@ -224,10 +225,12 @@
   });
 
   /* ---------- intro ---------- */
-  function intro() {
+  // afterLoader: the loader video is already on screen and the logo is in place
+  function intro({ afterLoader = false } = {}) {
     moveIndicator(false);
     moveHighlight(false);
     hero.classList.add('is-ready');
+    hero.classList.remove('is-loading');
 
     const activePanel = panels.find((p) => p.dataset.panel === current);
 
@@ -236,20 +239,27 @@
       return;
     }
 
-    const bg = bgs.find((b) => b.dataset.bg === current);
-    from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
+    if (!afterLoader) {
+      const bg = bgs.find((b) => b.dataset.bg === current);
+      from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
+    }
 
-    // frame lines draw in
-    const frame = $('.hero__frame');
-    from(frame, { clipPath: 'inset(0 50% 0 50%)' }, {
+    // frame and hairlines draw in
+    from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
+      pseudoElement: '::before',
       duration: 1400,
       delay: 100,
       easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
     });
+    from($('.header'), { transform: 'scaleX(0)' }, { pseudoElement: '::after', duration: 1400, delay: 200 });
+    from($('.cards'), { transform: 'scaleX(0)' }, { pseudoElement: '::before', duration: 1400, delay: 400 });
+
     // header items
-    $$('[data-intro="header"]').forEach((el, i) =>
-      from(el, { opacity: 0, transform: 'translateY(-14px)' }, { duration: 900, delay: 500 + i * 60 })
-    );
+    $$('[data-intro="header"]')
+      .filter((el) => !(afterLoader && el.classList.contains('header__logo')))
+      .forEach((el, i) =>
+        from(el, { opacity: 0, transform: 'translateY(-14px)' }, { duration: 900, delay: 500 + i * 60 })
+      );
     from(indicator, { opacity: 0 }, { duration: 700, delay: 1000 });
 
     // rating
@@ -265,14 +275,78 @@
     from(highlight, { opacity: 0 }, { duration: 900, delay: 1300 });
   }
 
-  // wait for fonts so the split text and tab widths are measured correctly
+  /* ---------- loader ---------- */
+  // The loader video runs once per tab session; its last frame stays as the Business background.
+  const video = $('.hero__video');
+  const LOADER_KEY = 'pigeonm:loader-seen';
+  const HANDOFF = 1.2; // seconds before the end when the hero UI starts coming in
+
+  const loaderSeen = () => {
+    try { return sessionStorage.getItem(LOADER_KEY) === '1'; } catch { return false; }
+  };
+  const markLoaderSeen = () => {
+    try { sessionStorage.setItem(LOADER_KEY, '1'); } catch { /* storage unavailable */ }
+  };
+
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
-  const firstBg = bgs[0];
-  const bgReady = firstBg.complete
-    ? Promise.resolve()
-    : new Promise((resolve) => {
-        firstBg.addEventListener('load', resolve, { once: true });
-        firstBg.addEventListener('error', resolve, { once: true });
-      });
-  Promise.race([Promise.all([fontsReady, bgReady]), new Promise((r) => setTimeout(r, 2500))]).then(intro);
+  const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function runLoader() {
+    hero.classList.add('is-ready', 'is-loading');
+    from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
+
+    let introStarted = false;
+    let finished = false;
+
+    const startIntro = () => {
+      if (introStarted) return;
+      introStarted = true;
+      markLoaderSeen();
+      hero.classList.add('is-handoff');
+      // fonts are long loaded by now, but never split/measure before they are
+      Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: true }));
+    };
+
+    // swap the paused last frame for the identical still image
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      startIntro();
+      hero.classList.remove('is-handoff');
+      video.pause();
+      video.remove();
+    };
+
+    video.addEventListener('timeupdate', () => {
+      if (video.duration && video.currentTime >= video.duration - HANDOFF) startIntro();
+    });
+    video.addEventListener('ended', finish, { once: true });
+    video.addEventListener('error', finish, { once: true });
+
+    // video that never starts (blocked autoplay, slow network) falls back to the still image
+    const started = new Promise((resolve) => video.addEventListener('playing', resolve, { once: true }));
+    const play = video.play();
+    if (play) play.catch(finish);
+    Promise.race([started, timeout(3000)]).then(() => {
+      if (video.paused && !finished) finish();
+      // safety net if playback stalls midway
+      else setTimeout(finish, ((video.duration || 16) + 4) * 1000);
+    });
+  }
+
+  function skipLoader() {
+    video.remove();
+    const firstBg = bgs.find((b) => b.dataset.bg === current);
+    const bgReady = firstBg.complete
+      ? Promise.resolve()
+      : new Promise((resolve) => {
+          firstBg.addEventListener('load', resolve, { once: true });
+          firstBg.addEventListener('error', resolve, { once: true });
+        });
+    // wait for fonts so the split text and tab widths are measured correctly
+    Promise.race([Promise.all([fontsReady, bgReady]), timeout(2500)]).then(() => intro());
+  }
+
+  if (reduceMotion || loaderSeen() || current !== 'business') skipLoader();
+  else runLoader();
 })();
