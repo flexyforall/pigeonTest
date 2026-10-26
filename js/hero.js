@@ -73,6 +73,12 @@
       ...wifiArc(25, [-135, -120, -105, -90, -75, -60, -45]),
     ],
   };
+  const IDLE_BEAT = [
+    { transform: 'scale(1)', opacity: 1 },
+    { transform: 'scale(1.1)', opacity: 0.6, offset: 0.18 },
+    { transform: 'scale(1)', opacity: 1, offset: 0.42 },
+    { transform: 'scale(1)', opacity: 1 },
+  ];
   const DOT = 3;
   const byPosition = (a, b) => a[1] - b[1] || a[0] - b[0];
 
@@ -105,14 +111,52 @@
     });
 
     const play = (rate) => {
-      if (reduceMotion) return;
       morphs.forEach((m) => {
         m.playbackRate = rate;
         m.play();
       });
+      return Promise.all(morphs.map((m) => m.finished));
     };
-    card.addEventListener('mouseenter', () => play(1));
-    card.addEventListener('mouseleave', () => play(-1));
+
+    // At rest the dots pulse softly, a wave running across the three cards,
+    // so the cards read as interactive. The pulse pauses while the symbol shows.
+    const groups = ['.dots__cross', '.dots__inner', '.dots__outer'].map((sel) => $(sel, card));
+    const cardIndex = cards.indexOf(card);
+    let idle = [];
+    let hovered = false;
+
+    const startIdle = () => {
+      idle = groups.map((g, i) =>
+        g.animate(IDLE_BEAT, {
+          duration: 2600,
+          delay: cardIndex * 220 + i * 120,
+          iterations: Infinity,
+          easing: 'ease-in-out',
+        })
+      );
+    };
+    const stopIdle = () => {
+      idle.forEach((anim, i) => {
+        const now = cssState(groups[i], IDLE_BEAT[0]);
+        anim.cancel();
+        groups[i].animate([now, IDLE_BEAT[0]], { duration: 250, easing: 'ease-out' });
+      });
+      idle = [];
+    };
+
+    if (reduceMotion) return;
+    startIdle();
+    card.addEventListener('mouseenter', () => {
+      hovered = true;
+      stopIdle();
+      play(1);
+    });
+    card.addEventListener('mouseleave', () => {
+      hovered = false;
+      play(-1).then(() => {
+        if (!hovered && !idle.length) startIdle();
+      });
+    });
   });
 
   /* ---------- split headings into words ---------- */
