@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PigeonM — WiFi for business, residential and mobile</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/hero-business.png">
+  <link rel="stylesheet" href="css/hero.css">
+</head>
+<body>
+
+<section class="hero" data-hero data-state="business">
+  <div class="hero__bg" aria-hidden="true">
+    <img class="hero__bg-img is-active" data-bg="business" src="assets/img/hero-business.png" alt="">
+    <img class="hero__bg-img" data-bg="residential" src="assets/img/hero-residential.png" alt="" fetchpriority="low">
+  </div>
+
+  <div class="hero__frame">
+    <!-- Header -->
+    <header class="header">
+      <a class="header__logo" href="/" aria-label="PigeonM — home" data-intro="header">
+        <img src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
+      </a>
+
+      <nav class="audience" role="tablist" aria-label="Audience" data-intro="header">
+        <span class="audience__indicator" aria-hidden="true"></span>
+        <button class="audience__tab is-active" role="tab" aria-selected="true" data-target="business">Business</button>
+        <button class="audience__tab" role="tab" aria-selected="false" data-target="residential">Residential</button>
+        <button class="audience__tab" role="tab" aria-selected="false" data-target="mobile">Mobile</button>
+      </nav>
+
+      <div class="header__actions">
+        <div class="header__links">
+          <a class="header__link" href="#about" data-intro="header">
+            About
+            <span class="icon icon--chevron" aria-hidden="true"><img src="assets/icons/chevron-down.svg" width="9.88356" height="5.38388" alt=""></span>
+          </a>
+          <a class="header__link" href="#security" data-intro="header">Security report</a>
+          <a class="header__link" href="#contact" data-intro="header">Contact</a>
+        </div>
+        <div class="header__cta">
+          <button class="header__lang" type="button" aria-label="Change language" data-intro="header">
+            <img src="assets/icons/globe.svg" width="16" height="16" alt="">
+          </button>
+          <a class="btn btn--sm" href="#start" data-intro="header"><span>Get started</span></a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="hero__content">
+      <div class="rating" data-intro="rating">
+        <span class="rating__score">
+          4.9
+          <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="12.0568" height="11.4964" alt=""></span>
+        </span>
+        <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
+        <span>Trusted nationwide</span>
+      </div>
+
+      <div class="hero__panels">
+        <div class="panel is-active" data-panel="business">
+          <h1 class="panel__title" data-split data-lit="36">Business WiFi that covers every corner of your operation</h1>
+          <p class="panel__text">From offices and clinics to fleets, vessels and aircraft. We design, install and manage your network, sized to your space and fully supported.</p>
+          <a class="btn" href="#start"><span>Get started</span></a>
+        </div>
+
+        <div class="panel" data-panel="residential" aria-hidden="true">
+          <h2 class="panel__title" data-split data-lit="20">One network for your<br>entire building</h2>
+          <p class="panel__text">For owners, managers and developers. We design, install and manage WiFi across every unit and common area, so residents move in already connected.</p>
+          <a class="btn" href="#start"><span>Connect your building</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audience cards -->
+    <div class="cards">
+      <span class="cards__highlight" aria-hidden="true"></span>
+      <a class="card is-active" href="#business" data-target="business" data-intro="card">
+        <span class="card__icon" aria-hidden="true"></span>
+        <span class="card__label">For Business</span>
+        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
+      </a>
+      <a class="card" href="#residential" data-target="residential" data-intro="card">
+        <span class="card__icon" aria-hidden="true"></span>
+        <span class="card__label">For Residential</span>
+        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
+      </a>
+      <a class="card" href="#mobile" data-target="mobile" data-intro="card">
+        <span class="card__icon" aria-hidden="true"></span>
+        <span class="card__label">For Mobile</span>
+        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<template id="dots-icon">
+  <svg width="50" height="50" viewBox="0 0 50 50" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+    <g class="dots__outer">
+      <rect x="12.7027" y="12.7029" width="2.5405" height="2.5405"/>
+      <rect x="35.5676" y="12.7029" width="2.5405" height="2.5405"/>
+      <rect x="35.5678" y="35.5664" width="2.5405" height="2.5405"/>
+      <rect x="12.7025" y="35.5664" width="2.5405" height="2.5405"/>
+    </g>
+    <g class="dots__inner">
+      <rect x="29.2162" y="17.7852" width="3.8108" height="3.8108"/>
+      <rect x="29.2162" y="29.2149" width="3.8108" height="3.8108"/>
+      <rect x="17.7836" y="17.7852" width="3.8108" height="3.8108"/>
+      <rect x="17.7836" y="29.2149" width="3.8108" height="3.8108"/>
+    </g>
+    <g class="dots__cross">
+      <rect x="24.7703" y="6.3516" width="1.2703" height="1.2703"/>
+      <rect x="24.1351" y="13.9732" width="2.5405" height="2.5405"/>
+      <rect x="22.8649" y="22.8651" width="5.0811" height="5.0811"/>
+      <rect x="24.1351" y="34.2975" width="2.5405" height="2.5405"/>
+      <rect x="24.7703" y="43.1894" width="1.2703" height="1.2703"/>
+      <rect x="6.3516" y="24.7686" width="1.2703" height="1.2703"/>
+      <rect x="13.9732" y="24.1334" width="2.5405" height="2.5405"/>
+      <rect x="34.2976" y="24.1334" width="2.5405" height="2.5405"/>
+      <rect x="43.1894" y="24.7686" width="1.2703" height="1.2703"/>
+    </g>
+  </svg>
+</template>
+
+<script src="js/hero.js" defer></script>
+</body>
+</html>
