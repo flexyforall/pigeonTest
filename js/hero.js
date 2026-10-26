@@ -53,17 +53,17 @@
   const wifiArc = (r, angles) =>
     angles.map((a) => [25 + r * Math.cos((a * Math.PI) / 180), 41 + r * Math.sin((a * Math.PI) / 180)]);
   const SYMBOLS = {
-    // office tower: 3 × 5 windows, door, antenna
+    // business centre: a tall two-column tower between lower wings
     business: [
-      ...[9, 16, 23, 30, 37].flatMap((y) => [17, 25, 33].map((x) => [x, y])),
-      [25, 43.5],
-      [25, 3],
+      ...[6, 12.5, 19, 25.5, 32, 38.5].flatMap((y) => [21.75, 28.25].map((x) => [x, y])),
+      [12, 25.5], [12, 32], [12, 38.5],
+      [38, 32], [38, 38.5],
     ],
-    // house: roof, walls, two windows, door, ground line
+    // house: pitched roof, walls, two windows, door, ground line
     residential: [
-      [25, 7], [19.5, 12.5], [30.5, 12.5], [14, 18], [36, 18],
-      [16, 25], [16, 32], [16, 39], [34, 25], [34, 32], [34, 39],
-      [21.5, 27], [28.5, 27], [25, 34], [25, 39], [20.5, 39], [29.5, 39],
+      [25, 6], [17.5, 13], [32.5, 13], [10, 20], [40, 20],
+      [12, 27], [12, 34], [12, 41], [38, 27], [38, 34], [38, 41],
+      [19, 28], [31, 28], [25, 35], [25, 41], [18.5, 41], [31.5, 41],
     ],
     // WiFi signal: a source dot under three arcs
     mobile: [
