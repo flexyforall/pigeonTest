@@ -108,7 +108,7 @@
     });
   }
 
-  /* ---------- panel enter / leave ---------- */
+  /* ---------- panel enter ---------- */
   function enterPanel(panel, delay = 0) {
     const words = $$('.w__in', panel);
     const text = $('.panel__text', panel);
@@ -128,18 +128,6 @@
       duration: 900,
       delay: delay + 380,
     }).finished;
-  }
-
-  function leavePanel(panel) {
-    const words = $$('.w__in', panel);
-    const text = $('.panel__text', panel);
-    const btn = $('.btn', panel);
-    const opts = { duration: 450, easing: EASE_IN };
-
-    const anims = words.map((w, i) => to(w, { transform: 'translateY(-105%)' }, { ...opts, delay: i * 18 }));
-    anims.push(to(text, { opacity: 0, transform: 'translateY(-10px)' }, opts));
-    anims.push(to(btn, { opacity: 0, transform: 'translateY(-10px)' }, { ...opts, delay: 60 }));
-    return Promise.all(anims.map((a) => a.finished)).then(() => anims);
   }
 
   /* ---------- indicator + highlight ---------- */
@@ -188,6 +176,21 @@
     return timeout(WIPE).then(() => prevBg.classList.remove('is-active'));
   }
 
+  // Clips `el` to the part of the hero the line hasn't reached yet, in step with the wipe.
+  // The clip's right inset is linear in the line's position, so the same easing keeps them in sync.
+  function eraseBehindLine(el) {
+    const heroBox = hero.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    const right = box.right - heroBox.left; // el's right edge in hero coordinates
+    const pad = 40; // room for descenders and transforms above/below/left
+    const clip = (lineX) => `inset(${-pad}px ${right - lineX}px ${-pad}px ${-pad}px)`;
+    return el.animate([{ clipPath: clip(heroBox.width) }, { clipPath: clip(0) }], {
+      duration: WIPE,
+      easing: WIPE_EASE,
+      fill: 'forwards',
+    });
+  }
+
   /* ---------- switch state ---------- */
   async function setState(next) {
     if (next === current || busy || !STATES.includes(next)) return;
@@ -227,22 +230,24 @@
     if (nextBg.dataset.src) loadDeferredImages();
     await nextBg.decode().catch(() => {});
 
-    // 1. the line repaints the background; the old copy stays until the line has passed it
-    const wiped = wipeBackground(next);
+    // 1. the line sweeps across, repainting the background and erasing the old copy as it goes
+    const content = $('.hero__content');
+    const wiped = Promise.all([wipeBackground(next), eraseBehindLine(content).finished]);
     current = next;
     hero.dataset.state = next;
-    await timeout(WIPE * 0.55);
-    const leaveAnims = await leavePanel(prevPanel);
-    prevPanel.classList.remove('is-active');
-    prevPanel.setAttribute('aria-hidden', 'true');
-    leaveAnims.forEach((a) => a.cancel());
-    dimDown(prevPanel);
     await wiped;
 
-    // 2. then the new copy and the active states come in
+    prevPanel.classList.remove('is-active');
+    prevPanel.setAttribute('aria-hidden', 'true');
+    dimDown(prevPanel);
+    content.getAnimations().forEach((a) => a.cancel());
+
+    // 2. a beat on the clean new background, then the new copy and active states come in
+    await timeout(250);
     markActive();
     nextPanel.classList.add('is-active');
     nextPanel.removeAttribute('aria-hidden');
+    from($('[data-intro="rating"]'), { opacity: 0, transform: 'translateY(12px)' }, { duration: 900 });
     await enterPanel(nextPanel, 100);
     busy = false;
   }
