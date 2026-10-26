@@ -161,13 +161,12 @@
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   /* ---------- background wipe ---------- */
-  // A hairline sweeps across the hero and repaints it with the next background behind it.
-  // Going forward (Business → Residential) it travels right to left, going back left to right.
+  // A hairline sweeps across the hero from right to left and repaints it with the next background.
   const wipeLine = $('.hero__wipe');
   const WIPE = 1300;
   const WIPE_EASE = 'cubic-bezier(0.7, 0, 0.25, 1)';
 
-  function wipeBackground(next, forward) {
+  function wipeBackground(next) {
     const prevBg = bgs.find((b) => b.dataset.bg === current);
     const nextBg = bgs.find((b) => b.dataset.bg === next);
     // keep the incoming image above the outgoing one
@@ -175,7 +174,7 @@
     prevBg.style.zIndex = 0;
     nextBg.classList.add('is-active');
 
-    const hidden = forward ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
+    const hidden = 'inset(0 0 0 100%)';
     const opts = { duration: WIPE, easing: WIPE_EASE };
     // explicit end value: `none` doesn't interpolate with inset()
     nextBg.animate(
@@ -183,9 +182,7 @@
       opts
     );
     wipeLine.animate(
-      forward
-        ? [{ left: '100%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '0%', opacity: 0 }]
-        : [{ left: '0%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '100%', opacity: 0 }],
+      [{ left: '100%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '0%', opacity: 0 }],
       opts
     );
     return timeout(WIPE).then(() => prevBg.classList.remove('is-active'));
@@ -199,7 +196,6 @@
 
     const prevPanel = panels.find((p) => p.dataset.panel === current);
     const nextPanel = panels.find((p) => p.dataset.panel === next);
-    const forward = STATES.indexOf(next) > STATES.indexOf(current);
 
     const markActive = () => {
       tabs.forEach((t) => {
@@ -226,8 +222,13 @@
       return;
     }
 
+    // the wipe must reveal a ready image, not one still loading or decoding
+    const nextBg = bgs.find((b) => b.dataset.bg === next);
+    if (nextBg.dataset.src) loadDeferredImages();
+    await nextBg.decode().catch(() => {});
+
     // 1. the line repaints the background; the old copy stays until the line has passed it
-    const wiped = wipeBackground(next, forward);
+    const wiped = wipeBackground(next);
     current = next;
     hero.dataset.state = next;
     await timeout(WIPE * 0.55);
@@ -274,6 +275,7 @@
     bgs.filter((b) => b.dataset.src).forEach((b) => {
       b.src = b.dataset.src;
       b.removeAttribute('data-src');
+      b.decode().catch(() => {}); // decode ahead so the first switch doesn't wait on it
     });
 
   /* ---------- intro ---------- */
