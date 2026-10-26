@@ -48,38 +48,52 @@
   const dotsTpl = document.getElementById('dots-icon');
   $$('.card__icon').forEach((slot) => slot.append(dotsTpl.content.cloneNode(true)));
 
-  /* ---------- split headings into words > chars ---------- */
+  // On hover the dots pulse in a loop, rippling from the centre outwards.
+  // On leave the current beat plays out, so the icon settles back without a jump.
+  const PULSE = [
+    { transform: 'scale(1)', opacity: 1 },
+    { transform: 'scale(1.14)', opacity: 0.55, offset: 0.45 },
+    { transform: 'scale(1)', opacity: 1 },
+  ];
+  cards.forEach((card) => {
+    const groups = ['.dots__cross', '.dots__inner', '.dots__outer'].map((sel) => $(sel, card));
+    let beats = [];
+    card.addEventListener('mouseenter', () => {
+      if (reduceMotion) return;
+      beats.forEach((b) => b.cancel());
+      beats = groups.map((g, i) =>
+        g.animate(PULSE, { duration: 1400, delay: i * 140, iterations: Infinity, easing: 'ease-in-out' })
+      );
+    });
+    card.addEventListener('mouseleave', () => {
+      beats.forEach((b) => {
+        const { currentIteration } = b.effect.getComputedTiming();
+        b.effect.updateTiming({ iterations: (currentIteration ?? 0) + 1 });
+      });
+    });
+  });
+
+  /* ---------- split headings into words ---------- */
   function splitTitle(title) {
-    const lit = Number(title.dataset.lit) || 0;
     const label = title.textContent.replace(/\s+/g, ' ').trim();
     const frag = document.createDocumentFragment();
-    let index = 0;
 
     title.childNodes.forEach((node) => {
       if (node.nodeName === 'BR') {
         frag.append(document.createElement('br'));
         return;
       }
-      const words = node.textContent.split(/(\s+)/);
-      words.forEach((chunk) => {
+      node.textContent.split(/(\s+)/).forEach((chunk) => {
         if (!chunk) return;
         if (/^\s+$/.test(chunk)) {
           frag.append(' ');
-          index += 1;
           return;
         }
         const w = document.createElement('span');
         w.className = 'w';
         const inner = document.createElement('span');
         inner.className = 'w__in';
-        [...chunk].forEach((ch) => {
-          const c = document.createElement('span');
-          c.className = 'c';
-          c.textContent = ch;
-          if (index < lit) c.dataset.lit = '';
-          inner.append(c);
-          index += 1;
-        });
+        inner.textContent = chunk;
         w.append(inner);
         frag.append(w);
       });
@@ -89,24 +103,8 @@
     title.append(frag);
     title.setAttribute('aria-label', label);
     [...title.children].forEach((el) => el.setAttribute('aria-hidden', 'true'));
-    title.classList.add('is-split');
   }
   $$('[data-split]').forEach(splitTitle);
-
-  /* ---------- text fill (dim -> white, char by char) ---------- */
-  function lightUp(panel, delay = 0) {
-    const chars = $$('.c[data-lit]', panel);
-    chars.forEach((c, i) => {
-      c.style.transitionDelay = `${delay + i * 22}ms`;
-      c.classList.add('is-lit');
-    });
-  }
-  function dimDown(panel) {
-    $$('.c', panel).forEach((c) => {
-      c.style.transitionDelay = '0ms';
-      c.classList.remove('is-lit');
-    });
-  }
 
   /* ---------- panel enter ---------- */
   const INTRO_TIMING = { word: 1000, stagger: 45, text: 250, button: 380, fade: 900 };
@@ -120,7 +118,6 @@
     words.forEach((w, i) =>
       from(w, { transform: 'translateY(105%)' }, { duration: t.word, delay: delay + i * t.stagger })
     );
-    lightUp(panel, delay + t.text);
 
     from(text, { opacity: 0, transform: 'translateY(16px)', filter: 'blur(6px)' }, {
       duration: t.fade,
@@ -237,7 +234,6 @@
       prevPanel.setAttribute('aria-hidden', 'true');
       nextPanel.classList.add('is-active');
       nextPanel.removeAttribute('aria-hidden');
-      lightUp(nextPanel);
       busy = false;
       return;
     }
@@ -256,7 +252,6 @@
 
     prevPanel.classList.remove('is-active');
     prevPanel.setAttribute('aria-hidden', 'true');
-    dimDown(prevPanel);
     content.getAnimations().forEach((a) => a.cancel());
 
     // 2. as soon as the line has cleared the copy, the new copy and active states come in
@@ -312,7 +307,6 @@
     const activePanel = panels.find((p) => p.dataset.panel === current);
 
     if (reduceMotion) {
-      lightUp(activePanel);
       return;
     }
 

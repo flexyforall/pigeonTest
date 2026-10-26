@@ -15,7 +15,6 @@
   --c-line: rgba(255, 255, 255, 0.2);
   --c-fill: rgba(255, 255, 255, 0.1);
   --c-muted: rgba(255, 255, 255, 0.6);
-  --c-dim: rgba(255, 255, 255, 0.4);
   --c-accent: #6fc6a7;
 
   --f-display: "Outfit", system-ui, sans-serif;
@@ -343,7 +342,7 @@ h1, h2, p { margin: 0; }
   font-weight: 300;
   line-height: 52px;
   letter-spacing: -1.04px;
-  color: var(--c-dim);
+  color: var(--c-white);
 }
 
 /* split text (built by JS) */
@@ -356,11 +355,7 @@ h1, h2, p { margin: 0; }
   white-space: nowrap;
 }
 .w__in { display: inline-block; will-change: transform; }
-.c { transition: color 0.6s ease; }
-.c.is-lit { color: var(--c-white); }
 
-/* no-JS fallback for the lit part */
-.panel__title:not(.is-split) { color: var(--c-white); }
 
 .panel__text {
   width: 463px;
@@ -443,15 +438,11 @@ h1, h2, p { margin: 0; }
   line-height: 24px;
 }
 
-/* dots icon: breathe on hover / active */
+/* dots icon: pulses on hover (js/hero.js) */
 .dots__outer, .dots__inner, .dots__cross {
   transform-box: view-box;
   transform-origin: 25px 25px;
-  transition: transform 0.6s var(--ease-out), opacity 0.6s ease;
 }
-.card:hover .dots__outer { transform: scale(1.18) rotate(90deg); }
-.card:hover .dots__inner { transform: scale(0.82); }
-.card:hover .dots__cross { transform: rotate(45deg); }
 
 /* ===== Adaptive (below design width) ===== */
 @media (max-width: 1100px) {
