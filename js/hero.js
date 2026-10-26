@@ -238,6 +238,13 @@
     moveHighlight(false);
   });
 
+  // Secondary backgrounds load after the intro so they don't compete with the loader video
+  const loadDeferredImages = () =>
+    bgs.filter((b) => b.dataset.src).forEach((b) => {
+      b.src = b.dataset.src;
+      b.removeAttribute('data-src');
+    });
+
   /* ---------- intro ---------- */
   // afterLoader: the loader video is already on screen and the logo is in place
   function intro({ afterLoader = false } = {}) {
@@ -245,6 +252,7 @@
     moveHighlight(false);
     hero.classList.add('is-ready');
     hero.classList.remove('is-loading');
+    loadDeferredImages();
 
     const activePanel = panels.find((p) => p.dataset.panel === current);
 
@@ -304,9 +312,86 @@
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  function runLoader() {
-    hero.classList.add('is-ready', 'is-loading');
+  /* ---------- countdown ---------- */
+  // 3 → 2 → 1 while the loader video downloads in full; "1" holds until it has.
+  const countdown = $('.countdown');
+  const COUNT_FROM = 3;
+  const TICK = 800; // ms per digit
+  const MAX_WAIT = 12000; // give up on the video after this and open on the still frame
+
+  function showDigit(n) {
+    const box = $('.countdown__box', countdown);
+    const prev = $('.countdown__digit', box);
+    const next = prev.cloneNode();
+    next.textContent = n;
+    box.append(next);
+    from(next, { transform: 'translateY(100%)', opacity: 0 }, { duration: 600 });
+    to(prev, { transform: 'translateY(-100%)', opacity: 0 }, { duration: 500 }).finished.then(() => prev.remove());
+  }
+
+  const setProgress = (p) => {
+    $('.countdown__fill', countdown).style.transform = `scaleX(${Math.min(1, Math.max(0, p))})`;
+  };
+
+  // Downloads the whole video so playback can't stall; resolves to an object URL (or null).
+  async function downloadVideo() {
+    const src = [...video.querySelectorAll('source')].find((el) => video.canPlayType(el.type))?.src;
+    if (!src) return null;
+    try {
+      const res = await fetch(src);
+      if (!res.ok) return null;
+      const total = Number(res.headers.get('content-length')) || 0;
+      if (!res.body || !total) {
+        const blob = await res.blob();
+        setProgress(1);
+        return URL.createObjectURL(blob);
+      }
+      const reader = res.body.getReader();
+      const chunks = [];
+      let loaded = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.length;
+        setProgress(loaded / total);
+      }
+      return URL.createObjectURL(new Blob(chunks, { type: res.headers.get('content-type') || 'video/mp4' }));
+    } catch {
+      return null;
+    }
+  }
+
+  async function runCountdown(download) {
+    // digits are set in Outfit; don't show a fallback face if it's quick to arrive
+    if (document.fonts) await Promise.race([document.fonts.load('300 72px Outfit'), timeout(1500)]);
+    hero.classList.add('is-ticking');
+    from($('.countdown__box', countdown), { opacity: 0, transform: 'scale(0.92)' }, { duration: 900 });
+    from($('.countdown__bar', countdown), { opacity: 0 }, { duration: 900, delay: 200 });
+
+    for (let n = COUNT_FROM - 1; n >= 1; n -= 1) {
+      await timeout(TICK);
+      showDigit(n);
+    }
+    // "1" stays at least one tick, longer if the video is still downloading
+    const [url] = await Promise.all([Promise.race([download, timeout(MAX_WAIT).then(() => null)]), timeout(TICK)]);
+    setProgress(1);
+
+    const out = [
+      to($('.countdown__box', countdown), { opacity: 0, transform: 'scale(1.06)' }, { duration: 500 }),
+      to($('.countdown__bar', countdown), { opacity: 0 }, { duration: 400 }),
+    ];
+    await Promise.all(out.map((a) => a.finished));
+    return url;
+  }
+
+  /* ---------- loader ---------- */
+  async function runLoader() {
+    const download = downloadVideo();
+    hero.classList.add('is-ready', 'is-loading', 'is-counting');
     from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
+
+    const url = await runCountdown(download);
 
     let finished = false;
 
@@ -317,22 +402,30 @@
       finished = true;
       markLoaderSeen();
       const played = video.currentTime > 0;
+      hero.classList.remove('is-counting', 'is-ticking');
       video.pause();
       video.remove();
+      if (url) URL.revokeObjectURL(url);
       // fonts are long loaded by now, but never split/measure before they are
       Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: played }));
     };
 
+    if (!url) {
+      finish();
+      return;
+    }
+
     video.addEventListener('ended', finish, { once: true });
     video.addEventListener('error', finish, { once: true });
+    // the countdown's black screen stays until the first video frame is on screen
+    video.addEventListener('playing', () => hero.classList.remove('is-counting', 'is-ticking'), { once: true });
 
-    // video that never starts (blocked autoplay, slow network) falls back to the still image
-    const started = new Promise((resolve) => video.addEventListener('playing', resolve, { once: true }));
+    video.src = url;
     const play = video.play();
     if (play) play.catch(finish);
-    Promise.race([started, timeout(3000)]).then(() => {
+    // safety net if playback never starts or stalls
+    timeout(3000).then(() => {
       if (video.paused && !finished) finish();
-      // safety net if playback stalls midway
       else setTimeout(finish, ((video.duration || 16) + 4) * 1000);
     });
   }
