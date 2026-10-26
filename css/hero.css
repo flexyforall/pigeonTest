@@ -72,6 +72,21 @@ h1, h2, p { margin: 0; }
 }
 .hero__bg-img.is-active { opacity: 1; }
 
+/* hairline that leads the background wipe between audiences */
+.hero__wipe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  z-index: 2;
+  width: 1px;
+  margin-left: -0.5px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 24px 2px rgba(111, 198, 167, 0.35);
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Loader video: plays once, its last frame equals hero-business.jpg */
 .hero__video {
   position: absolute;

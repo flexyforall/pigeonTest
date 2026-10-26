@@ -24,7 +24,10 @@
   // Explicit keyframes are needed: Chrome ignores backwards fill on implicit ones during the delay.
   const cssState = (el, keyframe, pseudoElement) => {
     const cs = getComputedStyle(el, pseudoElement);
-    return Object.fromEntries(Object.keys(keyframe).map((k) => [k, cs[k]]));
+    return Object.fromEntries(
+      // `none` doesn't interpolate with inset(), so spell out the unclipped box
+      Object.keys(keyframe).map((k) => [k, k === 'clipPath' && cs[k] === 'none' ? 'inset(0 0 0 0)' : cs[k]])
+    );
   };
   // `from` animates from the given state to the element's own CSS state and lets go afterwards
   const from = (el, keyframe, opts = {}) =>
@@ -155,20 +158,37 @@
     highlight.style.transform = `translate(${card.offsetLeft}px, ${card.offsetTop}px)`;
   }
 
-  /* ---------- background crossfade ---------- */
-  function swapBackground(next) {
+  const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  /* ---------- background wipe ---------- */
+  // A hairline sweeps across the hero and repaints it with the next background behind it.
+  // Going forward (Business → Residential) it travels right to left, going back left to right.
+  const wipeLine = $('.hero__wipe');
+  const WIPE = 1300;
+  const WIPE_EASE = 'cubic-bezier(0.7, 0, 0.25, 1)';
+
+  function wipeBackground(next, forward) {
     const prevBg = bgs.find((b) => b.dataset.bg === current);
     const nextBg = bgs.find((b) => b.dataset.bg === next);
     // keep the incoming image above the outgoing one
     nextBg.style.zIndex = 1;
     prevBg.style.zIndex = 0;
     nextBg.classList.add('is-active');
-    from(nextBg, { opacity: 0, transform: 'scale(1.08)', filter: 'blur(8px)' }, { duration: 1400 });
-    const out = to(prevBg, { opacity: 0, transform: 'scale(0.98)' }, { duration: 1200, easing: 'ease' });
-    out.finished.then(() => {
-      prevBg.classList.remove('is-active');
-      out.cancel();
-    });
+
+    const hidden = forward ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
+    const opts = { duration: WIPE, easing: WIPE_EASE };
+    // explicit end value: `none` doesn't interpolate with inset()
+    nextBg.animate(
+      [{ clipPath: hidden, transform: 'scale(1.04)' }, { clipPath: 'inset(0 0 0 0)', transform: 'scale(1)' }],
+      opts
+    );
+    wipeLine.animate(
+      forward
+        ? [{ left: '100%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '0%', opacity: 0 }]
+        : [{ left: '0%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '100%', opacity: 0 }],
+      opts
+    );
+    return timeout(WIPE).then(() => prevBg.classList.remove('is-active'));
   }
 
   /* ---------- switch state ---------- */
@@ -179,21 +199,24 @@
 
     const prevPanel = panels.find((p) => p.dataset.panel === current);
     const nextPanel = panels.find((p) => p.dataset.panel === next);
+    const forward = STATES.indexOf(next) > STATES.indexOf(current);
 
-    swapBackground(next);
-    current = next;
-    hero.dataset.state = next;
-
-    tabs.forEach((t) => {
-      const on = t.dataset.target === next;
-      t.classList.toggle('is-active', on);
-      t.setAttribute('aria-selected', String(on));
-    });
-    cards.forEach((c) => c.classList.toggle('is-active', c.dataset.target === next));
-    moveIndicator(true);
-    moveHighlight(true);
+    const markActive = () => {
+      tabs.forEach((t) => {
+        const on = t.dataset.target === next;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      cards.forEach((c) => c.classList.toggle('is-active', c.dataset.target === next));
+      moveIndicator(!reduceMotion);
+      moveHighlight(!reduceMotion);
+    };
 
     if (reduceMotion) {
+      bgs.forEach((b) => b.classList.toggle('is-active', b.dataset.bg === next));
+      current = next;
+      hero.dataset.state = next;
+      markActive();
       prevPanel.classList.remove('is-active');
       prevPanel.setAttribute('aria-hidden', 'true');
       nextPanel.classList.add('is-active');
@@ -203,15 +226,23 @@
       return;
     }
 
+    // 1. the line repaints the background; the old copy stays until the line has passed it
+    const wiped = wipeBackground(next, forward);
+    current = next;
+    hero.dataset.state = next;
+    await timeout(WIPE * 0.55);
     const leaveAnims = await leavePanel(prevPanel);
     prevPanel.classList.remove('is-active');
     prevPanel.setAttribute('aria-hidden', 'true');
     leaveAnims.forEach((a) => a.cancel());
     dimDown(prevPanel);
+    await wiped;
 
+    // 2. then the new copy and the active states come in
+    markActive();
     nextPanel.classList.add('is-active');
     nextPanel.removeAttribute('aria-hidden');
-    await enterPanel(nextPanel, 0);
+    await enterPanel(nextPanel, 100);
     busy = false;
   }
 
@@ -310,7 +341,6 @@
   };
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
-  const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   function runLoader() {
     hero.classList.add('is-ready', 'is-loading');
