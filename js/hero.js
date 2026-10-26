@@ -73,12 +73,6 @@
       ...wifiArc(25, [-135, -120, -105, -90, -75, -60, -45]),
     ],
   };
-  const IDLE_BEAT = [
-    { transform: 'scale(1)', opacity: 1 },
-    { transform: 'scale(1.1)', opacity: 0.6, offset: 0.18 },
-    { transform: 'scale(1)', opacity: 1, offset: 0.42 },
-    { transform: 'scale(1)', opacity: 1 },
-  ];
   const DOT = 3;
   const byPosition = (a, b) => a[1] - b[1] || a[0] - b[0];
 
@@ -118,18 +112,17 @@
       return Promise.all(morphs.map((m) => m.finished));
     };
 
-    // At rest the dots pulse softly, a wave running across the three cards,
-    // so the cards read as interactive. The pulse pauses while the symbol shows.
-    const groups = ['.dots__cross', '.dots__inner', '.dots__outer'].map((sel) => $(sel, card));
-    const cardIndex = cards.indexOf(card);
+    // At rest the dots shimmer: each one fades in and out on its own rhythm and phase,
+    // so the icon is always gently alive and the cards read as interactive.
+    // The shimmer pauses while the symbol shows.
     let idle = [];
     let hovered = false;
 
     const startIdle = () => {
-      idle = groups.map((g, i) =>
-        g.animate(IDLE_BEAT, {
-          duration: 2600,
-          delay: cardIndex * 220 + i * 120,
+      idle = dots.map(({ rect }) =>
+        rect.animate([{ opacity: 1 }, { opacity: 0.3 }, { opacity: 1 }], {
+          duration: 900 + Math.random() * 900,
+          delay: -Math.random() * 1800, // start mid-cycle so dots are out of step
           iterations: Infinity,
           easing: 'ease-in-out',
         })
@@ -137,9 +130,10 @@
     };
     const stopIdle = () => {
       idle.forEach((anim, i) => {
-        const now = cssState(groups[i], IDLE_BEAT[0]);
+        const { rect } = dots[i];
+        const now = getComputedStyle(rect).opacity;
         anim.cancel();
-        groups[i].animate([now, IDLE_BEAT[0]], { duration: 250, easing: 'ease-out' });
+        rect.animate([{ opacity: now }, { opacity: 1 }], { duration: 250, easing: 'ease-out' });
       });
       idle = [];
     };

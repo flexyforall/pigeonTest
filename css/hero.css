@@ -439,15 +439,10 @@ h1, h2, p { margin: 0; }
   line-height: 24px;
 }
 
-/* dots icon: pulses at rest, regroups into an audience symbol on hover (js/hero.js) */
+/* dots icon: shimmers at rest, regroups into an audience symbol on hover (js/hero.js) */
 .card__icon rect {
   transform-box: fill-box;
   transform-origin: center;
-}
-/* groups pulse softly at rest */
-.card__icon g {
-  transform-box: view-box;
-  transform-origin: 25px 25px;
 }
 
 /* ===== Adaptive (below design width) ===== */
