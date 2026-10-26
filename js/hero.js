@@ -291,7 +291,7 @@
   /* ---------- switch state ---------- */
   async function setState(next) {
     if (next === current || busy || !STATES.includes(next)) return;
-    if (hero.classList.contains('is-loading')) return;
+    if (hero.classList.contains('is-loading') || hero.classList.contains('is-handoff')) return;
     busy = true;
 
     const prevPanel = panels.find((p) => p.dataset.panel === current);
@@ -449,20 +449,41 @@
     hero.classList.add('is-ready', 'is-loading');
     from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
 
+    let introStarted = false;
     let finished = false;
 
-    // The hero UI comes in only once the video has stopped on its last frame.
-    // That frame is swapped for the identical still image, so nothing visibly changes.
-    const finish = () => {
-      if (finished) return;
-      finished = true;
+    // The hero UI comes in as the meeting-room doors open in the video (data-intro-at, seconds),
+    // while the video plays out underneath.
+    const startIntro = () => {
+      if (introStarted) return;
+      introStarted = true;
       markLoaderSeen();
       const played = video.currentTime > 0;
-      video.pause();
-      video.remove();
+      if (played) hero.classList.add('is-handoff');
       // fonts are long loaded by now, but never split/measure before they are
       Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: played }));
     };
+
+    // The video stops on its last frame, which is swapped for the identical still image.
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      startIntro();
+      video.pause();
+      video.remove();
+      hero.classList.remove('is-handoff');
+    };
+
+    const introAt = Number(video.dataset.introAt) || Infinity;
+    const watchTime = (mediaTime) => {
+      if (mediaTime >= introAt) startIntro();
+      else if (!finished) waitFrame();
+    };
+    const waitFrame = () =>
+      video.requestVideoFrameCallback
+        ? video.requestVideoFrameCallback((now, meta) => watchTime(meta.mediaTime))
+        : video.addEventListener('timeupdate', () => watchTime(video.currentTime), { once: true });
+    waitFrame();
 
     video.addEventListener('ended', finish, { once: true });
     video.addEventListener('error', finish, { once: true });
