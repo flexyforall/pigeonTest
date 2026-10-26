@@ -48,29 +48,71 @@
   const dotsTpl = document.getElementById('dots-icon');
   $$('.card__icon').forEach((slot) => slot.append(dotsTpl.content.cloneNode(true)));
 
-  // On hover the dots pulse in a loop, rippling from the centre outwards.
-  // On leave the current beat plays out, so the icon settles back without a jump.
-  const PULSE = [
-    { transform: 'scale(1)', opacity: 1 },
-    { transform: 'scale(1.14)', opacity: 0.55, offset: 0.45 },
-    { transform: 'scale(1)', opacity: 1 },
-  ];
+  // On hover the 17 dots regroup into a symbol for the audience; on leave they fly back.
+  // Points are dot centres in the icon's 50×50 box; every dot becomes a 3px square.
+  const wifiArc = (r, angles) =>
+    angles.map((a) => [25 + r * Math.cos((a * Math.PI) / 180), 41 + r * Math.sin((a * Math.PI) / 180)]);
+  const SYMBOLS = {
+    // office tower: 3 × 5 windows, door, antenna
+    business: [
+      ...[9, 16, 23, 30, 37].flatMap((y) => [17, 25, 33].map((x) => [x, y])),
+      [25, 43.5],
+      [25, 3],
+    ],
+    // house: roof, walls, two windows, door, ground line
+    residential: [
+      [25, 7], [19.5, 12.5], [30.5, 12.5], [14, 18], [36, 18],
+      [16, 25], [16, 32], [16, 39], [34, 25], [34, 32], [34, 39],
+      [21.5, 27], [28.5, 27], [25, 34], [25, 39], [20.5, 39], [29.5, 39],
+    ],
+    // WiFi signal: a source dot under three arcs
+    mobile: [
+      [25, 41], [25, 41],
+      ...wifiArc(9, [-125, -90, -55]),
+      ...wifiArc(17, [-135, -112, -90, -68, -45]),
+      ...wifiArc(25, [-135, -120, -105, -90, -75, -60, -45]),
+    ],
+  };
+  const DOT = 3;
+  const byPosition = (a, b) => a[1] - b[1] || a[0] - b[0];
+
   cards.forEach((card) => {
-    const groups = ['.dots__cross', '.dots__inner', '.dots__outer'].map((sel) => $(sel, card));
-    let beats = [];
-    card.addEventListener('mouseenter', () => {
-      if (reduceMotion) return;
-      beats.forEach((b) => b.cancel());
-      beats = groups.map((g, i) =>
-        g.animate(PULSE, { duration: 1400, delay: i * 140, iterations: Infinity, easing: 'ease-in-out' })
+    const symbol = SYMBOLS[card.dataset.target];
+    if (!symbol) return;
+    const rects = $$('rect', card);
+    const dots = rects
+      .map((rect) => {
+        const x = +rect.getAttribute('x');
+        const y = +rect.getAttribute('y');
+        const w = +rect.getAttribute('width');
+        return { rect, cx: x + w / 2, cy: y + w / 2, w };
+      })
+      .sort((a, b) => byPosition([a.cx, a.cy], [b.cx, b.cy]));
+    const targets = [...symbol].sort(byPosition);
+
+    // one animation per dot, played forwards on enter and backwards on leave
+    const morphs = dots.map(({ rect, cx, cy, w }, i) => {
+      const [tx, ty] = targets[i];
+      const anim = rect.animate(
+        [
+          { transform: 'translate(0, 0) scale(1)' },
+          { transform: `translate(${tx - cx}px, ${ty - cy}px) scale(${DOT / w})` },
+        ],
+        { duration: 520 + i * 12, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'both' }
       );
+      anim.pause();
+      return anim;
     });
-    card.addEventListener('mouseleave', () => {
-      beats.forEach((b) => {
-        const { currentIteration } = b.effect.getComputedTiming();
-        b.effect.updateTiming({ iterations: (currentIteration ?? 0) + 1 });
+
+    const play = (rate) => {
+      if (reduceMotion) return;
+      morphs.forEach((m) => {
+        m.playbackRate = rate;
+        m.play();
       });
-    });
+    };
+    card.addEventListener('mouseenter', () => play(1));
+    card.addEventListener('mouseleave', () => play(-1));
   });
 
   /* ---------- split headings into words ---------- */
@@ -131,15 +173,15 @@
   }
 
   /* ---------- indicator + highlight ---------- */
-  function moveIndicator(animated) {
-    const tab = tabs.find((t) => t.dataset.target === current);
+  function moveIndicator(animated, state = current) {
+    const tab = tabs.find((t) => t.dataset.target === state);
     indicator.classList.toggle('is-animated', animated);
     indicator.style.width = `${tab.offsetWidth}px`;
     indicator.style.transform = `translateX(${tab.offsetLeft}px)`;
   }
 
-  function moveHighlight(animated) {
-    const card = cards.find((c) => c.dataset.target === current);
+  function moveHighlight(animated, state = current) {
+    const card = cards.find((c) => c.dataset.target === state);
     highlight.classList.toggle('is-animated', animated);
     highlight.style.width = `${card.offsetWidth}px`;
     highlight.style.height = `${card.offsetHeight}px`;
@@ -221,8 +263,8 @@
         t.setAttribute('aria-selected', String(on));
       });
       cards.forEach((c) => c.classList.toggle('is-active', c.dataset.target === next));
-      moveIndicator(!reduceMotion);
-      moveHighlight(!reduceMotion);
+      moveIndicator(!reduceMotion, next);
+      moveHighlight(!reduceMotion, next);
     };
 
     if (reduceMotion) {
@@ -243,6 +285,9 @@
     if (nextBg.dataset.src) loadDeferredImages();
     await nextBg.decode().catch(() => {});
 
+    // the tab and card respond right away, the content follows the line
+    markActive();
+
     // 1. the line sweeps across, repainting the background and erasing the old copy as it goes
     const content = $('.hero__content');
     const wiped = wipeBackground(next);
@@ -254,9 +299,8 @@
     prevPanel.setAttribute('aria-hidden', 'true');
     content.getAnimations().forEach((a) => a.cancel());
 
-    // 2. as soon as the line has cleared the copy, the new copy and active states come in
+    // 2. as soon as the line has cleared the copy, the new copy comes in
     //    (the line finishes its last stretch over the empty left margin meanwhile)
-    markActive();
     nextPanel.classList.add('is-active');
     nextPanel.removeAttribute('aria-hidden');
     from($('[data-intro="rating"]'), { opacity: 0, transform: 'translateY(10px)' }, { duration: 700 });
