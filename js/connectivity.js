@@ -67,74 +67,55 @@
   }
 
   /* ---------- scrubbing ---------- */
-  // Clips are fetched whole and played from memory, so a seek never waits on the network
-  // (Safari stalls on seeks into ranges it hasn't buffered). Seeks are asynchronous: the latest
-  // wanted time is re-applied every frame until the video shows it, and a seek that hangs
-  // (Safari can drop one without ever firing `seeked`) is simply issued again.
+  // Seeks are asynchronous: while one is in flight only the latest wanted time is kept,
+  // and it is applied as soon as the video lands.
   const wanted = new Map();
-  const seekStarted = new Map();
   const FRAME = 1 / 24;
-  const SEEK_TIMEOUT = 1500; // ms; a slow seek must not be cut short by a retry
 
-  // true once the video shows the wanted frame
-  function seek(video, now = performance.now()) {
+  function seek(video) {
     const t = wanted.get(video);
-    if (t === undefined || video.readyState < 1) return false;
-    // only the scroll moves a clip: never let one run on its own
-    if (!video.paused) video.pause();
-    if (Math.abs(video.currentTime - t) < FRAME / 2 && !video.seeking) return true;
-    if (video.seeking && now - seekStarted.get(video) < SEEK_TIMEOUT) return false;
+    if (t === undefined || video.seeking || video.readyState < 1 || Math.abs(video.currentTime - t) < FRAME / 2) return;
     video.currentTime = t;
-    seekStarted.set(video, now);
-    return false;
   }
   videos.forEach((video) => {
     if (!video) return;
+    video.addEventListener('seeked', () => seek(video));
     // the wanted time depends on the duration, so recompute once it is known
-    ['loadedmetadata', 'loadeddata', 'seeked'].forEach((type) => video.addEventListener(type, () => schedule()));
+    video.addEventListener('loadedmetadata', () => draw(state));
   });
 
   function scrub(seq) {
-    let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
       const p = clamp(seq - (k - 1 + CLIP_START));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
-      if (!seek(video) && video.readyState >= 1) synced = false;
+      seek(video);
       // the panel is on screen from seq k − 1 to k + 1 (the last one stays to the end)
       video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1)) / 2)));
     });
-    return synced;
   }
 
-  // Loads the clips as the section approaches. They are never played: a deferred play() (Safari
-  // holds it back until the video is on screen) would set a clip running on its own.
-  function loadClip(video) {
-    const url = video.dataset.src;
-    const use = (src) => {
-      video.preload = 'auto';
-      video.src = src;
-    };
-    fetch(url)
-      .then((res) => (res.ok ? res.blob() : Promise.reject()))
-      .then((blob) => use(URL.createObjectURL(blob)))
-      .catch(() => use(url)); // stream it instead
-  }
-  const loader = new IntersectionObserver(
+  // Browsers (iOS Safari above all) may not fetch a paused muted video until it has played once,
+  // so each clip is nudged into play and straight back to pause as the section approaches.
+  const primer = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return;
-      loader.disconnect();
-      videos.forEach((video) => video && loadClip(video));
+      primer.disconnect();
+      videos.forEach((video) => {
+        if (!video) return;
+        const play = video.play();
+        if (play) play.then(() => { video.pause(); seek(video); }).catch(() => {});
+      });
     },
     { rootMargin: '100% 0px' }
   );
-  loader.observe(section);
+  primer.observe(section);
 
   function draw({ fill, seq }) {
     title.style.setProperty('--fill', fill);
-    const synced = scrub(seq);
+    scrub(seq);
 
     const step = Math.min(seq, handovers);
     const i = Math.min(Math.floor(step), handovers - 1);
@@ -147,7 +128,6 @@
 
     // the title shrinks with its panel instead of reflowing
     if (i === 0) title.style.setProperty('--title-scale', corner);
-    return synced;
   }
 
   let state = target();
@@ -164,10 +144,9 @@
     };
     const settled = Math.abs(goal.fill - state.fill) < 0.001 && Math.abs(goal.seq - state.seq) < 0.001;
     if (settled) state = goal;
-    // keep going until the clips have caught up too
-    const done = draw(state) && settled;
-    last = done ? 0 : now;
-    frame = done ? 0 : requestAnimationFrame(tick);
+    draw(state);
+    last = settled ? 0 : now;
+    frame = settled ? 0 : requestAnimationFrame(tick);
   }
 
   const schedule = () => {

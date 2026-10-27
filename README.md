@@ -15,8 +15,8 @@ python3 -m http.server 8000
 - `js/hero.js` — loader, intro animation and Business / Residential / Mobile switching
 - `js/sections.js` — scroll-in reveal of the sections below the hero
 - `js/connectivity.js` — scroll-driven "Connectivity without boundaries" sequence (Figma storyboard `228:3913`);
-  its clips in `assets/connectivity/` are fetched whole and scrubbed by the scroll from memory,
-  encoded with a keyframe every 4 frames and no B-frames so each seek is cheap
+  its clips in `assets/connectivity/` are scrubbed by the scroll, so they are encoded with a keyframe
+  every 4 frames and no B-frames. Serve them from a host that supports byte ranges, or seeking fails
 - `assets/` — images, icons and loader video exported from Figma
 
 The loader video (`assets/video/loader.*`) plays once per tab session; its last
