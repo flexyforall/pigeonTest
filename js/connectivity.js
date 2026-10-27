@@ -22,11 +22,13 @@
   const STEP = 1.2; // each hand-over
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
   const handovers = panels.length - 1;
-  // A clip plays from the middle of its panel's arrival (the shared corner halfway along the
-  // diagonal) to the middle of its exit, where the next clip takes over. The last clip finishes
-  // half a step after the last hand-over, so the scroll runs that much further.
+  // A clip starts a third of the way into its panel's arrival (the new panel at about a third of
+  // the box) and runs for one hand-over's worth of scroll, finishing at the same point of the
+  // next hand-over, just as the next clip starts. The last clip needs that much scroll after
+  // the last hand-over.
+  const CLIP_START = 0.35;
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
-  const seqEnd = handovers + 0.5;
+  const seqEnd = handovers + CLIP_START;
   const travel = FILL + seqEnd * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
@@ -85,7 +87,7 @@
   function scrub(seq) {
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp(seq - (k - 0.5));
+      const p = clamp(seq - (k - 1 + CLIP_START));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
