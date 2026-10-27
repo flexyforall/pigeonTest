@@ -26,8 +26,11 @@ body { background: var(--c-page); }
 .logos__list {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 64px;
-  margin: 0;
+  /* the design's 1240px row, spreading a little wider on large screens */
+  max-width: 1720px;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
 }
@@ -78,7 +81,8 @@ body { background: var(--c-page); }
   align-items: center;
   width: 100%;
   height: 300px;
-  padding: 0 40px;
+  /* the rules run edge to edge; the cards stay within 1760px so the "+" grid still covers them */
+  padding: 0 max(40px, calc((100% - 1760px) / 2));
   overflow: hidden;
   /* Figma strokes don't take up layout space, so rules are drawn as inset shadows */
   box-shadow: inset 0 0 0 1px var(--c-rule);
@@ -104,8 +108,6 @@ body { background: var(--c-page); }
   box-shadow: inset -1px 0 var(--c-rule);
   pointer-events: none;
 }
-/* Figma rounds the three columns to 454 / 453 / 453 */
-.benefit:first-child { flex: 0 0 454px; }
 .benefit:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule); }
 
 /* "+" grid, softened at the top-left by a blurred page-coloured blob */

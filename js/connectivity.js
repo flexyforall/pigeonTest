@@ -154,7 +154,8 @@
       const to = k < handovers ? 1 - ease(clamp(seq - k * LAG)) : 1;
       place(panel, from, to);
       // the title shrinks with its panel instead of reflowing
-      if (k === 0) title.style.setProperty('--title-scale', to);
+      // (and grows with the box on screens wider than the 1360px design box)
+      if (k === 0) title.style.setProperty('--title-scale', to * Math.max(1, box.offsetWidth / 1360));
       from = to;
     });
     return synced;
