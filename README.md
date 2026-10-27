@@ -11,7 +11,7 @@ python3 -m http.server 8000
 
 - `index.html` — markup
 - `css/hero.css` — styles (design width 1440 × 810)
-- `js/hero.js` — loader, intro animation and Business ↔ Residential switching
+- `js/hero.js` — loader, intro animation and Business / Residential / Mobile switching
 - `assets/` — images, icons and loader video exported from Figma
 
 The loader video (`assets/video/loader.*`) plays once per tab session; its last

@@ -5,7 +5,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
   const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.2)';
-  const STATES = ['business', 'residential']; // "mobile" has no design yet
+  const STATES = ['business', 'residential', 'mobile'];
 
   const $ = (sel, root = hero) => root.querySelector(sel);
   const $$ = (sel, root = hero) => [...root.querySelectorAll(sel)];
