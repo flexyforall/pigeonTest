@@ -174,7 +174,7 @@ body { background: var(--c-page); }
   text-align: center;
   white-space: nowrap;
 }
-.connectivity__title span { color: rgba(255, 255, 255, 0.4); }
+.connectivity__dim { color: rgba(255, 255, 255, 0.4); }
 
 .connectivity__corner {
   position: absolute;
@@ -210,3 +210,10 @@ body { background: var(--c-page); }
   .connectivity__title { white-space: normal; padding: 0 24px; }
   .benefits { padding: 64px 0; gap: 40px; }
 }
+
+/* ===== Scroll reveal (js/sections.js) ===== */
+/* content waits hidden until its section scrolls in; the frame and rules stay put */
+.is-pending .logos__list,
+.is-pending .benefits__head,
+.is-pending .benefit > *,
+.is-pending .connectivity__box { visibility: hidden; }
