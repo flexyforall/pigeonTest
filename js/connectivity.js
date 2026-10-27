@@ -31,6 +31,12 @@
   // the box) and runs until the next clip starts at the same point of the next hand-over, so
   // every clip gets LAG of scroll and they all run at one speed.
   const CLIP_START = 0.41; // ease(0.41) ≈ 0.34
+  // Pace within a clip: fast out of the start, slow through the middle, fast into the end.
+  // A blend of linear and a cubic centred on the middle; PACE sets how strong the slow-down is
+  // (0 = even pace; 0.55 runs the ends at ~2.2× and the middle at ~0.45× the average speed).
+  // The start and end stay put, so the clips still hand over at the same moments.
+  const PACE = 0.55;
+  const pace = (p) => (1 - PACE) * p + PACE * (0.5 + 4 * (p - 0.5) ** 3);
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
   const seqEnd = Math.max((handovers - 1) * LAG + 1, handovers * LAG + CLIP_START);
   const travel = FILL + seqEnd * STEP + HOLD;
@@ -109,7 +115,7 @@
     let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp((seq - ((k - 1) * LAG + CLIP_START)) / LAG);
+      const p = pace(clamp((seq - ((k - 1) * LAG + CLIP_START)) / LAG));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
