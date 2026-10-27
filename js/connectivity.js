@@ -30,7 +30,7 @@
   // A clip starts a third of the way into its panel's arrival (the new panel at about a third of
   // the box) and runs until the next clip starts at the same point of the next hand-over, so
   // every clip gets LAG of scroll and they all run at one speed.
-  const CLIP_START = 0.35;
+  const CLIP_START = 0.41; // ease(0.41) ≈ 0.34
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
   const seqEnd = Math.max((handovers - 1) * LAG + 1, handovers * LAG + CLIP_START);
   const travel = FILL + seqEnd * STEP + HOLD;
@@ -40,8 +40,10 @@
   const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 140;
 
   const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
-  // mostly linear with a touch of smoothstep: the hand-overs flow into each other without stalling
-  const ease = (t) => 0.8 * t + 0.2 * t * t * (3 - 2 * t);
+  // ease-in-out: each boundary lingers near the box corners and crosses the middle quickly, so the
+  // panels at either end stay small and the one in focus gets most of the diagonal; with the
+  // hand-overs overlapping, one boundary is always on the move, so the whole never stalls
+  const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t));
 
   section.classList.add('is-scrolling');
   section.style.setProperty('--track', `${(1 + travel) * 100}vh`);
