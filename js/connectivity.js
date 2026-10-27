@@ -6,6 +6,8 @@
 // Each image panel holds a short clip in which a line sweeps across, turning a wireframe into
 // the photo. The clips are scrubbed by the scroll, not played: all four get the same stretch of
 // scroll, back to back, so they run at one speed and each line starts where the last one ended.
+// On top of that every clip slowly zooms out for as long as its panel is on screen, so no panel
+// ever sits still, even once its clip has finished.
 (() => {
   const section = document.querySelector('[data-connectivity]');
   if (!section) return;
@@ -20,20 +22,18 @@
   const STEP = 1.2; // each hand-over
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
   const handovers = panels.length - 1;
-  // A clip plays over one hand-over's worth of scroll, centred on the moment its panel fills the
-  // box: from halfway through its arrival to halfway through its exit. The last one finishes
-  // half a step after the sequence ends, so the scroll runs that much further.
-  const CLIP = 1;
-  const seqEnd = handovers + CLIP / 2;
-  const travel = FILL + seqEnd * STEP + HOLD;
+  // A clip plays while its panel grows: it starts the moment the panel appears and finishes as
+  // the panel fills the box, right when the next clip starts in the next panel.
+  const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
+  const travel = FILL + handovers * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
   // and trackpad flicks glide. SMOOTH is the time constant of that chase, in ms.
   const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 140;
 
   const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
-  // half linear, half smoothstep: eases into each panel without rushing through the middle
-  const ease = (t) => 0.5 * t + 0.5 * t * t * (3 - 2 * t);
+  // mostly linear with a touch of smoothstep: the hand-overs flow into each other without stalling
+  const ease = (t) => 0.8 * t + 0.2 * t * t * (3 - 2 * t);
 
   section.classList.add('is-scrolling');
   section.style.setProperty('--track', `${(1 + travel) * 100}vh`);
@@ -58,7 +58,7 @@
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
       // position along the panel sequence: 0 = title, 1 = first image, …
-      seq: clamp((scrolled - FILL) / STEP, 0, seqEnd),
+      seq: clamp((scrolled - FILL) / STEP, 0, handovers),
     };
   }
 
@@ -83,11 +83,13 @@
   function scrub(seq) {
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp((seq - (k - CLIP / 2)) / CLIP);
+      const p = clamp(seq - (k - 1));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
       seek(video);
+      // the panel is on screen from seq k − 1 to k + 1 (the last one stays to the end)
+      video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1)) / 2)));
     });
   }
 

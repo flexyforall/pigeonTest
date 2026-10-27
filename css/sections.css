@@ -193,12 +193,20 @@ body { background: var(--c-page); }
 .connectivity__panel:not([data-panel="title"]) { display: none; }
 .connectivity.is-scrolling .connectivity__panel { display: block; }
 
+/* clips the slow scroll-linked zoom on the clip (the corners sit outside the panel) */
+.connectivity__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
 .connectivity__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  scale: var(--zoom, 1);
 }
 
 .connectivity__title {
