@@ -22,10 +22,12 @@
   const STEP = 1.2; // each hand-over
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
   const handovers = panels.length - 1;
-  // A clip plays while its panel grows: it starts the moment the panel appears and finishes as
-  // the panel fills the box, right when the next clip starts in the next panel.
+  // A clip plays from the middle of its panel's arrival (the shared corner halfway along the
+  // diagonal) to the middle of its exit, where the next clip takes over. The last clip finishes
+  // half a step after the last hand-over, so the scroll runs that much further.
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
-  const travel = FILL + handovers * STEP + HOLD;
+  const seqEnd = handovers + 0.5;
+  const travel = FILL + seqEnd * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
   // and trackpad flicks glide. SMOOTH is the time constant of that chase, in ms.
@@ -58,7 +60,7 @@
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
       // position along the panel sequence: 0 = title, 1 = first image, …
-      seq: clamp((scrolled - FILL) / STEP, 0, handovers),
+      seq: clamp((scrolled - FILL) / STEP, 0, seqEnd),
     };
   }
 
@@ -83,7 +85,7 @@
   function scrub(seq) {
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp(seq - (k - 1));
+      const p = clamp(seq - (k - 0.5));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
