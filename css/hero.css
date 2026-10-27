@@ -20,6 +20,10 @@
   --f-display: "Outfit", system-ui, sans-serif;
   --f-body: "Inter", system-ui, sans-serif;
 
+  /* one design pixel: 1px up to the 1440px design width, then growing with the screen up to
+     1.25px (from 1800px on), so type and spacing scale smoothly on large screens */
+  --px: clamp(1px, 100vw / 1440, 1.25px);
+
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   color-scheme: dark;
@@ -112,14 +116,7 @@ h1, h2, p { margin: 0; }
 /* Frame: 1px outline drawn by ::before so it can be animated */
 .hero__frame {
   position: absolute;
-  /* laid out at the 1440px design width and scaled up on wider screens (--hero-scale, set by
-     the script); at 1 this is simply inset: 0 40px */
-  top: 0;
-  left: calc(40px * var(--hero-scale, 1));
-  width: calc(100% / var(--hero-scale, 1) - 80px);
-  height: calc(100% / var(--hero-scale, 1));
-  transform: scale(var(--hero-scale, 1));
-  transform-origin: 0 0;
+  inset: 0 calc(40 * var(--px));
   overflow: hidden;
   z-index: 1;
 }
@@ -138,7 +135,7 @@ h1, h2, p { margin: 0; }
   top: 0;
   left: 0;
   width: 100%;
-  height: 52px;
+  height: calc(52 * var(--px));
   z-index: 2;
 }
 .header::after {
@@ -154,21 +151,22 @@ h1, h2, p { margin: 0; }
 
 .header__logo {
   position: absolute;
-  left: 32px;
-  top: 10.5px;
-  width: 107px;
-  height: 27px;
+  left: calc(32 * var(--px));
+  top: calc(10.5 * var(--px));
+  width: calc(107 * var(--px));
+  height: calc(27 * var(--px));
 }
+.header__logo img { width: 100%; height: 100%; }
 
 /* Audience tabs */
 .audience {
   position: absolute;
-  left: 171px;
+  left: calc(171 * var(--px));
   top: 0;
   z-index: 1; /* the active pill covers the header hairline */
   display: flex;
   align-items: center;
-  height: 52px;
+  height: calc(52 * var(--px));
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
@@ -192,8 +190,8 @@ h1, h2, p { margin: 0; }
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 8px 20px;
-  font-size: 14px;
+  padding: calc(8 * var(--px)) calc(20 * var(--px));
+  font-size: calc(14 * var(--px));
   line-height: 1.2;
   font-weight: 400;
   white-space: nowrap;
@@ -237,8 +235,8 @@ h1, h2, p { margin: 0; }
   top: 0;
   display: flex;
   align-items: stretch;
-  gap: 16px;
-  height: 51px; /* sits above the header hairline */
+  gap: calc(16 * var(--px));
+  height: calc(51 * var(--px)); /* sits above the header hairline */
 }
 
 .header__links { display: flex; align-items: stretch; }
@@ -247,9 +245,9 @@ h1, h2, p { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 0 20px;
-  font-size: 14px;
+  gap: calc(10 * var(--px));
+  padding: 0 calc(20 * var(--px));
+  font-size: calc(14 * var(--px));
   line-height: 1.2;
   white-space: nowrap;
   opacity: 0.7;
@@ -266,7 +264,7 @@ h1, h2, p { margin: 0; }
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 51px; /* square: same as the header row height */
+  width: calc(51 * var(--px)); /* square: same as the header row height */
   background: var(--c-fill);
   backdrop-filter: blur(10px); /* same frosted glass as the audience cards */
   -webkit-backdrop-filter: blur(10px);
@@ -282,19 +280,19 @@ h1, h2, p { margin: 0; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
-  padding: 20px;
+  height: calc(48 * var(--px));
+  padding: calc(20 * var(--px));
   overflow: hidden;
   border-radius: 1px;
   background: var(--c-white);
   color: #000;
-  font-size: 16px;
+  font-size: calc(16 * var(--px));
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
   isolation: isolate;
 }
-.btn--sm { height: auto; padding: 0 20px; border-radius: 0; font-size: 14px; }
+.btn--sm { height: auto; padding: 0 calc(20 * var(--px)); border-radius: 0; font-size: calc(14 * var(--px)); }
 
 /* hover: accent wipe from bottom */
 .btn::before {
@@ -328,41 +326,41 @@ h1, h2, p { margin: 0; }
 /* ===== Content ===== */
 .hero__content {
   position: absolute;
-  left: 32px;
-  top: 120px;
-  width: 686px;
+  left: calc(32 * var(--px));
+  top: calc(120 * var(--px));
+  width: calc(686 * var(--px));
   z-index: 1;
 }
 
 .rating {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.28px;
+  gap: calc(12 * var(--px));
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.28 * var(--px));
   white-space: nowrap;
 }
 .rating__score { display: flex; align-items: center; gap: 4px; }
 .rating__divider { width: 1px; height: 17px; }
 
-.hero__panels { display: grid; margin-top: 19px; }
+.hero__panels { display: grid; margin-top: calc(19 * var(--px)); }
 
 .panel {
   grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 32px;
+  gap: calc(32 * var(--px));
 }
 .panel:not(.is-active) { visibility: hidden; pointer-events: none; }
 
 .panel__title {
   width: 100%;
-  font-size: 52px;
+  font-size: calc(52 * var(--px));
   font-weight: 400;
-  line-height: 52px;
-  letter-spacing: -1.04px;
+  line-height: calc(52 * var(--px));
+  letter-spacing: calc(-1.04 * var(--px));
   color: var(--c-white);
 }
 
@@ -379,10 +377,10 @@ h1, h2, p { margin: 0; }
 
 
 .panel__text {
-  width: 463px;
+  width: calc(463 * var(--px));
   font-family: var(--f-body);
-  font-size: 14px;
-  line-height: 20px;
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
   color: var(--c-muted);
 }
 
@@ -428,8 +426,8 @@ h1, h2, p { margin: 0; }
   min-width: 1px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 32px 20px;
+  gap: calc(8 * var(--px));
+  padding: calc(32 * var(--px)) calc(20 * var(--px));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -454,9 +452,9 @@ h1, h2, p { margin: 0; }
 .card__label {
   flex: 1 0 0;
   min-width: 1px;
-  font-size: 16px;
+  font-size: calc(16 * var(--px));
   font-weight: 500;
-  line-height: 24px;
+  line-height: calc(24 * var(--px));
 }
 
 /* dots icon: shimmers at rest, regroups into an audience symbol on hover (js/hero.js) */

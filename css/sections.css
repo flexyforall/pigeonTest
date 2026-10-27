@@ -11,10 +11,10 @@ body { background: var(--c-page); }
 .section-title {
   margin: 0;
   font-family: var(--f-display);
-  font-size: 44px;
+  font-size: calc(44 * var(--px));
   font-weight: 500;
-  line-height: 48px;
-  letter-spacing: -0.88px;
+  line-height: calc(48 * var(--px));
+  letter-spacing: calc(-0.88 * var(--px));
 }
 
 /* ===== Logos ===== */
@@ -51,8 +51,8 @@ body { background: var(--c-page); }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 60px;
-  padding: 100px 0;
+  gap: calc(60 * var(--px));
+  padding: calc(100 * var(--px)) 0;
   background: var(--c-page);
 }
 
@@ -69,9 +69,9 @@ body { background: var(--c-page); }
 .benefits__mark {
   position: absolute;
   top: 0;
-  left: calc(50% + 196px);
-  width: 240px;
-  height: 54px;
+  left: calc(50% + 196 * var(--px));
+  width: calc(240 * var(--px));
+  height: calc(54 * var(--px));
   transform: translateX(-50%);
   background: var(--c-mint);
 }
@@ -80,7 +80,7 @@ body { background: var(--c-page); }
   display: flex;
   align-items: center;
   width: 100%;
-  height: 300px;
+  height: calc(300 * var(--px));
   /* the rules run edge to edge; the cards stay within 1760px so the "+" grid still covers them */
   padding: 0 max(40px, calc((100% - 1760px) / 2));
   overflow: hidden;
@@ -141,18 +141,18 @@ body { background: var(--c-page); }
 .benefit__title {
   margin: 0;
   font-family: var(--f-display);
-  font-size: 24px;
+  font-size: calc(24 * var(--px));
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: -0.48px;
+  letter-spacing: calc(-0.48 * var(--px));
 }
 
 .benefit__desc {
   margin: 0;
   font-family: var(--f-body);
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.28px;
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.28 * var(--px));
   opacity: 0.5;
 }
 
@@ -177,10 +177,14 @@ body { background: var(--c-page); }
   top: 0;
 }
 
+/* fills the stage, up to the 1360 × 730 design box enlarged to 1840px wide, centred */
 .connectivity__box {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 1840px;
+  max-height: 988px;
+  margin: auto;
 }
 /* light "+" grid in the space the panels leave free, seen only through a soft round spot that
    wanders the free corners as you scroll; the grid itself drifts too (--drift, --spot-x/y are
