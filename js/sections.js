@@ -85,7 +85,7 @@
 
       $$('.benefit', section).forEach((card, i) => {
         const d = 300 + i * 120;
-        $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
+        $$('.benefit__grid, .benefit__glow, .benefit__fade', card).forEach((el) =>
           from(el, { opacity: 0 }, { duration: 1400, delay: d })
         );
         from($('.benefit__icon', card), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: d + 100 });
