@@ -20,6 +20,18 @@
   let current = hero.dataset.state;
   let busy = false;
 
+  // Above the 1440 × 810 design size the frame (header, copy, cards) is laid out at design size
+  // and scaled up to the screen as a whole; the background stays full-bleed. The scale is capped
+  // by the height too, so on ultra-wide screens the layout widens instead of outgrowing the hero.
+  const DESIGN_WIDTH = 1440;
+  const DESIGN_HEIGHT = 810;
+  let scale = 1;
+  const setScale = () => {
+    scale = Math.max(1, Math.min(window.innerWidth / DESIGN_WIDTH, window.innerHeight / DESIGN_HEIGHT));
+    hero.style.setProperty('--hero-scale', scale);
+  };
+  setScale();
+
   // The element's current CSS values for the properties in `keyframe`.
   // Explicit keyframes are needed: Chrome ignores backwards fill on implicit ones during the delay.
   const cssState = (el, keyframe, pseudoElement) => {
@@ -266,7 +278,8 @@
     const box = el.getBoundingClientRect();
     const right = box.right - heroBox.left; // el's right edge in hero coordinates
     const pad = 40; // room for descenders and transforms above/below/left
-    const clip = (lineX) => `inset(${-pad}px ${right - lineX}px ${-pad}px ${-pad}px)`;
+    // the line moves in screen pixels, the clip is in el's own (possibly scaled-up) pixels
+    const clip = (lineX) => `inset(${-pad}px ${(right - lineX) / scale}px ${-pad}px ${-pad}px)`;
     return el.animate([{ clipPath: clip(heroBox.width) }, { clipPath: clip(0) }], {
       duration: WIPE,
       easing: WIPE_EASE,
@@ -276,7 +289,7 @@
 
   // Resolves once the erase clip has passed the element's left edge (nothing of it is visible).
   function fullyErased(erase, el) {
-    const width = el.getBoundingClientRect().width;
+    const width = el.offsetWidth; // in el's own pixels, like the clip
     return new Promise((resolve) => {
       const check = () => {
         const inset = getComputedStyle(el).clipPath.match(/inset\(([^)]*)\)/);
@@ -368,6 +381,7 @@
   });
 
   window.addEventListener('resize', () => {
+    setScale();
     moveIndicator(false);
     moveHighlight(false);
   });

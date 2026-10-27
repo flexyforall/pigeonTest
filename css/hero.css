@@ -112,7 +112,14 @@ h1, h2, p { margin: 0; }
 /* Frame: 1px outline drawn by ::before so it can be animated */
 .hero__frame {
   position: absolute;
-  inset: 0 40px;
+  /* laid out at the 1440px design width and scaled up on wider screens (--hero-scale, set by
+     the script); at 1 this is simply inset: 0 40px */
+  top: 0;
+  left: calc(40px * var(--hero-scale, 1));
+  width: calc(100% / var(--hero-scale, 1) - 80px);
+  height: calc(100% / var(--hero-scale, 1));
+  transform: scale(var(--hero-scale, 1));
+  transform-origin: 0 0;
   overflow: hidden;
   z-index: 1;
 }
