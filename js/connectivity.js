@@ -2,7 +2,9 @@
 // The stage sticks while the section scrolls past. First the title fills in white, then each
 // panel hands over to the next along the box diagonal: the shared corner travels from the
 // bottom-right to the top-left, so the current panel shrinks into the top-left corner while the
-// next one grows out of the bottom-right. Both keep the box's proportions all the way.
+// next one grows out of the bottom-right. All keep the box's proportions all the way. Each
+// hand-over starts before the previous one has finished, so mid-sequence three panels share
+// the diagonal: one leaving, one in focus, one arriving.
 // Each image panel holds a short clip in which a line sweeps across, turning a wireframe into
 // the photo. The clips are scrubbed by the scroll, not played: all four get the same stretch of
 // scroll, back to back, so they run at one speed and each line starts where the last one ended.
@@ -19,16 +21,18 @@
 
   // scroll lengths in viewport heights
   const FILL = 1; // title fill, once the stage has stuck
-  const STEP = 1.2; // each hand-over
+  const STEP = 2; // each hand-over
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
   const handovers = panels.length - 1;
+  // Hand-over k (panel k → k + 1) runs over seq [k·LAG, k·LAG + 1]; with LAG < 1 the next one
+  // starts while the previous is still finishing.
+  const LAG = 0.5;
   // A clip starts a third of the way into its panel's arrival (the new panel at about a third of
-  // the box) and runs for one hand-over's worth of scroll, finishing at the same point of the
-  // next hand-over, just as the next clip starts. The last clip needs that much scroll after
-  // the last hand-over.
+  // the box) and runs until the next clip starts at the same point of the next hand-over, so
+  // every clip gets LAG of scroll and they all run at one speed.
   const CLIP_START = 0.35;
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
-  const seqEnd = handovers + CLIP_START;
+  const seqEnd = Math.max((handovers - 1) * LAG + 1, handovers * LAG + CLIP_START);
   const travel = FILL + seqEnd * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
@@ -103,13 +107,13 @@
     let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp(seq - (k - 1 + CLIP_START));
+      const p = clamp((seq - ((k - 1) * LAG + CLIP_START)) / LAG);
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
       if (!seek(video)) synced = false;
-      // the panel is on screen from seq k − 1 to k + 1 (the last one stays to the end)
-      video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1)) / 2)));
+      // the panel is on screen from its arrival to the end of its exit (the last one stays)
+      video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1) * LAG) / (LAG + 1))));
     });
     return synced;
   }
@@ -134,17 +138,16 @@
     title.style.setProperty('--fill', fill);
     const synced = scrub(seq);
 
-    const step = Math.min(seq, handovers);
-    const i = Math.min(Math.floor(step), handovers - 1);
-    const corner = 1 - ease(step - i); // shared corner along the diagonal, 1 = bottom-right
+    // boundary k sits between panels k and k + 1, as a fraction of the diagonal from the
+    // top-left: it sweeps from 1 to 0 over hand-over k; the panels fill the gaps between them
+    let from = 0;
     panels.forEach((panel, k) => {
-      if (k === i) place(panel, 0, corner);
-      else if (k === i + 1) place(panel, corner, 1);
-      else place(panel, 0, 0);
+      const to = k < handovers ? 1 - ease(clamp(seq - k * LAG)) : 1;
+      place(panel, from, to);
+      // the title shrinks with its panel instead of reflowing
+      if (k === 0) title.style.setProperty('--title-scale', to);
+      from = to;
     });
-
-    // the title shrinks with its panel instead of reflowing
-    if (i === 0) title.style.setProperty('--title-scale', corner);
     return synced;
   }
 
