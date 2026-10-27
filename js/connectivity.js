@@ -139,6 +139,12 @@
   function draw({ fill, seq }) {
     title.style.setProperty('--fill', fill);
     box.style.setProperty('--drift', (seq * 60).toFixed(1)); // background grid, px
+    // the spot over the grid swings along the anti-diagonal, between the free top-right and
+    // bottom-left corners, with a gentle sideways sway
+    const swing = Math.sin(seq * 2.4 + 0.9);
+    const sway = Math.cos(seq * 3.7) * 8;
+    box.style.setProperty('--spot-x', `${(50 + 30 * swing + sway).toFixed(2)}%`);
+    box.style.setProperty('--spot-y', `${(50 - 30 * swing + sway).toFixed(2)}%`);
     const synced = scrub(seq);
 
     // boundary k sits between panels k and k + 1, as a fraction of the diagonal from the

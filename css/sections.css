@@ -180,14 +180,18 @@ body { background: var(--c-page); }
   flex: 1;
   min-height: 0;
 }
-/* light "+" grid in the space the panels leave free; it drifts with the scroll (--drift, set
-   by the script) */
+/* light "+" grid in the space the panels leave free, seen only through a soft round spot that
+   wanders the free corners as you scroll; the grid itself drifts too (--drift, --spot-x/y are
+   set by the script) */
 .connectivity__box::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17'%3E%3Cpath d='M8.5 4v9M4 8.5h9' stroke='%23000' stroke-width='.6' stroke-opacity='.14'/%3E%3C/svg%3E") 0 0 / 17px 17px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17'%3E%3Cpath d='M8.5 4v9M4 8.5h9' stroke='%23000' stroke-width='.6' stroke-opacity='.22'/%3E%3C/svg%3E") 0 0 / 17px 17px;
   background-position: calc(var(--drift, 0) * -1px) calc(var(--drift, 0) * -1px);
+  --spot: radial-gradient(circle min(34vw, 460px) at var(--spot-x, 75%) var(--spot-y, 25%), #000, rgba(0, 0, 0, 0.5) 45%, transparent);
+  -webkit-mask: var(--spot);
+  mask: var(--spot);
 }
 
 .connectivity__panel {
