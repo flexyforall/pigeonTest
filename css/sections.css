@@ -1,0 +1,212 @@
+/* ===== Sections below the hero (design width 1440) ===== */
+:root {
+  --c-page: #f5faf8;
+  --c-ink: #000;
+  --c-rule: #e2eae7;
+  --c-mint: #c8f5e5;
+}
+
+body { background: var(--c-page); }
+
+.section-title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 48px;
+  letter-spacing: -0.88px;
+}
+
+/* ===== Logos ===== */
+.logos {
+  background: var(--c-page);
+  padding: 52px 100px;
+}
+
+.logos__list {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.logos__item {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 196px;
+  height: 106px;
+  padding: 30px 16px;
+}
+.logos__item img { flex: none; object-fit: cover; }
+
+/* ===== Benefits ===== */
+.benefits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  padding: 100px 0;
+  background: var(--c-page);
+}
+
+.benefits__head {
+  position: relative;
+  width: 100%;
+  padding: 0 40px;
+  color: var(--c-ink);
+  text-align: center;
+}
+.benefits__head .section-title { position: relative; }
+
+/* mint block behind "for business." */
+.benefits__mark {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 196px);
+  width: 240px;
+  height: 54px;
+  transform: translateX(-50%);
+  background: var(--c-mint);
+}
+
+.benefits__row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 300px;
+  padding: 0 40px;
+  overflow: hidden;
+  /* Figma strokes don't take up layout space, so rules are drawn as inset shadows */
+  box-shadow: inset 0 0 0 1px var(--c-rule);
+}
+
+.benefit {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-width: 1px;
+  height: 100%;
+  padding: 20px;
+  overflow: hidden;
+  color: var(--c-ink);
+}
+.benefit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset -1px 0 var(--c-rule);
+  pointer-events: none;
+}
+/* Figma rounds the three columns to 454 / 453 / 453 */
+.benefit:first-child { flex: 0 0 454px; }
+.benefit:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule); }
+
+/* "+" grid, softened at the top-left by a blurred page-coloured blob */
+.benefit__grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+}
+.benefit__fade {
+  position: absolute;
+  top: -110px;
+  left: -140px;
+  max-width: none;
+}
+
+.benefit__icon {
+  position: relative;
+  flex: none;
+  fill: var(--c-ink);
+}
+
+.benefit__text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.benefit__title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+}
+
+.benefit__desc {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.28px;
+  opacity: 0.5;
+}
+
+/* ===== Connectivity ===== */
+.connectivity {
+  padding: 40px;
+  background: var(--c-page);
+}
+
+.connectivity__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 730px;
+  background: var(--c-ink);
+}
+
+.connectivity__title {
+  color: var(--c-white);
+  text-align: center;
+  white-space: nowrap;
+}
+.connectivity__title span { color: rgba(255, 255, 255, 0.4); }
+
+.connectivity__corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--c-mint);
+}
+.connectivity__corner--tl { top: -10px; left: -10px; }
+.connectivity__corner--tr { top: -10px; right: -10px; }
+.connectivity__corner--br { bottom: -10px; right: -10px; }
+.connectivity__corner--bl { bottom: -10px; left: -10px; }
+
+/* ===== Adaptive (below design width) ===== */
+@media (max-width: 1280px) {
+  .logos { padding-inline: 40px; }
+  .logos__list { justify-content: space-between; gap: 24px; }
+  .logos__item { width: auto; padding-inline: 0; }
+}
+
+@media (max-width: 960px) {
+  .logos__list { flex-wrap: wrap; justify-content: center; gap: 0 40px; }
+  .benefits__row { flex-direction: column; height: auto; padding: 0 16px; }
+  .benefit, .benefit:first-child { width: 100%; height: 260px; flex: none; }
+  .benefit::after,
+  .benefit:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
+  .benefits__mark { display: none; }
+  .connectivity__box { height: 60vw; min-height: 320px; }
+}
+
+@media (max-width: 560px) {
+  .logos, .connectivity { padding: 32px 16px; }
+  .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }
+  .connectivity__title { white-space: normal; padding: 0 24px; }
+  .benefits { padding: 64px 0; gap: 40px; }
+}

@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="543" height="521" viewBox="0 0 543 521" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Union" filter="url(#filter0_f_0_10)">
+<path d="M225 140C225 195.228 269.772 240 325 240H403C458.228 240 503 284.772 503 340V381C503 436.228 458.228 481 403 481H193.5C147.384 481 110 443.616 110 397.5V349C110 329.67 94.33 314 75 314C55.67 314 40 298.33 40 279V132.5C40 81.4137 81.4137 40 132.5 40C183.586 40 225 81.4137 225 132.5V140Z" fill="#F5FAF8"/>
+</g>
+<defs>
+<filter id="filter0_f_0_10" x="0" y="0" width="543" height="521" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="20" result="effect1_foregroundBlur_0_10"/>
+</filter>
+</defs>
+</svg>

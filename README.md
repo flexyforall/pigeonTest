@@ -10,7 +10,8 @@ python3 -m http.server 8000
 ```
 
 - `index.html` — markup
-- `css/hero.css` — styles (design width 1440 × 810)
+- `css/hero.css` — hero styles (design width 1440 × 810)
+- `css/sections.css` — logos, benefits and connectivity sections
 - `js/hero.js` — loader, intro animation and Business / Residential / Mobile switching
 - `assets/` — images, icons and loader video exported from Figma
 
