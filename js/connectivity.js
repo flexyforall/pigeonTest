@@ -138,6 +138,7 @@
 
   function draw({ fill, seq }) {
     title.style.setProperty('--fill', fill);
+    box.style.setProperty('--drift', (seq * 60).toFixed(1)); // background grid, px
     const synced = scrub(seq);
 
     // boundary k sits between panels k and k + 1, as a fraction of the diagonal from the
