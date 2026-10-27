@@ -209,6 +209,17 @@ body { background: var(--c-page); }
   scale: var(--zoom, 1);
 }
 
+/* "+" grid behind the title; it covers the panel from the top-left, as in Figma, and shrinks with it */
+.connectivity__pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: left top;
+}
+
 .connectivity__title {
   position: absolute;
   top: 50%;
