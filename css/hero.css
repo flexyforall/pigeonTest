@@ -131,7 +131,7 @@ h1, h2, p { margin: 0; }
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px;
+  height: 52px;
   z-index: 2;
 }
 .header::after {
@@ -148,7 +148,7 @@ h1, h2, p { margin: 0; }
 .header__logo {
   position: absolute;
   left: 32px;
-  top: 16.5px;
+  top: 10.5px;
   width: 107px;
   height: 27px;
 }
@@ -157,12 +157,11 @@ h1, h2, p { margin: 0; }
 .audience {
   position: absolute;
   left: 171px;
-  top: 10px;
+  top: 0;
+  z-index: 1; /* the active pill covers the header hairline */
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 40px;
-  padding: 2px;
+  height: 52px;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
@@ -174,7 +173,7 @@ h1, h2, p { margin: 0; }
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 8px 12px;
+  padding: 8px 20px;
   font-size: 14px;
   line-height: 1.2;
   font-weight: 400;
@@ -190,10 +189,10 @@ h1, h2, p { margin: 0; }
   --t: 1.275px;
   --l: 6px;
   position: absolute;
-  top: 2px;
+  top: 0;
   left: 0;
   width: 0;
-  height: 36px;
+  height: 100%;
   pointer-events: none;
   background:
     linear-gradient(var(--c-accent), var(--c-accent)) left top / var(--t) var(--l),
@@ -215,23 +214,22 @@ h1, h2, p { margin: 0; }
 /* Right-side actions */
 .header__actions {
   position: absolute;
-  right: 32px;
-  top: 10px;
+  right: 0;
+  top: 0;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 16px;
+  height: 51px; /* sits above the header hairline */
 }
 
-.header__links { display: flex; align-items: center; gap: 4px; }
+.header__links { display: flex; align-items: stretch; }
 
 .header__link {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  height: 40px;
-  padding: 0 12px;
-  border-radius: 1px;
+  gap: 10px;
+  padding: 0 20px;
   font-size: 14px;
   line-height: 1.2;
   white-space: nowrap;
@@ -242,14 +240,13 @@ h1, h2, p { margin: 0; }
 .header__link:hover { opacity: 1; }
 .header__link:hover .icon--chevron img { transform: translateY(1.5px); }
 
-.header__cta { display: flex; align-items: center; gap: 8px; }
+.header__cta { display: flex; align-items: stretch; }
 
 .header__lang {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  aspect-ratio: 1;
   background: var(--c-fill);
   transition: background-color 0.3s ease;
 }
@@ -275,7 +272,7 @@ h1, h2, p { margin: 0; }
   white-space: nowrap;
   isolation: isolate;
 }
-.btn--sm { height: 40px; padding: 18px 16px; font-size: 14px; }
+.btn--sm { height: auto; padding: 0 20px; border-radius: 0; font-size: 14px; }
 
 /* hover: accent wipe from bottom */
 .btn::before {
@@ -341,7 +338,7 @@ h1, h2, p { margin: 0; }
 .panel__title {
   width: 100%;
   font-size: 52px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 52px;
   letter-spacing: -1.04px;
   color: var(--c-white);
@@ -454,9 +451,8 @@ h1, h2, p { margin: 0; }
 @media (max-width: 860px) {
   .hero__frame { inset: 0 16px; }
   .header__logo { left: 20px; }
-  .header__actions { right: 20px; }
   .header__lang { display: none; }
-  .audience { left: auto; right: 132px; }
+  .audience { left: auto; right: 112px; }
 
   .hero__content { left: 20px; right: 20px; width: auto; top: 100px; }
   .panel__title { font-size: 40px; line-height: 42px; letter-spacing: -0.8px; }
@@ -470,7 +466,7 @@ h1, h2, p { margin: 0; }
 
 @media (max-width: 560px) {
   .hero { min-height: 760px; }
-  .audience { left: 12px; right: auto; top: 70px; }
+  .audience { left: 0; right: auto; top: 52px; height: 44px; }
   .hero__content { top: 150px; }
   .panel__title { font-size: 34px; line-height: 36px; }
 }
