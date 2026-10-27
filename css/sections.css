@@ -210,8 +210,8 @@ body { background: var(--c-page); }
   text-align: center;
   white-space: nowrap;
   /* white sweeps across the dim title as --fill goes 0 → 1 */
-  --fill-at: calc(var(--fill, 1) * 120% - 10%);
-  background: linear-gradient(90deg, var(--c-white) calc(var(--fill-at) - 8%), rgba(255, 255, 255, 0.4) calc(var(--fill-at) + 8%));
+  --fill-at: calc(var(--fill, 1) * 110% - 5%);
+  background: linear-gradient(90deg, var(--c-white) calc(var(--fill-at) - 4%), rgba(255, 255, 255, 0.25) calc(var(--fill-at) + 4%));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
