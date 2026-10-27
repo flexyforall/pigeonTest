@@ -15,6 +15,6 @@ python3 -m http.server 8000
 - `assets/` — images, icons and loader video exported from Figma
 
 The loader video (`assets/video/loader.*`) plays once per tab session; its last
-frame is `assets/img/hero-business.jpg`, which stays as the Business background.
+frame is `assets/img/hero-business-*.jpg`, which stays as the Business background.
 With reduced motion enabled, or if the video can't start within 3 s, the hero
 opens straight on that still image.

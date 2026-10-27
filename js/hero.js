@@ -375,8 +375,10 @@
   // Secondary backgrounds load after the intro so they don't compete with the loader video
   const loadDeferredImages = () =>
     bgs.filter((b) => b.dataset.src).forEach((b) => {
+      b.srcset = b.dataset.srcset;
       b.src = b.dataset.src;
       b.removeAttribute('data-src');
+      b.removeAttribute('data-srcset');
       b.decode().catch(() => {}); // decode ahead so the first switch doesn't wait on it
     });
 
