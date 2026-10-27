@@ -68,14 +68,29 @@
 
   /* ---------- scrubbing ---------- */
   // Seeks are asynchronous: while one is in flight only the latest wanted time is kept,
-  // and it is applied as soon as the video lands.
+  // and it is applied as soon as the video lands. Safari can drop a seek without ever firing
+  // `seeked`, which would leave the clip frozen, so a seek still pending after SEEK_TIMEOUT
+  // is issued again.
   const wanted = new Map();
+  const seekStarted = new Map();
   const FRAME = 1 / 24;
+  const SEEK_TIMEOUT = 1500; // ms
 
+  // true once the video shows the wanted frame (or can't seek yet)
   function seek(video) {
     const t = wanted.get(video);
-    if (t === undefined || video.seeking || video.readyState < 1 || Math.abs(video.currentTime - t) < FRAME / 2) return;
+    if (t === undefined || video.readyState < 1) return true;
+    // only the scroll moves a clip: Safari may run the primer's play() late, when the panel shows
+    if (!video.paused) video.pause();
+    const now = performance.now();
+    if (video.seeking) {
+      if (now - seekStarted.get(video) < SEEK_TIMEOUT) return false;
+    } else if (Math.abs(video.currentTime - t) < FRAME / 2) {
+      return true;
+    }
     video.currentTime = t;
+    seekStarted.set(video, now);
+    return false;
   }
   videos.forEach((video) => {
     if (!video) return;
@@ -85,16 +100,18 @@
   });
 
   function scrub(seq) {
+    let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
       const p = clamp(seq - (k - 1 + CLIP_START));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
-      seek(video);
+      if (!seek(video)) synced = false;
       // the panel is on screen from seq k − 1 to k + 1 (the last one stays to the end)
       video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1)) / 2)));
     });
+    return synced;
   }
 
   // Browsers (iOS Safari above all) may not fetch a paused muted video until it has played once,
@@ -115,7 +132,7 @@
 
   function draw({ fill, seq }) {
     title.style.setProperty('--fill', fill);
-    scrub(seq);
+    const synced = scrub(seq);
 
     const step = Math.min(seq, handovers);
     const i = Math.min(Math.floor(step), handovers - 1);
@@ -128,6 +145,7 @@
 
     // the title shrinks with its panel instead of reflowing
     if (i === 0) title.style.setProperty('--title-scale', corner);
+    return synced;
   }
 
   let state = target();
@@ -144,9 +162,10 @@
     };
     const settled = Math.abs(goal.fill - state.fill) < 0.001 && Math.abs(goal.seq - state.seq) < 0.001;
     if (settled) state = goal;
-    draw(state);
-    last = settled ? 0 : now;
-    frame = settled ? 0 : requestAnimationFrame(tick);
+    // keep going until the clips have caught up too
+    const done = draw(state) && settled;
+    last = done ? 0 : now;
+    frame = done ? 0 : requestAnimationFrame(tick);
   }
 
   const schedule = () => {
