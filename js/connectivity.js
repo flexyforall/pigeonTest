@@ -54,13 +54,14 @@
   section.classList.add('is-scrolling');
   section.style.setProperty('--track', `${(1 + travel) * 100}vh`);
 
-  // Lays a panel out as the diagonal slice from `a` to `b` (fractions of the box diagonal).
-  function place(panel, a, b) {
-    const size = b - a;
+  // Lays a panel out as the diagonal slice from `a` to `b` (fractions of the box diagonal),
+  // shrunk by `inset` on every side (a fraction of the box) around its centre.
+  function place(panel, a, b, inset = 0) {
+    const size = b - a - 2 * inset;
     panel.style.visibility = size > 0.001 ? 'visible' : 'hidden';
     if (size <= 0.001) return;
-    panel.style.left = `${a * 100}%`;
-    panel.style.top = `${a * 100}%`;
+    panel.style.left = `${(a + inset) * 100}%`;
+    panel.style.top = `${(a + inset) * 100}%`;
     panel.style.width = `${size * 100}%`;
     panel.style.height = `${size * 100}%`;
     // corners would clump together on a sliver of a panel
@@ -71,6 +72,8 @@
   function target() {
     const scrolled = -section.getBoundingClientRect().top / window.innerHeight; // past the moment the stage sticks
     return {
+      // the title panel grows to full size as the section rises into view, done as it sticks
+      enter: clamp(1 + scrolled),
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
       // position along the panel sequence: 0 = title, 1 = first image, …
@@ -142,7 +145,13 @@
   );
   primer.observe(section);
 
-  function draw({ fill, seq }) {
+  // the title panel starts at ENTER_SIZE of the box as the section enters and grows to full size
+  // over the whole rise, settling just as the stage sticks
+  const ENTER_SIZE = 0.7;
+  const smoothstep = (t) => t * t * (3 - 2 * t);
+
+  function draw({ enter, fill, seq }) {
+    const grow = ENTER_SIZE + (1 - ENTER_SIZE) * smoothstep(enter);
     title.style.setProperty('--fill', fill);
     box.style.setProperty('--drift', (seq * 60).toFixed(1)); // background grid, px
     // the spot over the grid swings along the anti-diagonal, between the free top-right and
@@ -158,9 +167,9 @@
     let from = 0;
     panels.forEach((panel, k) => {
       const to = k < handovers ? 1 - ease(clamp(seq - k * LAG)) : 1;
-      place(panel, from, to);
+      place(panel, from, to, k === 0 ? (to - from) * (1 - grow) / 2 : 0);
       // the title shrinks with its panel instead of reflowing
-      if (k === 0) title.style.setProperty('--title-scale', to);
+      if (k === 0) title.style.setProperty('--title-scale', to * grow);
       from = to;
     });
     return synced;
@@ -174,11 +183,8 @@
     const goal = target();
     const dt = last ? now - last : 16;
     const k = SMOOTH ? 1 - Math.exp(-dt / SMOOTH) : 1;
-    state = {
-      fill: state.fill + (goal.fill - state.fill) * k,
-      seq: state.seq + (goal.seq - state.seq) * k,
-    };
-    const settled = Math.abs(goal.fill - state.fill) < 0.001 && Math.abs(goal.seq - state.seq) < 0.001;
+    state = Object.fromEntries(Object.keys(goal).map((key) => [key, state[key] + (goal[key] - state[key]) * k]));
+    const settled = Object.keys(goal).every((key) => Math.abs(goal[key] - state[key]) < 0.001);
     if (settled) state = goal;
     // keep going until the clips have caught up too
     const done = draw(state) && settled;
