@@ -155,32 +155,74 @@ body { background: var(--c-page); }
 }
 
 /* ===== Connectivity ===== */
+/* Scroll-driven (js/connectivity.js): the stage sticks while the section scrolls past.
+   The title fills in white, then each panel hands over to the next along the diagonal:
+   the current one shrinks into the top-left corner as the next grows out of the bottom-right. */
 .connectivity {
-  padding: 40px;
+  position: relative;
   background: var(--c-page);
+}
+.connectivity.is-scrolling { height: var(--track, 500vh); }
+
+.connectivity__stage {
+  display: flex;
+  height: 100vh;
+  height: 100svh;
+  padding: 40px;
+}
+.connectivity.is-scrolling .connectivity__stage {
+  position: sticky;
+  top: 0;
 }
 
 .connectivity__box {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 730px;
+  flex: 1;
+  min-height: 0;
+}
+
+.connectivity__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: var(--c-ink);
+}
+/* until the script lays them out, only the title panel shows */
+.connectivity__panel:not([data-panel="title"]) { display: none; }
+.connectivity.is-scrolling .connectivity__panel { display: block; }
+
+.connectivity__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .connectivity__title {
-  color: var(--c-white);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  scale: var(--title-scale, 1);
   text-align: center;
   white-space: nowrap;
+  /* white sweeps across the dim title as --fill goes 0 → 1 */
+  --fill-at: calc(var(--fill, 1) * 120% - 10%);
+  background: linear-gradient(90deg, var(--c-white) calc(var(--fill-at) - 8%), rgba(255, 255, 255, 0.4) calc(var(--fill-at) + 8%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-.connectivity__dim { color: rgba(255, 255, 255, 0.4); }
 
 .connectivity__corner {
   position: absolute;
   width: 20px;
   height: 20px;
   background: var(--c-mint);
+  opacity: var(--corner-opacity, 1);
 }
 .connectivity__corner--tl { top: -10px; left: -10px; }
 .connectivity__corner--tr { top: -10px; right: -10px; }
@@ -201,13 +243,13 @@ body { background: var(--c-page); }
   .benefit::after,
   .benefit:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
   .benefits__mark { display: none; }
-  .connectivity__box { height: 60vw; min-height: 320px; }
 }
 
 @media (max-width: 560px) {
-  .logos, .connectivity { padding: 32px 16px; }
+  .logos { padding: 32px 16px; }
+  .connectivity__stage { padding: 32px 16px; }
+  .connectivity__title { width: 300px; white-space: normal; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }
-  .connectivity__title { white-space: normal; padding: 0 24px; }
   .benefits { padding: 64px 0; gap: 40px; }
 }
 
@@ -215,5 +257,4 @@ body { background: var(--c-page); }
 /* content waits hidden until its section scrolls in; the frame and rules stay put */
 .is-pending .logos__list,
 .is-pending .benefits__head,
-.is-pending .benefit > *,
-.is-pending .connectivity__box { visibility: hidden; }
+.is-pending .benefit > * { visibility: hidden; }

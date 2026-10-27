@@ -93,14 +93,6 @@
         fadeUp($('.benefit__desc', card), d + 400);
       });
     },
-
-    connectivity(section) {
-      from($('.connectivity__box', section), { opacity: 0, transform: 'translateY(40px)' }, { duration: 1100 });
-      $$('.connectivity__corner', section).forEach((el, i) =>
-        from(el, { opacity: 0, transform: 'scale(0)' }, { duration: 700, delay: 500 + i * 70 })
-      );
-      rise($('.connectivity__title', section), 450);
-    },
   };
 
   const sections = Object.keys(REVEALS)

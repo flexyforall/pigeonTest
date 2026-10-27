@@ -14,6 +14,7 @@ python3 -m http.server 8000
 - `css/sections.css` — logos, benefits and connectivity sections
 - `js/hero.js` — loader, intro animation and Business / Residential / Mobile switching
 - `js/sections.js` — scroll-in reveal of the sections below the hero
+- `js/connectivity.js` — scroll-driven "Connectivity without boundaries" sequence (Figma storyboard `228:3913`)
 - `assets/` — images, icons and loader video exported from Figma
 
 The loader video (`assets/video/loader.*`) plays once per tab session; its last
