@@ -249,6 +249,8 @@ h1, h2, p { margin: 0; }
   flex: none;
   width: 51px; /* square: same as the header row height */
   background: var(--c-fill);
+  backdrop-filter: blur(10px); /* same frosted glass as the audience cards */
+  -webkit-backdrop-filter: blur(10px);
   transition: background-color 0.3s ease;
 }
 .header__lang img { flex: none; width: 16px; height: 16px; transition: transform 0.8s var(--ease-out); }
