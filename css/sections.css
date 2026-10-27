@@ -115,34 +115,6 @@ body { background: var(--c-page); }
   left: 0;
   max-width: none;
 }
-/* a soft mint light drifts under the "+" grid, lighting up the crosses it passes */
-@property --glow-x { syntax: "<percentage>"; inherits: false; initial-value: 30%; }
-@property --glow-y { syntax: "<percentage>"; inherits: false; initial-value: 60%; }
-.benefit__glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 691px;
-  height: 503px;
-  background: radial-gradient(circle 260px at var(--glow-x) var(--glow-y), rgba(24, 168, 118, 0.42), rgba(24, 168, 118, 0) 100%);
-  -webkit-mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px no-repeat;
-  mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px no-repeat;
-  animation: benefit-glow 18s ease-in-out infinite;
-}
-.benefit:nth-child(2) .benefit__glow { animation-duration: 21s; animation-delay: -7s; }
-.benefit:nth-child(3) .benefit__glow { animation-duration: 24s; animation-delay: -15s; }
-
-@keyframes benefit-glow {
-  0%, 100% { --glow-x: 30%; --glow-y: 60%; }
-  25% { --glow-x: 75%; --glow-y: 25%; }
-  50% { --glow-x: 85%; --glow-y: 55%; }
-  75% { --glow-x: 50%; --glow-y: 35%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .benefit__glow { animation: none; }
-}
-
 .benefit__fade {
   position: absolute;
   top: -110px;
