@@ -147,7 +147,7 @@
 
   // the title panel starts at ENTER_SIZE of the box as the section enters and grows to full size
   // over the whole rise, settling just as the stage sticks
-  const ENTER_SIZE = 0.7;
+  const ENTER_SIZE = 0.83;
   const smoothstep = (t) => t * t * (3 - 2 * t);
 
   function draw({ enter, fill, seq }) {
