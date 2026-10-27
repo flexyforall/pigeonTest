@@ -74,12 +74,14 @@
   const wanted = new Map();
   const seekStarted = new Map();
   const FRAME = 1 / 24;
-  const SEEK_TIMEOUT = 300; // ms
+  const SEEK_TIMEOUT = 1500; // ms; a slow seek must not be cut short by a retry
 
   // true once the video shows the wanted frame
   function seek(video, now = performance.now()) {
     const t = wanted.get(video);
     if (t === undefined || video.readyState < 1) return false;
+    // only the scroll moves a clip: never let one run on its own
+    if (!video.paused) video.pause();
     if (Math.abs(video.currentTime - t) < FRAME / 2 && !video.seeking) return true;
     if (video.seeking && now - seekStarted.get(video) < SEEK_TIMEOUT) return false;
     video.currentTime = t;
@@ -107,16 +109,11 @@
     return synced;
   }
 
-  // Loads the clips as the section approaches. Some browsers (iOS Safari above all) won't paint
-  // a paused muted video until it has played once, so each one is nudged into play and straight
-  // back to pause once it has loaded.
+  // Loads the clips as the section approaches. They are never played: a deferred play() (Safari
+  // holds it back until the video is on screen) would set a clip running on its own.
   function loadClip(video) {
     const url = video.dataset.src;
     const use = (src) => {
-      video.addEventListener('loadeddata', () => {
-        const play = video.play();
-        if (play) play.then(() => video.pause(), () => {}).finally(schedule);
-      }, { once: true });
       video.preload = 'auto';
       video.src = src;
     };
