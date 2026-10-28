@@ -623,10 +623,10 @@ body { background: var(--c-page); }
   );
   opacity: 0;
 }
-.plans.is-seen .plans__signal::before { animation: plans-signal 3s both; }
+.plans.is-seen .plans__signal::before { animation: plans-signal 1.8s both; }
 @keyframes plans-signal {
   0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-  55% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-in-out; }
+  45% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-out; }
   100% { clip-path: inset(0); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
