@@ -555,7 +555,6 @@ body { background: var(--c-page); }
   position: absolute;
   inset: 0;
   z-index: 2;
-  background-color: var(--c-page);
   pointer-events: none;
 }
 .plans__scan {

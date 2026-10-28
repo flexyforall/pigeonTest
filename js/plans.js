@@ -31,12 +31,14 @@
   let sliding = null;
   function slide(fromPanel, toPanel) {
     if (sliding) sliding.forEach((el) => el.remove());
-    const content = [...toPanel.children];
+    // the grid behind the plan stays put: only the copy and the plan itself move
+    const content = [toPanel.querySelector('.plans__info'), toPanel.querySelector('.plans__plan')];
     const ghost = fromPanel.cloneNode(true);
     ghost.classList.add('plans__ghost');
     ['id', 'role', 'aria-labelledby', 'hidden'].forEach((a) => ghost.removeAttribute(a));
     ghost.setAttribute('aria-hidden', 'true');
     ghost.inert = true;
+    ghost.querySelector('.plans__illus').style.background = 'none';
     const line = document.createElement('span');
     line.className = 'plans__scan';
     line.append(document.createElement('i'));
