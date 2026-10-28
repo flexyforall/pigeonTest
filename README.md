@@ -18,8 +18,7 @@ python3 -m http.server 8000
   its clips in `assets/connectivity/` are scrubbed by the scroll, so they are encoded with a keyframe
   every 4 frames and no B-frames. Serve them from a host that supports byte ranges, or seeking fails
 - `assets/` — images, icons and loader video exported from Figma
-- `assets/fonts/Satoshi-Variable.woff2` — headline/label font (Fontshare); until it is added the
-  pages fall back to Outfit
+- `assets/fonts/Satoshi-Variable*.woff2` — headline/label font (Fontshare, variable weight 300–900)
 
 The loader video (`assets/video/loader.*`) plays once per tab session; its last
 frame is `assets/img/hero-business-*.jpg`, which stays as the Business background.
