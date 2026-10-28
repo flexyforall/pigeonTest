@@ -198,16 +198,20 @@ body { background: var(--c-page); }
   position: sticky;
   top: 0;
 }
-/* rules down both sides of the box, the full height of the screen */
+/* the frame around the box: side and top rules, FRAME_GAP short of the screen's top and bottom
+   edges so the whole frame is in view; the bottom rule is the progress bar */
+.connectivity__stage {
+  --frame-gap: 3px;
+}
 .connectivity__stage::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: var(--frame-gap);
+  bottom: var(--frame-gap);
   left: max(40px, calc((100% - 1840px) / 2));
   right: max(40px, calc((100% - 1840px) / 2));
-  border-left: 1px solid var(--c-rule);
-  border-right: 1px solid var(--c-rule);
+  border: 1px solid var(--c-rule);
+  border-bottom: 0;
   pointer-events: none;
 }
 
@@ -246,7 +250,7 @@ body { background: var(--c-page); }
    to the screen (--progress-fade) */
 .connectivity__progress {
   position: absolute;
-  bottom: 0;
+  bottom: var(--frame-gap);
   left: max(40px, calc((100% - 1840px) / 2));
   right: max(40px, calc((100% - 1840px) / 2));
   height: 1px;
