@@ -300,8 +300,23 @@ body { background: var(--c-page); }
   color: var(--c-white);
   pointer-events: none;
   visibility: hidden;
+  opacity: 0;
+  /* the plates fade in with the words and out after them */
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
 }
-.connectivity__info.is-shown { visibility: visible; }
+.connectivity__info.is-shown {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.4s ease, visibility 0s;
+}
+
+/* dark frosted plates keep the white copy readable over any frame of the clip */
+.connectivity__count,
+.connectivity__caption {
+  background: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
 
 .connectivity__count {
   position: absolute;
@@ -312,7 +327,8 @@ body { background: var(--c-page); }
   font-size: calc(14 * var(--px));
   font-weight: 650;
   line-height: calc(20 * var(--px));
-  opacity: 0.5;
+  padding: calc(6 * var(--px)) calc(10 * var(--px));
+  color: var(--c-muted);
 }
 
 .connectivity__caption {
@@ -322,6 +338,7 @@ body { background: var(--c-page); }
   display: flex;
   flex-direction: column;
   gap: calc(8 * var(--px));
+  padding: calc(16 * var(--px)) calc(20 * var(--px));
 }
 
 .connectivity__name {
@@ -368,6 +385,9 @@ body { background: var(--c-page); }
      the number above it */
   .connectivity__box { height: calc(100% - 64px); margin: 0 auto auto; }
   .connectivity__info { inset: 0; color: var(--c-ink); }
+  .connectivity__count,
+  .connectivity__caption { padding: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .connectivity__count { color: rgba(0, 0, 0, 0.5); }
   .connectivity__desc { color: var(--c-ink-muted); }
   .connectivity__caption { bottom: -62px; }
   .connectivity__count { top: -27px; }
