@@ -1,13 +1,14 @@
 // "Coverage starts with your space": the space-type tabs, switched the way the hero switches
-// audiences. A thin line sweeps up across the floor plan, cutting the old plan away above it,
-// while the black block behind the active tab slides to the new tab with the same timing; the
-// new copy comes in as the hero copy does on a switch, on its own clock.
+// audiences. A thin line sweeps up across the whole panel, cutting the old content away above
+// it, while the black block behind the active tab slides quickly to the new tab; the new copy
+// comes in as the hero copy does on a switch, on its own clock.
 (() => {
   const section = document.querySelector('.plans');
   if (!section) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SWITCH = 1600; // ms: the scan line and the tab block
+  const SWITCH = 1600; // ms: the scan line
+  const SLIDE = 650; // ms: the tab block
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
   // the hero's SWITCH_TIMING
@@ -17,7 +18,7 @@
   const indicator = section.querySelector('.plans__indicator');
   const tabs = [...section.querySelectorAll('.plan-tab')];
   const panelOf = (tab) => document.getElementById(tab.getAttribute('aria-controls'));
-  section.style.setProperty('--switch-duration', `${SWITCH}ms`);
+  section.style.setProperty('--switch-duration', `${SLIDE}ms`);
   section.style.setProperty('--switch-ease', SWITCH_EASE);
 
   /* ---------- tab block ---------- */
@@ -68,17 +69,20 @@
     });
   }
 
-  /* ---------- scan over the plan ---------- */
-  // a copy of the outgoing plan on top of the incoming one, cut away from the bottom
+  /* ---------- scan over the panel ---------- */
+  // a copy of the outgoing panel on top of the incoming one, cut away from the bottom
   let scanning = null;
-  function scan(fromIllus, toIllus) {
+  function scan(fromPanel, toPanel) {
     if (scanning) scanning.forEach((el) => el.remove());
-    const ghost = fromIllus.cloneNode(true);
+    const ghost = fromPanel.cloneNode(true);
     ghost.classList.add('plans__ghost');
+    ['id', 'role', 'aria-labelledby', 'hidden'].forEach((a) => ghost.removeAttribute(a));
+    ghost.setAttribute('aria-hidden', 'true');
+    ghost.inert = true;
     const line = document.createElement('span');
     line.className = 'plans__scan';
     line.append(document.createElement('i'));
-    toIllus.append(ghost, line);
+    toPanel.append(ghost, line);
     scanning = [ghost, line];
 
     const opts = { duration: SWITCH, easing: SWITCH_EASE, fill: 'forwards' };
@@ -98,7 +102,7 @@
 
   function select(tab) {
     if (tab.classList.contains('is-active')) return;
-    const fromIllus = section.querySelector('.plans__panel:not([hidden]) .plans__illus');
+    const fromPanel = section.querySelector('.plans__panel:not([hidden]):not(.plans__ghost)');
     tabs.forEach((t) => {
       const on = t === tab;
       t.classList.toggle('is-active', on);
@@ -107,9 +111,9 @@
       panelOf(t).hidden = !on;
     });
     moveIndicator(tab, !reduceMotion);
-    if (reduceMotion || !fromIllus) return;
+    if (reduceMotion || !fromPanel) return;
     const panel = panelOf(tab);
-    scan(fromIllus, panel.querySelector('.plans__illus'));
+    scan(fromPanel, panel);
     enterCopy(panel);
   }
 
