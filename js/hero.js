@@ -454,7 +454,7 @@
     let introStarted = false;
     let finished = false;
 
-    // The hero UI comes in as the camera closes in on the lit building in the video (data-intro-at, seconds),
+    // The hero UI comes in as the building has fully materialised in the video (data-intro-at, seconds),
     // while the video plays out underneath.
     const startIntro = () => {
       if (introStarted) return;
