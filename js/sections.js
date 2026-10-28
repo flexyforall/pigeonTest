@@ -113,36 +113,36 @@
       });
     },
 
-    // heading and mint block as everywhere else. Then, on a clock of its own once the cards are
-    // in view, a band of the "+" grid runs across them from left to right: the first card is
+    // Once the cards are well in view (on a clock of its own, not the scroll): the heading rises,
+    // and as the mint block wipes in behind it a band of the "+" grid runs across the cards from
+    // left to right, on the block's timing. The first card is
     // there from the start, the second and third come in behind the band as it passes. The grid
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
-      rise($('.section-title', section));
-      from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
-        duration: 900,
-        delay: 350,
-        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
-      });
-
-      const RUN = 2400; // ms for the band to cross all three cards
-      const ease = 'cubic-bezier(0.45, 0, 0.55, 1)';
+      const RUN = 1800; // ms: the mint block's wipe and the band's run across the cards
+      const DELAY = 350;
+      const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'; // the mint blocks' wipe everywhere
       const row = $('.steps__row', section);
       const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
 
+      // everything waits for the cards to be well in view, so the block and the band set off
+      // together and keep pace
       section.classList.add('is-dim');
+      section.classList.add('is-pending');
       new IntersectionObserver((entries, io) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         io.disconnect();
-        section.classList.remove('is-dim');
+        section.classList.remove('is-dim', 'is-pending');
+        rise($('.section-title', section));
+        from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, { duration: RUN, delay: DELAY, easing: ease });
         sweep();
       }, { threshold: 0.6 }).observe(row);
 
       function sweep() {
         const width = row.clientWidth;
         const bw = band.offsetWidth;
-        const opts = { duration: RUN, easing: ease, fill: 'backwards' };
+        const opts = { duration: RUN, delay: DELAY, easing: ease, fill: 'backwards' };
         // the band's leading edge goes from the row's left edge to its right edge
         band.animate(
           [
