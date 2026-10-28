@@ -295,7 +295,7 @@ body { background: var(--c-page); }
    set is shown */
 .connectivity__info {
   position: absolute;
-  inset: calc(32 * var(--px));
+  inset: 0;
   z-index: 2;
   color: var(--c-white);
   pointer-events: none;
@@ -327,7 +327,7 @@ body { background: var(--c-page); }
   font-size: calc(14 * var(--px));
   font-weight: 650;
   line-height: calc(20 * var(--px));
-  padding: calc(6 * var(--px)) calc(10 * var(--px));
+  padding: calc(8 * var(--px)) calc(14 * var(--px));
   color: var(--c-muted);
 }
 
@@ -338,7 +338,8 @@ body { background: var(--c-page); }
   display: flex;
   flex-direction: column;
   gap: calc(8 * var(--px));
-  padding: calc(16 * var(--px)) calc(20 * var(--px));
+  /* flush with the box's bottom-left corner, roomy inside */
+  padding: calc(32 * var(--px)) calc(40 * var(--px));
 }
 
 .connectivity__name {
