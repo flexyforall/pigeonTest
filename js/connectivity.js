@@ -1,13 +1,14 @@
 // "Connectivity without boundaries" — a scroll-driven sequence (Figma storyboard 248:7761).
 // The stage sticks while the section scrolls past. First the title fills in white, then the
-// panels run past as a horizontal strip, clipped to the box, one full-size panel at a time.
-// Each change has two moves: the current panel slides a little to the left and the edge of the
-// next one peeks in from the right; after a short pause the strip slides on until the next
-// panel fills the box. At the end the last panel spreads out to the whole screen.
+// panels run past as a horizontal strip, clipped to the box. The strip never stops: it eases
+// down while a panel fills the box and speeds up between panels. At the end the last panel
+// spreads out to the whole screen.
 // Each image panel holds a short clip in which a line sweeps across, turning a wireframe into
-// the photo. The clips are scrubbed by the scroll, not played: each runs from the moment its
-// panel slides in until the next panel starts to peek, all over the same stretch of scroll, so
-// they run at one speed. Every clip also slowly zooms out while its panel is on screen.
+// the photo. The clips are scrubbed by the scroll, not played, and chained so the line reads as
+// one: a clip's line leaves its panel at the right edge exactly as the next clip's line enters
+// at the left edge of the next panel — the same seam on screen. Only the stretch of each clip
+// where the line is on screen is used (data-line, in seconds), at the same pace for all.
+// Every clip also slowly zooms out while its panel is on screen.
 (() => {
   const section = document.querySelector('[data-connectivity]');
   if (!section) return;
@@ -25,27 +26,32 @@
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
   const changes = panels.length - 1;
 
-  // One change per unit of seq: change k (panel k → k + 1) runs over seq [k, k + 1).
-  // As fractions of that unit:
-  const PEEK = 355 / 1360; // how far the strip moves for the peek (from the storyboard)
-  const PEEK_END = 0.25; // the peek is done
-  const SLIDE_START = 0.4; // after a pause, the strip slides on…
-  const SLIDE_END = 0.75; // …and the next panel fills the box until the next change
-  // A clip plays from its panel's slide-in to the next peek: the same length for every clip.
-  const CLIP = 1 - SLIDE_START;
-  // Pace within a clip: fast out of the start, slow through the middle, fast into the end.
-  // A blend of linear and a cubic centred on the middle; PACE sets how strong the slow-down is
-  // (0 = even pace; 0.55 runs the ends at ~2.2× and the middle at ~0.45× the average speed).
-  // The start and end stay put, so the clips still hand over at the same moments.
-  const PACE = 0.55;
-  const pace = (p) => (1 - PACE) * p + PACE * (0.5 + 4 * (p - 0.5) ** 3);
+  // One change per unit of seq: change k (panel k → k + 1) runs over seq [k, k + 1). Within a
+  // change the strip eases: slower (but never still) while a panel is centred, faster between.
+  const EASE = 0.5; // 0 = constant speed; 0.5 = from half speed at a panel to 1.5× in between
+  const ease = (t) => t - (EASE * Math.sin(2 * Math.PI * t)) / (2 * Math.PI);
+  // A clip's line enters as its panel shows SEAM of itself at the right of the box, and leaves
+  // as the next panel shows the same: every clip takes one change's worth of scroll.
+  const SEAM = 0.3;
+  const invEase = (y) => {
+    let lo = 0;
+    let hi = 1;
+    for (let i = 0; i < 30; i++) {
+      const mid = (lo + hi) / 2;
+      if (ease(mid) < y) lo = mid;
+      else hi = mid;
+    }
+    return lo;
+  };
+  const CLIP_AT = invEase(SEAM); // where in a change the next clip starts
+  const clipStart = (k) => k - 1 + CLIP_AT; // seq at which panel k's clip starts (k ≥ 1)
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
-  // the last clip ends a whole unit after the last change starts
-  const seqEnd = changes;
-  // Finale: once the last clip has played, its panel spreads from the box out to the whole
-  // screen over OUTRO more of the sequence.
-  const OUTRO = 0.35;
-  const travel = FILL + (seqEnd + OUTRO) * STEP + HOLD;
+  // the last clip ends CLIP_AT after the strip has come to rest on the last panel
+  const seqEnd = clipStart(changes) + 1;
+  // Finale: as the strip comes to rest, the last panel spreads out to the whole screen while its
+  // clip plays out.
+  const OUTRO_END = seqEnd + 0.15;
+  const travel = FILL + OUTRO_END * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
   // and trackpad flicks glide. SMOOTH is the time constant of that chase, in ms.
@@ -53,7 +59,6 @@
 
   const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
   const smoothstep = (t) => t * t * (3 - 2 * t);
-  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
   section.classList.add('is-scrolling');
   section.style.setProperty('--track', `${(1 + travel) * 100}vh`);
@@ -62,11 +67,7 @@
   function stripAt(seq) {
     if (seq >= changes) return changes;
     const k = Math.floor(seq);
-    const t = seq - k;
-    if (t < PEEK_END) return k + PEEK * smoothstep(t / PEEK_END);
-    if (t < SLIDE_START) return k + PEEK;
-    if (t < SLIDE_END) return k + PEEK + (1 - PEEK) * easeInOut((t - SLIDE_START) / (SLIDE_END - SLIDE_START));
-    return k + 1;
+    return k + ease(seq - k);
   }
 
   // where the scroll position says we should be
@@ -78,7 +79,7 @@
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
       // position along the sequence, in changes of panel
-      seq: clamp((scrolled - FILL) / STEP, 0, seqEnd + OUTRO),
+      seq: clamp((scrolled - FILL) / STEP, 0, OUTRO_END),
     };
   }
 
@@ -115,14 +116,16 @@
     video.addEventListener('loadedmetadata', () => draw(state));
   });
 
+  // the part of each clip where the line crosses the frame, in seconds
+  const lines = videos.map((video) => video && video.dataset.line.split(' ').map(Number));
+
   function scrub(seq, strip) {
     let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = pace(clamp((seq - (k - 1 + SLIDE_START)) / CLIP));
-      // stop a frame short of the end: seeking to the very end can show a blank frame
-      const duration = video.duration || 0;
-      wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
+      const p = clamp(seq - clipStart(k));
+      const [from, to] = lines[k];
+      wanted.set(video, Math.round((from + p * (to - from)) / FRAME) * FRAME);
       if (!seek(video)) synced = false;
       // the panel is on screen while the strip is between k − 1 and k + 1 (the last one stays)
       video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((strip - (k - 1)) / 2)));
@@ -224,10 +227,10 @@
     const strip = stripAt(seq);
     title.style.setProperty('--fill', fill);
     const synced = scrub(seq, strip);
-    // a card's caption flips in as its panel slides in and out as the next one starts to peek;
-    // the last one leaves before the finale
-    const focus = seq < SLIDE_START ? 0 : Math.min(changes, Math.floor(seq - SLIDE_START) + 1);
-    showInfo(seq >= seqEnd ? 0 : focus);
+    // a card's caption flips in with its clip's line and out as the next one's starts;
+    // the last one leaves as the finale begins
+    const focus = seq < clipStart(1) ? 0 : Math.min(changes, Math.floor(seq - clipStart(1)) + 1);
+    showInfo(seq >= changes ? 0 : focus);
 
     panels.forEach((panel, k) => {
       const offset = k - strip; // in panel widths, 0 = in the box
@@ -244,7 +247,7 @@
 
     // finale: the last panel spreads from the box to the edges of the stage (the screen),
     // and the strip's clip opens out with it
-    const outro = smoothstep(clamp((seq - seqEnd) / OUTRO));
+    const outro = smoothstep(clamp((seq - changes) / (OUTRO_END - changes)));
     const last = panels[changes];
     const bleedX = box.offsetLeft * outro;
     const bleedY = box.offsetTop * outro;
