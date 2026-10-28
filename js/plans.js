@@ -62,9 +62,8 @@
   }
 
   /* ---------- wifi signal ---------- */
-  // A single wave out of every access point, across the whole building (the zones together tile
-  // it), at one speed for all: a wave that has further to go takes longer.
-  const WAVE_SPEED = 320; // plan units (of the 680 wide plan) per second
+  // A single wave out of every access point, to the walls of the whole building (the zones
+  // together tile it); all of a plan's waves start and reach the walls together.
   section.querySelectorAll('.plans__plan').forEach((plan) => {
     const zones = [...plan.querySelectorAll('.plans__signal')];
     if (!zones.length) return;
@@ -80,12 +79,11 @@
     Object.entries({ '--x': x0, '--y': y0, '--w': x1 - x0, '--h': y1 - y0 }).forEach(([k, v]) => layer.style.setProperty(k, v));
     zones.forEach((z, i) => {
       const ap = z.querySelector('i');
-      const cx = box[i][0] + num(ap, '--x') + 6 - x0; // the square's centre, in the layer
-      const cy = box[i][1] + num(ap, '--y') + 6 - y0;
-      const r = Math.max(...[[0, 0], [x1 - x0, 0], [0, y1 - y0], [x1 - x0, y1 - y0]].map(([x, y]) => Math.hypot(x - cx, y - cy)));
       const wave = document.createElement('span');
       wave.className = 'plans__wave';
-      Object.entries({ '--cx': cx, '--cy': cy, '--r': r, '--dur': `${(r / WAVE_SPEED).toFixed(2)}s` }).forEach(([k, v]) => wave.style.setProperty(k, v));
+      // the square's centre, in the layer
+      wave.style.setProperty('--cx', box[i][0] + num(ap, '--x') + 6 - x0);
+      wave.style.setProperty('--cy', box[i][1] + num(ap, '--y') + 6 - y0);
       layer.append(wave);
     });
     plan.insertBefore(layer, zones[0]);

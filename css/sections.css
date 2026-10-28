@@ -624,8 +624,9 @@ body { background: var(--c-page); }
 }
 
 /* the wifi signal: once the section is in view, and each time a plan is shown, a single wave
-   rings out of every access point and runs across the whole building (built by plans.js: the
-   layer covers the building, --cx/--cy is the access point, --r how far the wave goes) */
+   spreads out of every access point as a growing rectangle to the walls of the whole building,
+   all of a plan's waves in step (built by plans.js: the layer covers the building, --cx/--cy
+   is the access point within it) */
 .plans__waves {
   position: absolute;
   left: calc(var(--x) * var(--u));
@@ -639,20 +640,19 @@ body { background: var(--c-page); }
 }
 .plans__wave {
   position: absolute;
-  left: calc((var(--cx) - var(--r)) * var(--u));
-  top: calc((var(--cy) - var(--r)) * var(--u));
-  width: calc(2 * var(--r) * var(--u));
-  height: calc(2 * var(--r) * var(--u));
-  border-radius: 50%;
+  inset: 0;
   background: #eafff8;
   opacity: 0;
-  transform: scale(0);
+  --from: inset(
+    calc(var(--cy) * var(--u)) calc((var(--w) - var(--cx)) * var(--u))
+    calc((var(--h) - var(--cy)) * var(--u)) calc(var(--cx) * var(--u))
+  );
 }
-.plans.is-seen .plans__wave { animation: plans-wave var(--dur) 0.35s cubic-bezier(0.25, 0.5, 0.35, 1) both; }
+.plans.is-seen .plans__wave { animation: plans-wave 2s 0.35s both; }
 @keyframes plans-wave {
-  0% { transform: scale(0.02); opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: scale(1); opacity: 0; }
+  0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+  60% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-out; }
+  100% { clip-path: inset(0); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .plans.is-seen .plans__wave { animation: none; }
