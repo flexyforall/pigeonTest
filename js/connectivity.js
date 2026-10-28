@@ -88,13 +88,15 @@
 
   /* ---------- scrubbing ---------- */
   // Seeks are asynchronous: while one is in flight only the latest wanted time is kept,
-  // and it is applied as soon as the video lands. Safari can drop a seek without ever firing
-  // `seeked`, which would leave the clip frozen, so a seek still pending after SEEK_TIMEOUT
-  // is issued again.
+  // and it is applied as soon as the video lands. A clip counts as showing a time only once its
+  // `seeked` has come back for it: Safari reports the new currentTime straight away, even for a
+  // seek it then drops (often when scrolling back up), which would leave a stale frame on screen.
+  // So a seek still pending after SEEK_TIMEOUT is issued again.
   const wanted = new Map();
+  const shown = new Map();
   const seekStarted = new Map();
   const FRAME = 1 / 24;
-  const SEEK_TIMEOUT = 1500; // ms
+  const SEEK_TIMEOUT = 400; // ms
 
   // true once the video shows the wanted frame (or can't seek yet)
   function seek(video) {
@@ -102,19 +104,23 @@
     if (t === undefined || video.readyState < 1) return true;
     // only the scroll moves a clip: Safari may run the primer's play() late, when the panel shows
     if (!video.paused) video.pause();
+    if (Math.abs((shown.get(video) ?? -1) - t) < FRAME / 2) return true;
     const now = performance.now();
-    if (video.seeking) {
-      if (now - seekStarted.get(video) < SEEK_TIMEOUT) return false;
-    } else if (Math.abs(video.currentTime - t) < FRAME / 2) {
-      return true;
-    }
-    video.currentTime = t;
+    if (seekStarted.has(video) && now - seekStarted.get(video) < SEEK_TIMEOUT) return false;
+    // a repeat of the same time may be ignored, so a re-issued seek lands a hair off it
+    video.currentTime = seekStarted.has(video) && Math.abs(video.currentTime - t) < FRAME / 2 ? t + 0.001 : t;
     seekStarted.set(video, now);
     return false;
   }
   videos.forEach((video) => {
     if (!video) return;
-    video.addEventListener('seeked', () => seek(video));
+    video.addEventListener('seeked', () => {
+      shown.set(video, video.currentTime);
+      seekStarted.delete(video);
+      if (!seek(video)) schedule();
+    });
+    // playing moves the frame on from the last seek
+    video.addEventListener('play', () => shown.delete(video));
     // the wanted time depends on the duration, so recompute once it is known
     video.addEventListener('loadedmetadata', () => draw(state));
   });
