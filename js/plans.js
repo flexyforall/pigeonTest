@@ -1,14 +1,13 @@
 // "Coverage starts with your space": the space-type tabs. On a switch the panel slides up as a
 // whole: the old content goes up and out at its own size, the new content follows right under
 // it, and a thin line runs along the seam between them. The grey block behind the active tab
-// slides quickly to the new tab.
+// slides to the new tab with the same timing.
 (() => {
   const section = document.querySelector('.plans');
   if (!section) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SWITCH = 1000; // ms: the panel slide
-  const SLIDE = 500; // ms: the tab block
+  const SWITCH = 1000; // ms: the panel slide, the line and the tab block, all on one clock
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
   // the hero's SWITCH_TIMING; the copy waits, hidden, until the new panel has nearly come to rest
@@ -18,7 +17,7 @@
   const indicator = section.querySelector('.plans__indicator');
   const tabs = [...section.querySelectorAll('.plan-tab')];
   const panelOf = (tab) => document.getElementById(tab.getAttribute('aria-controls'));
-  section.style.setProperty('--switch-duration', `${SLIDE}ms`);
+  section.style.setProperty('--switch-duration', `${SWITCH}ms`);
   section.style.setProperty('--switch-ease', SWITCH_EASE);
 
   /* ---------- copy, entering as the hero copy does on a switch ---------- */
