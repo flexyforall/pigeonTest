@@ -127,13 +127,6 @@
       const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
 
-      // Everything here moves by transform, so it stays smooth while the rest of the page works:
-      // the mint block scales in from its left edge, a white cover slides off the cards that are
-      // still to come, and a card's grid clears through a sliding window.
-      const cover = $('.steps__cover', section);
-      const coverFrom = () => cards[1].offsetLeft;
-      section.style.setProperty('--cover-from', `${coverFrom()}px`);
-
       // everything waits for the cards to be well in view, so the block and the band set off
       // together and keep pace
       section.classList.add('is-dim');
@@ -141,13 +134,9 @@
       new IntersectionObserver((entries, io) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         io.disconnect();
-        section.classList.remove('is-pending');
+        section.classList.remove('is-dim', 'is-pending');
         rise($('.section-title', section));
-        // same list of functions at both ends, so it scales rather than snapping
-        $('.steps__mark', section).animate(
-          [{ transform: 'translateX(-50%) scaleX(0)' }, { transform: 'translateX(-50%) scaleX(1)' }],
-          { duration: WIPE, delay: DELAY, easing: ease, fill: 'backwards' }
-        );
+        from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, { duration: WIPE, delay: DELAY, easing: ease });
         sweep();
       }, { threshold: 0.6 }).observe(row);
 
@@ -155,7 +144,7 @@
         const width = row.clientWidth;
         const bw = band.offsetWidth;
         const opts = { duration: RUN, delay: DELAY, easing: ease, fill: 'backwards' };
-        // the band's leading edge goes from the row's left edge (progress 0) to its right edge (1)
+        // the band's leading edge goes from the row's left edge to its right edge
         band.animate(
           [
             { transform: `translateX(${-bw}px)`, opacity: 1 },
@@ -164,38 +153,37 @@
           ],
           { ...opts, fill: 'both' }
         );
-        // the cover holds until the edge reaches the second card, then goes with it: keyframe
-        // offsets are in the band's progress, so between them it keeps exactly to the edge
-        const x0 = coverFrom();
-        cover.animate(
-          [
-            { transform: `translateX(${x0}px)`, offset: 0 },
-            { transform: `translateX(${x0}px)`, offset: x0 / width },
-            { transform: `translateX(${width}px)`, offset: 1 },
-          ],
-          { ...opts, fill: 'both' }
-        ).finished.then(() => section.classList.remove('is-dim'));
-        // the grid clears off every card but the last right behind the band's tail: a window over
-        // it slides right while the grid inside slides back left by as much, so it stays put
+        // every card but the first is uncovered right behind that edge: its reveal runs over the
+        // stretch of the band's way that crosses it (keyframe offsets are in the band's progress)
+        cards.slice(1).forEach((card) => {
+          const a = card.offsetLeft / width;
+          const b = (card.offsetLeft + card.offsetWidth) / width;
+          card.animate(
+            [
+              { clipPath: 'inset(0 100% 0 0)', offset: 0 },
+              { clipPath: 'inset(0 100% 0 0)', offset: a },
+              { clipPath: 'inset(0 0% 0 0)', offset: b },
+              { clipPath: 'inset(0 0% 0 0)', offset: 1 },
+            ],
+            opts
+          );
+        });
+        // the grid clears off every card but the last right behind the band's tail
+        const lag = bw / width;
         cards.slice(0, -1).forEach((card) => {
           const grid = $('.step__grid', card);
-          const clip = document.createElement('span');
-          clip.className = 'step__gridclip';
-          grid.before(clip);
-          clip.append(grid);
-          const l = card.offsetLeft;
           const w = card.offsetWidth;
-          const a = Math.min(1, (l + bw) / width);
-          const b = Math.min(1, (l + w + bw) / width);
-          const t = Math.min(w, width - bw - l); // how far it has cleared when the band is done
-          const keys = (sign) => [
-            { transform: 'none', offset: 0 },
-            { transform: 'none', offset: a },
-            { transform: `translateX(${sign * t}px)`, offset: b },
-            { transform: `translateX(${sign * t}px)`, offset: 1 },
-          ];
-          clip.animate(keys(1), { ...opts, fill: 'forwards' });
-          grid.animate(keys(-1), { ...opts, fill: 'forwards' });
+          const a = Math.min(1, card.offsetLeft / width + lag);
+          const b = Math.min(1, (card.offsetLeft + w) / width + lag);
+          grid.animate(
+            [
+              { clipPath: 'inset(0 0 0 0px)', offset: 0 },
+              { clipPath: 'inset(0 0 0 0px)', offset: a },
+              { clipPath: `inset(0 0 0 ${w}px)`, offset: b },
+              { clipPath: `inset(0 0 0 ${w}px)`, offset: 1 },
+            ],
+            { ...opts, fill: 'forwards' }
+          );
         });
       }
     },
