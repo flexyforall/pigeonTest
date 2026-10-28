@@ -360,8 +360,7 @@ body { background: var(--c-page); }
 .is-pending .steps__head,
 .is-pending .step > * { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
-.steps.is-dim .step:not(:first-child) { clip-path: inset(0 100% 0 0); }
-.steps.is-dim .steps__sweep { opacity: 0; }
+.steps.is-dim .steps__cover { display: block; }
 .is-pending .plans__indicator { opacity: 0; }
 
 /* ===== Plans ("Coverage starts with your space") ===== */
@@ -715,6 +714,8 @@ body { background: var(--c-page); }
   text-align: center;
 }
 .steps__head .section-title { position: relative; }
+/* (scales in from its left edge, see js/sections.js) */
+.steps__mark { transform-origin: left center; }
 /* mint block behind "to always on." */
 .steps__mark {
   position: absolute;
@@ -826,6 +827,26 @@ body { background: var(--c-page); }
   mask-composite: intersect;
   opacity: 0;
   pointer-events: none;
+}
+
+/* covers the cards still to come until the band uncovers them */
+.steps__cover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: none;
+  width: 100%;
+  background: var(--c-white);
+  transform: translateX(var(--cover-from, 0));
+  pointer-events: none;
+}
+/* the window a card's grid clears through */
+.step__gridclip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 
 @media (max-width: 960px) {
