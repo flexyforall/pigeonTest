@@ -241,15 +241,16 @@ body { background: var(--c-page); }
 .connectivity__panel:not([data-panel="title"]) { display: none; }
 .connectivity.is-scrolling .connectivity__panel { display: block; }
 
-/* how far through the section you are: a 1px bar 20px under the box, filled by the script
-   (--progress); it fades out as the last panel spreads to the screen (--progress-fade) */
+/* how far through the section you are: the frame's bottom rule, between the side rules,
+   filling with black (--progress, set by the script); it fades out as the last panel spreads
+   to the screen (--progress-fade) */
 .connectivity__progress {
   position: absolute;
-  top: calc(100% + 20px);
-  left: 0;
-  right: 0;
+  bottom: 0;
+  left: max(40px, calc((100% - 1840px) / 2));
+  right: max(40px, calc((100% - 1840px) / 2));
   height: 1px;
-  background: rgba(0, 0, 0, 0.06); /* icon/disabled (#000 at 20%) on a 30% layer */
+  background: var(--c-rule);
   opacity: var(--progress-fade, 1);
 }
 .connectivity__progress span {
@@ -330,7 +331,7 @@ body { background: var(--c-page); }
   .logos { padding: 32px 16px; }
   .connectivity__stage { padding: 32px 16px; }
   .connectivity__stage::before { left: 16px; right: 16px; }
-  .connectivity__progress { top: calc(100% + 16px); }
+  .connectivity__progress { left: 16px; right: 16px; }
   .divider { height: 64px; }
   .connectivity__title { width: 300px; white-space: normal; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }
