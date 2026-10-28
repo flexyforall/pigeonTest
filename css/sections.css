@@ -832,3 +832,24 @@ body { background: var(--c-page); }
   .step::after,
   .step:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
 }
+
+/* ===== Layout grid drawn in with the scroll (js/grid.js) ===== */
+/* the sections' own rules give way to the drawn ones */
+.grid-drawn :is(.benefits, .divider, .plans, .steps) { --c-rule: transparent; }
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  width: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.grid-lines i {
+  position: absolute;
+  display: block;
+  background: #e2eae7; /* border/base */
+  will-change: transform;
+}
+.grid-lines .is-v { width: 1px; transform: scaleY(0); transform-origin: top; }
+.grid-lines .is-h { height: 1px; transform: scaleX(0); transform-origin: left; }
