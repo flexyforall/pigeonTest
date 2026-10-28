@@ -351,7 +351,9 @@ body { background: var(--c-page); }
 .is-pending .benefits__head,
 .is-pending .benefit > *,
 .is-pending .plans__head,
-.is-pending .plan-tab > * { visibility: hidden; }
+.is-pending .plan-tab > *,
+.is-pending .steps__head,
+.is-pending .step > * { visibility: hidden; }
 .is-pending .plans__indicator { opacity: 0; }
 
 /* ===== Plans ("Coverage starts with your space") ===== */
@@ -680,4 +682,128 @@ body { background: var(--c-page); }
 @media (max-width: 560px) {
   .plans__frame { padding-top: 80px; gap: 40px; }
   .plans__mark { display: none; }
+}
+
+/* ===== How it works ("From setup to always on.", Figma 264:28245) ===== */
+.steps {
+  padding: 0 max(40px, calc((100% - 1760px) / 2));
+  background: var(--c-white);
+  border-bottom: 1px solid var(--c-rule);
+}
+.steps__frame {
+  display: flex;
+  flex-direction: column;
+  gap: calc(60 * var(--px));
+  padding: calc(160 * var(--px)) 0;
+  /* side rules; Figma strokes don't take up layout space, so they are inset shadows */
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+}
+
+.steps__head {
+  position: relative;
+  padding: 0 40px;
+  color: var(--c-ink);
+  text-align: center;
+}
+.steps__head .section-title { position: relative; }
+/* mint block behind "to always on." */
+.steps__mark {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 101.5 * var(--px));
+  width: calc(237 * var(--px));
+  height: calc(46 * var(--px));
+  transform: translateX(-50%);
+  background: var(--c-mint);
+}
+
+.steps__row {
+  display: flex;
+  height: calc(240 * var(--px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  box-shadow: inset 0 1px var(--c-rule);
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-width: 1px;
+  padding: 20px;
+  overflow: hidden;
+  color: var(--c-ink);
+}
+.step::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset -1px 0 var(--c-rule);
+  pointer-events: none;
+}
+.step:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule); }
+
+/* "+" grid, softened at the top-left by a blurred white blob */
+.step__grid {
+  position: absolute;
+  top: 0;
+  left: -0.5px;
+  max-width: none;
+}
+.step__fade {
+  position: absolute;
+  top: -116px;
+  left: -138px;
+  width: 513px;
+  height: 534px;
+  max-width: none;
+}
+
+.step__num {
+  position: relative;
+  font-family: var(--f-display);
+  font-size: calc(40 * var(--px));
+  font-weight: 600;
+  line-height: calc(40 * var(--px));
+  letter-spacing: calc(-0.6 * var(--px));
+}
+
+.step__text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--px));
+  width: 100%;
+}
+
+.step__title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(24 * var(--px));
+  font-weight: 600;
+  line-height: calc(28 * var(--px));
+  letter-spacing: calc(-0.24 * var(--px));
+}
+
+.step__desc {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink-muted);
+}
+
+@media (max-width: 960px) {
+  .steps { padding: 0 16px; }
+  .steps__frame { padding: 64px 0; gap: 40px; }
+  .steps__mark { display: none; }
+  .steps__row { flex-direction: column; height: auto; }
+  .step { flex: none; height: 200px; }
+  .step::after,
+  .step:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
 }

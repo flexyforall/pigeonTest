@@ -112,6 +112,25 @@
         fadeUp($('.plan-tab__aps', tab), d + 400);
       });
     },
+
+    // like the benefits: heading and mint block, then the cards one after another, each with its
+    // number rising ahead of its title
+    steps(section) {
+      rise($('.section-title', section));
+      from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
+        duration: 900,
+        delay: 350,
+        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+      });
+
+      $$('.step', section).forEach((card, i) => {
+        const d = 300 + i * 120;
+        $$('.step__grid, .step__fade', card).forEach((el) => from(el, { opacity: 0 }, { duration: 1400, delay: d }));
+        rise($('.step__num', card), d + 100, { word: 900, stagger: 40 });
+        rise($('.step__title', card), d + 200, { word: 900, stagger: 40 });
+        fadeUp($('.step__desc', card), d + 400);
+      });
+    },
   };
 
   const sections = Object.keys(REVEALS)
@@ -123,7 +142,7 @@
 
   sections.forEach(([, section]) => {
     section.classList.add('is-pending');
-    $$('.section-title, .benefit__title, .plan-tab__name', section).forEach(splitWords);
+    $$('.section-title, .benefit__title, .plan-tab__name, .step__num, .step__title', section).forEach(splitWords);
   });
 
   const observer = new IntersectionObserver(
