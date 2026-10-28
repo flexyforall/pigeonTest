@@ -157,8 +157,8 @@ body { background: var(--c-page); }
 }
 
 /* ===== Divider between benefits and connectivity ===== */
-/* an empty band of rules (Figma 257:27209): top and bottom across the page, sides in line with
-   the cards */
+/* an empty band of rules (Figma 257:27209): top and bottom across the page, and three columns in
+   line with the benefit cards above, each with its own rule on both sides */
 .divider {
   display: flex;
   height: calc(120 * var(--px));
