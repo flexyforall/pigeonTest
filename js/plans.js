@@ -10,6 +10,9 @@
   const SWITCH = 1000; // ms: the panel slide
   const SLIDE = 500; // ms: the tab block
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
+  const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
+  // the hero's SWITCH_TIMING; the copy starts as the new panel comes up into view
+  const T = { delay: 350, word: 800, stagger: 30, text: 120, fade: 700 };
 
   const tabRow = section.querySelector('.plans__tabs');
   const indicator = section.querySelector('.plans__indicator');
@@ -17,6 +20,45 @@
   const panelOf = (tab) => document.getElementById(tab.getAttribute('aria-controls'));
   section.style.setProperty('--switch-duration', `${SLIDE}ms`);
   section.style.setProperty('--switch-ease', SWITCH_EASE);
+
+  /* ---------- copy, entering as the hero copy does on a switch ---------- */
+  section.querySelectorAll('.plans__title').forEach((title) => {
+    const label = title.textContent.trim();
+    title.textContent = '';
+    label.split(/\s+/).forEach((word, i, all) => {
+      const w = document.createElement('span');
+      w.className = 'w';
+      const inner = document.createElement('span');
+      inner.className = 'w__in';
+      inner.textContent = word;
+      w.append(inner);
+      title.append(w);
+      if (i < all.length - 1) title.append(' ');
+    });
+    title.setAttribute('aria-label', label);
+    [...title.children].forEach((el) => el.setAttribute('aria-hidden', 'true'));
+  });
+
+  // animates from the given state to the element's own CSS state (see hero.js)
+  const from = (el, keyframe, opts) => {
+    const cs = getComputedStyle(el);
+    const end = Object.fromEntries(Object.keys(keyframe).map((k) => [k, cs[k]]));
+    return el.animate([keyframe, end], { fill: 'backwards', easing: EASE_OUT, ...opts });
+  };
+
+  function enterCopy(panel) {
+    const d = T.delay;
+    from(panel.querySelector('.plans__icon'), { opacity: 0, transform: 'translateY(10px)' }, { duration: T.fade, delay: d });
+    panel.querySelectorAll('.plans__title .w__in').forEach((w, i) =>
+      from(w, { transform: 'translateY(105%)' }, { duration: T.word, delay: d + i * T.stagger })
+    );
+    [panel.querySelector('.plans__tags'), panel.querySelector('.plans__desc')].forEach((el, i) =>
+      from(el, { opacity: 0, transform: 'translateY(16px)', filter: 'blur(6px)' }, {
+        duration: T.fade,
+        delay: d + T.text + i * 60,
+      })
+    );
+  }
 
   /* ---------- wifi signal ---------- */
   // all the zones of a plan grow out of their access points together, then fade away together
@@ -120,6 +162,7 @@
     moveIndicator(tab, !reduceMotion);
     if (reduceMotion || !fromPanel) return;
     slide(fromPanel, panelOf(tab));
+    enterCopy(panelOf(tab));
   }
 
   moveIndicator(tabs.find((t) => t.classList.contains('is-active')), false);
