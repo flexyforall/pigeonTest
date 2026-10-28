@@ -12,7 +12,7 @@
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
   // the hero's SWITCH_TIMING; the copy starts as the new panel comes up into view
-  const T = { delay: 350, word: 800, stagger: 30, text: 120, fade: 700 };
+  const T = { delay: 450, word: 800, stagger: 30, text: 120, fade: 700 };
 
   const tabRow = section.querySelector('.plans__tabs');
   const indicator = section.querySelector('.plans__indicator');
@@ -47,6 +47,8 @@
   };
 
   function enterCopy(panel) {
+    // the panel's own copy only, not the outgoing copy sliding over it
+    panel = panel.querySelector(':scope > .plans__info');
     const d = T.delay;
     from(panel.querySelector('.plans__icon'), { opacity: 0, transform: 'translateY(10px)' }, { duration: T.fade, delay: d });
     panel.querySelectorAll('.plans__title .w__in').forEach((w, i) =>
