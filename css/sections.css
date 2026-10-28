@@ -241,6 +241,25 @@ body { background: var(--c-page); }
 .connectivity__panel:not([data-panel="title"]) { display: none; }
 .connectivity.is-scrolling .connectivity__panel { display: block; }
 
+/* how far through the section you are: a 4px bar 20px under the box, filled by the script
+   (--progress); it fades out as the last panel spreads to the screen (--progress-fade) */
+.connectivity__progress {
+  position: absolute;
+  top: calc(100% + 18px);
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: var(--progress-fade, 1);
+}
+.connectivity__progress span {
+  display: block;
+  height: 100%;
+  background: var(--c-ink);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left center;
+}
+
 /* clips the slow scroll-linked zoom on the clip */
 .connectivity__media {
   position: absolute;
@@ -311,6 +330,7 @@ body { background: var(--c-page); }
   .logos { padding: 32px 16px; }
   .connectivity__stage { padding: 32px 16px; }
   .connectivity__stage::before { left: 16px; right: 16px; }
+  .connectivity__progress { top: calc(100% + 14px); }
   .divider { height: 64px; }
   .connectivity__title { width: 300px; white-space: normal; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }

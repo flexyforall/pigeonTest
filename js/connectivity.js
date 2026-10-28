@@ -16,6 +16,7 @@
 
   const box = section.querySelector('.connectivity__box');
   const track = section.querySelector('.connectivity__track');
+  const progress = section.querySelector('.connectivity__progress');
   const panels = [...section.querySelectorAll('.connectivity__panel')];
   const title = section.querySelector('.connectivity__title');
   const videos = panels.map((panel) => panel.querySelector('video'));
@@ -78,6 +79,8 @@
       enter: clamp(1 + scrolled),
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
+      // progress bar: from the start of the title fill to the start of the finale
+      progress: clamp((scrolled + 0.15) / (FILL + 0.15 + changes * STEP)),
       // position along the sequence, in changes of panel
       seq: clamp((scrolled - FILL) / STEP, 0, OUTRO_END),
     };
@@ -157,7 +160,7 @@
   // over the whole rise, settling just as the stage sticks
   const ENTER_SIZE = 0.83;
 
-  function draw({ enter, fill, seq }) {
+  function draw({ enter, fill, progress: done, seq }) {
     const strip = stripAt(seq);
     title.style.setProperty('--fill', fill);
     const synced = scrub(seq, strip);
@@ -185,6 +188,8 @@
     last.style.width = last.style.height = 'auto';
     track.style.setProperty('--bleed-x', `${bleedX}px`);
     track.style.setProperty('--bleed-y', `${bleedY}px`);
+    progress.style.setProperty('--progress', done.toFixed(4));
+    progress.style.setProperty('--progress-fade', (1 - outro).toFixed(3));
     return synced;
   }
 
