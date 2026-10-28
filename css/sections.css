@@ -175,8 +175,8 @@ body { background: var(--c-page); }
 
 /* ===== Connectivity ===== */
 /* Scroll-driven (js/connectivity.js): the stage sticks while the section scrolls past.
-   The title fills in white, then each panel hands over to the next along the diagonal:
-   the current one shrinks into the top-left corner as the next grows out of the bottom-right. */
+   The title fills in white, then the panels run past as a horizontal strip, clipped to the
+   box: each one first lets the next peek in from the right, then slides out to the left. */
 .connectivity {
   position: relative;
   background: var(--c-page);
@@ -217,18 +217,12 @@ body { background: var(--c-page); }
   max-height: 988px;
   margin: auto;
 }
-/* light "+" grid in the space the panels leave free, seen only through a soft round spot that
-   wanders the free corners as you scroll; the grid itself drifts too (--drift, --spot-x/y are
-   set by the script) */
-.connectivity__box::before {
-  content: "";
+/* the strip of panels, clipped to the box; the finale opens the clip out to the screen
+   (--bleed-x/y, set by the script) */
+.connectivity__track {
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17'%3E%3Cpath d='M8.5 4v9M4 8.5h9' stroke='%23000' stroke-width='.6' stroke-opacity='.22'/%3E%3C/svg%3E") 0 0 / 17px 17px;
-  background-position: calc(var(--drift, 0) * -1px) calc(var(--drift, 0) * -1px);
-  --spot: radial-gradient(circle min(34vw, 460px) at var(--spot-x, 75%) var(--spot-y, 25%), #000, rgba(0, 0, 0, 0.5) 45%, transparent);
-  -webkit-mask: var(--spot);
-  mask: var(--spot);
+  clip-path: inset(calc(var(--bleed-y, 0px) * -1) calc(var(--bleed-x, 0px) * -1));
 }
 
 .connectivity__panel {
@@ -238,12 +232,13 @@ body { background: var(--c-page); }
   width: 100%;
   height: 100%;
   background: var(--c-ink);
+  will-change: transform;
 }
 /* until the script lays them out, only the title panel shows */
 .connectivity__panel:not([data-panel="title"]) { display: none; }
 .connectivity.is-scrolling .connectivity__panel { display: block; }
 
-/* clips the slow scroll-linked zoom on the clip (the corners sit outside the panel) */
+/* clips the slow scroll-linked zoom on the clip */
 .connectivity__media {
   position: absolute;
   inset: 0;
@@ -292,14 +287,14 @@ body { background: var(--c-page); }
   color: transparent;
 }
 
-/* per-card caption (bottom-left) and number (top-right): the corners the diagonal leaves free.
+/* per-card caption (bottom-left) and number (top-right), over the clip in its corners.
    Words flip in and out like the hero headline (js/connectivity.js); only the current card's
    set is shown */
 .connectivity__info {
   position: absolute;
-  inset: 0;
+  inset: calc(32 * var(--px));
   z-index: 2;
-  color: var(--c-ink);
+  color: var(--c-white);
   pointer-events: none;
   visibility: hidden;
 }
@@ -340,20 +335,8 @@ body { background: var(--c-page); }
   font-family: var(--f-body);
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
-  color: var(--c-ink-muted);
+  color: var(--c-muted);
 }
-
-.connectivity__corner {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: var(--c-mint);
-  opacity: var(--corner-opacity, 1);
-}
-.connectivity__corner--tl { top: -10px; left: -10px; }
-.connectivity__corner--tr { top: -10px; right: -10px; }
-.connectivity__corner--br { bottom: -10px; right: -10px; }
-.connectivity__corner--bl { bottom: -10px; left: -10px; }
 
 /* ===== Adaptive (below design width) ===== */
 @media (max-width: 1280px) {
@@ -378,9 +361,11 @@ body { background: var(--c-page); }
   .connectivity__stage::before { left: 16px; right: 16px; }
   .divider { height: 64px; }
   .connectivity__title { width: 300px; white-space: normal; }
-  /* the free corners are too small for the captions on a phone: they go under the box,
+  /* on a phone the captions would cover too much of the clip: they go under the box,
      the number above it */
   .connectivity__box { height: calc(100% - 64px); margin: 0 auto auto; }
+  .connectivity__info { inset: 0; color: var(--c-ink); }
+  .connectivity__desc { color: var(--c-ink-muted); }
   .connectivity__caption { bottom: -62px; }
   .connectivity__count { top: -27px; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }

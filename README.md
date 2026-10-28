@@ -14,7 +14,7 @@ python3 -m http.server 8000
 - `css/sections.css` — logos, benefits and connectivity sections
 - `js/hero.js` — loader, intro animation and Business / Residential / Mobile switching
 - `js/sections.js` — scroll-in reveal of the sections below the hero
-- `js/connectivity.js` — scroll-driven "Connectivity without boundaries" sequence (Figma storyboard `228:3913`);
+- `js/connectivity.js` — scroll-driven "Connectivity without boundaries" sequence (Figma storyboard `248:7761`);
   its clips in `assets/connectivity/` are scrubbed by the scroll, so they are encoded with a keyframe
   every 4 frames and no B-frames. Serve them from a host that supports byte ranges, or seeking fails
 - `assets/` — images, icons and loader video exported from Figma

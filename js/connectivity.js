@@ -1,20 +1,19 @@
-// "Connectivity without boundaries" — a scroll-driven sequence (Figma storyboard 228:3913).
-// The stage sticks while the section scrolls past. First the title fills in white, then each
-// panel hands over to the next along the box diagonal: the shared corner travels from the
-// bottom-right to the top-left, so the current panel shrinks into the top-left corner while the
-// next one grows out of the bottom-right. All keep the box's proportions all the way. Each
-// hand-over starts before the previous one has finished, so mid-sequence three panels share
-// the diagonal: one leaving, one in focus, one arriving.
+// "Connectivity without boundaries" — a scroll-driven sequence (Figma storyboard 248:7761).
+// The stage sticks while the section scrolls past. First the title fills in white, then the
+// panels run past as a horizontal strip, clipped to the box, one full-size panel at a time.
+// Each change has two moves: the current panel slides a little to the left and the edge of the
+// next one peeks in from the right; after a short pause the strip slides on until the next
+// panel fills the box. At the end the last panel spreads out to the whole screen.
 // Each image panel holds a short clip in which a line sweeps across, turning a wireframe into
-// the photo. The clips are scrubbed by the scroll, not played: all four get the same stretch of
-// scroll, back to back, so they run at one speed and each line starts where the last one ended.
-// On top of that every clip slowly zooms out for as long as its panel is on screen, so no panel
-// ever sits still, even once its clip has finished.
+// the photo. The clips are scrubbed by the scroll, not played: each runs from the moment its
+// panel slides in until the next panel starts to peek, all over the same stretch of scroll, so
+// they run at one speed. Every clip also slowly zooms out while its panel is on screen.
 (() => {
   const section = document.querySelector('[data-connectivity]');
   if (!section) return;
 
   const box = section.querySelector('.connectivity__box');
+  const track = section.querySelector('.connectivity__track');
   const panels = [...section.querySelectorAll('.connectivity__panel')];
   const title = section.querySelector('.connectivity__title');
   const videos = panels.map((panel) => panel.querySelector('video'));
@@ -22,16 +21,18 @@
 
   // scroll lengths in viewport heights
   const FILL = 1; // title fill, once the stage has stuck
-  const STEP = 2; // each hand-over
+  const STEP = 1.6; // each change of panel
   const HOLD = 0.3; // the last panel stays full before the section scrolls away
-  const handovers = panels.length - 1;
-  // Hand-over k (panel k → k + 1) runs over seq [k·LAG, k·LAG + 1]; with LAG < 1 the next one
-  // starts while the previous is still finishing.
-  const LAG = 0.5;
-  // A clip starts a third of the way into its panel's arrival (the new panel at about a third of
-  // the box) and runs until the next clip starts at the same point of the next hand-over, so
-  // every clip gets LAG of scroll and they all run at one speed.
-  const CLIP_START = 0.41; // ease(0.41) ≈ 0.34
+  const changes = panels.length - 1;
+
+  // One change per unit of seq: change k (panel k → k + 1) runs over seq [k, k + 1).
+  // As fractions of that unit:
+  const PEEK = 355 / 1360; // how far the strip moves for the peek (from the storyboard)
+  const PEEK_END = 0.25; // the peek is done
+  const SLIDE_START = 0.4; // after a pause, the strip slides on…
+  const SLIDE_END = 0.75; // …and the next panel fills the box until the next change
+  // A clip plays from its panel's slide-in to the next peek: the same length for every clip.
+  const CLIP = 1 - SLIDE_START;
   // Pace within a clip: fast out of the start, slow through the middle, fast into the end.
   // A blend of linear and a cubic centred on the middle; PACE sets how strong the slow-down is
   // (0 = even pace; 0.55 runs the ends at ~2.2× and the middle at ~0.45× the average speed).
@@ -39,13 +40,10 @@
   const PACE = 0.55;
   const pace = (p) => (1 - PACE) * p + PACE * (0.5 + 4 * (p - 0.5) ** 3);
   const ZOOM = 0.12; // extra scale a clip starts from; it eases back to 1 across the panel's life
-  // Captions follow the clips: card k's caption and number flip in as its clip starts and flip
-  // out as the next one's start. The last caption leaves before its panel fills the box and
-  // covers the corner it sits in.
-  const CAPTION_END = (handovers - 1) * LAG + 0.65;
-  const seqEnd = Math.max((handovers - 1) * LAG + 1, handovers * LAG + CLIP_START);
-  // Finale: once the last panel fills the box it keeps growing, out to the whole screen,
-  // over OUTRO more of the sequence.
+  // the last clip ends a whole unit after the last change starts
+  const seqEnd = changes;
+  // Finale: once the last clip has played, its panel spreads from the box out to the whole
+  // screen over OUTRO more of the sequence.
   const OUTRO = 0.35;
   const travel = FILL + (seqEnd + OUTRO) * STEP + HOLD;
 
@@ -54,26 +52,21 @@
   const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 140;
 
   const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
-  // ease-in-out: each boundary lingers near the box corners and crosses the middle quickly, so the
-  // panels at either end stay small and the one in focus gets most of the diagonal; with the
-  // hand-overs overlapping, one boundary is always on the move, so the whole never stalls
-  const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t));
+  const smoothstep = (t) => t * t * (3 - 2 * t);
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
   section.classList.add('is-scrolling');
   section.style.setProperty('--track', `${(1 + travel) * 100}vh`);
 
-  // Lays a panel out as the diagonal slice from `a` to `b` (fractions of the box diagonal),
-  // shrunk by `inset` on every side (a fraction of the box) around its centre.
-  function place(panel, a, b, inset = 0) {
-    const size = b - a - 2 * inset;
-    panel.style.visibility = size > 0.001 ? 'visible' : 'hidden';
-    if (size <= 0.001) return;
-    panel.style.left = `${(a + inset) * 100}%`;
-    panel.style.top = `${(a + inset) * 100}%`;
-    panel.style.width = `${size * 100}%`;
-    panel.style.height = `${size * 100}%`;
-    // corners would clump together on a sliver of a panel
-    panel.style.setProperty('--corner-opacity', clamp((size * box.offsetWidth - 20) / 60));
+  // Position of the strip, in panels: 0 = title in the box, 1 = first image, …
+  function stripAt(seq) {
+    if (seq >= changes) return changes;
+    const k = Math.floor(seq);
+    const t = seq - k;
+    if (t < PEEK_END) return k + PEEK * smoothstep(t / PEEK_END);
+    if (t < SLIDE_START) return k + PEEK;
+    if (t < SLIDE_END) return k + PEEK + (1 - PEEK) * easeInOut((t - SLIDE_START) / (SLIDE_END - SLIDE_START));
+    return k + 1;
   }
 
   // where the scroll position says we should be
@@ -84,7 +77,7 @@
       enter: clamp(1 + scrolled),
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
-      // position along the panel sequence: 0 = title, 1 = first image, …
+      // position along the sequence, in changes of panel
       seq: clamp((scrolled - FILL) / STEP, 0, seqEnd + OUTRO),
     };
   }
@@ -122,17 +115,17 @@
     video.addEventListener('loadedmetadata', () => draw(state));
   });
 
-  function scrub(seq) {
+  function scrub(seq, strip) {
     let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = pace(clamp((seq - ((k - 1) * LAG + CLIP_START)) / LAG));
+      const p = pace(clamp((seq - (k - 1 + SLIDE_START)) / CLIP));
       // stop a frame short of the end: seeking to the very end can show a blank frame
       const duration = video.duration || 0;
       wanted.set(video, Math.round(p * Math.max(0, duration - FRAME) / FRAME) * FRAME);
       if (!seek(video)) synced = false;
-      // the panel is on screen from its arrival to the end of its exit (the last one stays)
-      video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((seq - (k - 1) * LAG) / (LAG + 1))));
+      // the panel is on screen while the strip is between k − 1 and k + 1 (the last one stays)
+      video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((strip - (k - 1)) / 2)));
     });
     return synced;
   }
@@ -226,46 +219,39 @@
   // the title panel starts at ENTER_SIZE of the box as the section enters and grows to full size
   // over the whole rise, settling just as the stage sticks
   const ENTER_SIZE = 0.83;
-  const smoothstep = (t) => t * t * (3 - 2 * t);
 
   function draw({ enter, fill, seq }) {
-    const grow = ENTER_SIZE + (1 - ENTER_SIZE) * smoothstep(enter);
+    const strip = stripAt(seq);
     title.style.setProperty('--fill', fill);
-    box.style.setProperty('--drift', (seq * 60).toFixed(1)); // background grid, px
-    // the spot over the grid swings along the anti-diagonal, between the free top-right and
-    // bottom-left corners, with a gentle sideways sway
-    const swing = Math.sin(seq * 2.4 + 0.9);
-    const sway = Math.cos(seq * 3.7) * 8;
-    box.style.setProperty('--spot-x', `${(50 + 30 * swing + sway).toFixed(2)}%`);
-    box.style.setProperty('--spot-y', `${(50 - 30 * swing + sway).toFixed(2)}%`);
-    const synced = scrub(seq);
-    const focus = seq < CLIP_START ? 0 : Math.min(handovers, Math.floor((seq - CLIP_START) / LAG) + 1);
-    showInfo(seq > CAPTION_END ? 0 : focus);
+    const synced = scrub(seq, strip);
+    // a card's caption flips in as its panel slides in and out as the next one starts to peek;
+    // the last one leaves before the finale
+    const focus = seq < SLIDE_START ? 0 : Math.min(changes, Math.floor(seq - SLIDE_START) + 1);
+    showInfo(seq >= seqEnd ? 0 : focus);
 
-    // boundary k sits between panels k and k + 1, as a fraction of the diagonal from the
-    // top-left: it sweeps from 1 to 0 over hand-over k; the panels fill the gaps between them
-    let from = 0;
     panels.forEach((panel, k) => {
-      const to = k < handovers ? 1 - ease(clamp(seq - k * LAG)) : 1;
-      place(panel, from, to, k === 0 ? (to - from) * (1 - grow) / 2 : 0);
-      // the title shrinks with its panel instead of reflowing
-      if (k === 0) title.style.setProperty('--title-scale', to * grow);
-      from = to;
+      const offset = k - strip; // in panel widths, 0 = in the box
+      panel.style.visibility = Math.abs(offset) < 1 ? 'visible' : 'hidden';
+      panel.style.transform = `translateX(${(offset * 100).toFixed(3)}%)`;
     });
 
-    // finale: the last panel spreads from the box to the edges of the stage (the screen)
+    // entrance: the title panel grows from ENTER_SIZE around its centre, its title with it
+    const grow = ENTER_SIZE + (1 - ENTER_SIZE) * smoothstep(enter);
+    const titlePanel = panels[0];
+    titlePanel.style.inset = `${((1 - grow) / 2) * 100}%`;
+    titlePanel.style.width = titlePanel.style.height = 'auto';
+    title.style.setProperty('--title-scale', grow);
+
+    // finale: the last panel spreads from the box to the edges of the stage (the screen),
+    // and the strip's clip opens out with it
     const outro = smoothstep(clamp((seq - seqEnd) / OUTRO));
-    if (outro > 0) {
-      const last = panels[handovers];
-      const stage = box.parentElement;
-      const growX = (stage.clientWidth - box.offsetWidth) * outro;
-      const growY = (stage.clientHeight - box.offsetHeight) * outro;
-      last.style.left = `${-box.offsetLeft * outro}px`;
-      last.style.top = `${-box.offsetTop * outro}px`;
-      last.style.width = `calc(100% + ${growX}px)`;
-      last.style.height = `calc(100% + ${growY}px)`;
-      last.style.setProperty('--corner-opacity', 1 - outro);
-    }
+    const last = panels[changes];
+    const bleedX = box.offsetLeft * outro;
+    const bleedY = box.offsetTop * outro;
+    last.style.inset = `${-bleedY}px ${-bleedX}px`;
+    last.style.width = last.style.height = 'auto';
+    track.style.setProperty('--bleed-x', `${bleedX}px`);
+    track.style.setProperty('--bleed-y', `${bleedY}px`);
     return synced;
   }
 
