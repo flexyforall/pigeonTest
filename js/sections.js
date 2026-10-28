@@ -119,7 +119,7 @@
     // there from the start, the second and third come in behind the band as it passes. The grid
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
-      const RUN = 1800; // ms: the mint block's wipe and the band's run across the cards
+      const RUN = 900; // ms: the mint block's wipe (as in the other headings) and the band's run
       const DELAY = 350;
       const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'; // the mint blocks' wipe everywhere
       const row = $('.steps__row', section);
