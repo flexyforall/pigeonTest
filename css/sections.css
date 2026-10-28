@@ -622,7 +622,6 @@ body { background: var(--c-page); }
     calc((var(--h) - var(--ay) - 6) * var(--u)) calc((var(--ax) + 6) * var(--u))
   );
   animation: plans-signal 3.6s infinite both;
-  animation-delay: calc(var(--n, 0) * 0.9s);
 }
 @keyframes plans-signal {
   0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }

@@ -19,13 +19,12 @@
   section.style.setProperty('--switch-ease', SWITCH_EASE);
 
   /* ---------- wifi signal ---------- */
-  // each coverage zone grows out of its access point; the zones of a plan take turns
+  // all the zones of a plan grow out of their access points together, then fade away together
   section.querySelectorAll('.plans__panel').forEach((panel) =>
-    panel.querySelectorAll('.plans__signal').forEach((zone, n) => {
+    panel.querySelectorAll('.plans__signal').forEach((zone) => {
       const ap = zone.querySelector('i');
       zone.style.setProperty('--ax', ap.style.getPropertyValue('--x'));
       zone.style.setProperty('--ay', ap.style.getPropertyValue('--y'));
-      zone.style.setProperty('--n', n);
     })
   );
 
