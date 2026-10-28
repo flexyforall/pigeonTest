@@ -255,6 +255,58 @@ body { background: var(--c-page); }
   color: transparent;
 }
 
+/* per-card caption (bottom-left) and number (top-right): the corners the diagonal leaves free.
+   Words flip in and out like the hero headline (js/connectivity.js); only the current card's
+   set is shown */
+.connectivity__info {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  color: var(--c-ink);
+  pointer-events: none;
+  visibility: hidden;
+}
+.connectivity__info.is-shown { visibility: visible; }
+
+.connectivity__count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(14 * var(--px));
+  font-weight: 500;
+  line-height: calc(20 * var(--px));
+  opacity: 0.5;
+}
+
+.connectivity__caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--px));
+}
+
+.connectivity__name {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(24 * var(--px));
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: calc(-0.48 * var(--px));
+}
+
+.connectivity__desc {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.28 * var(--px));
+  opacity: 0.5;
+}
+
 .connectivity__corner {
   position: absolute;
   width: 20px;
@@ -287,6 +339,11 @@ body { background: var(--c-page); }
   .logos { padding: 32px 16px; }
   .connectivity__stage { padding: 32px 16px; }
   .connectivity__title { width: 300px; white-space: normal; }
+  /* the free corners are too small for the captions on a phone: they go under the box,
+     the number above it */
+  .connectivity__box { height: calc(100% - 64px); margin: 0 auto auto; }
+  .connectivity__caption { bottom: -62px; }
+  .connectivity__count { top: -27px; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }
   .benefits { padding: 64px 0; gap: 40px; }
 }
