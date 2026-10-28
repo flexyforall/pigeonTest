@@ -551,6 +551,10 @@ body { background: var(--c-page); }
 
 /* tab switch (js/plans.js): a copy of the outgoing plan sits on top and is cut away from the
    bottom as a thin line runs up over the plan */
+.plans__grid {
+  position: absolute;
+  pointer-events: none;
+}
 .plans__ghost {
   position: absolute;
   inset: 0;

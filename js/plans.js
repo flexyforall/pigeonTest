@@ -28,11 +28,28 @@
   /* ---------- panel slide ---------- */
   // a copy of the outgoing panel goes up out of the incoming one while its content comes up
   // from below; the line is the seam between the two
+  // The plans themselves don't travel: each sits still and is cut at the line, the old one above
+  // it, the new one below. That's done by sliding the plan's frame and moving the plan back the
+  // other way by as much, so everything runs as transforms on one clock. The grid behind the
+  // plans is lifted onto a still layer of its own meanwhile.
   let sliding = null;
   function slide(fromPanel, toPanel) {
-    if (sliding) sliding.forEach((el) => el.remove());
-    // the grid behind the plan stays put: only the copy and the plan itself move
-    const content = [toPanel.querySelector('.plans__info'), toPanel.querySelector('.plans__plan')];
+    if (sliding) sliding();
+    const info = toPanel.querySelector('.plans__info');
+    const illus = toPanel.querySelector('.plans__illus');
+    const plan = toPanel.querySelector('.plans__plan');
+
+    const grid = document.createElement('span');
+    grid.className = 'plans__grid';
+    Object.assign(grid.style, {
+      left: `${illus.offsetLeft}px`,
+      top: `${illus.offsetTop}px`,
+      width: `${illus.offsetWidth}px`,
+      height: `${illus.offsetHeight}px`,
+      background: getComputedStyle(illus).background,
+    });
+    illus.style.background = 'none';
+
     const ghost = fromPanel.cloneNode(true);
     ghost.classList.add('plans__ghost');
     ['id', 'role', 'aria-labelledby', 'hidden'].forEach((a) => ghost.removeAttribute(a));
@@ -42,28 +59,34 @@
     const line = document.createElement('span');
     line.className = 'plans__scan';
     line.append(document.createElement('i'));
+    toPanel.prepend(grid);
     toPanel.append(ghost, line);
-    sliding = [ghost, line];
+    const done = () => {
+      [info, illus, plan].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+      illus.style.background = '';
+      [grid, ghost, line].forEach((el) => el.remove());
+      sliding = null;
+    };
+    sliding = done;
 
     const h = toPanel.offsetHeight;
-    const opts = { duration: SWITCH, easing: SWITCH_EASE };
-    ghost.animate([{ transform: 'none' }, { transform: `translateY(${-h}px)` }], { ...opts, fill: 'forwards' });
-    content.forEach((el) => el.animate([{ transform: `translateY(${h}px)` }, { transform: 'none' }], opts));
+    const opts = { duration: SWITCH, easing: SWITCH_EASE, fill: 'forwards' };
+    const move = (el, from, to) => el.animate([{ transform: `translateY(${from}px)` }, { transform: `translateY(${to}px)` }], opts);
+    move(ghost, 0, -h);
+    move(ghost.querySelector('.plans__plan'), 0, h);
+    move(info, h, 0);
+    move(illus, h, 0);
+    move(plan, -h, 0);
     const run = line.firstChild.animate(
-      // moved by transform like the panels, so it runs on the same (compositor) clock as them
       [
         { transform: `translateY(${h}px)`, opacity: 0 },
         { opacity: 1, offset: 0.06 },
         { opacity: 1, offset: 0.92 },
         { transform: 'none', opacity: 0 },
       ],
-      { ...opts, fill: 'forwards' }
+      opts
     );
-    run.finished.then(() => {
-      ghost.remove();
-      line.remove();
-      if (sliding && sliding[0] === ghost) sliding = null;
-    }, () => {});
+    run.finished.then(() => sliding === done && done(), () => {});
   }
 
   function select(tab) {
