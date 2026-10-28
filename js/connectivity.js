@@ -7,7 +7,8 @@
 // the photo. The clips are scrubbed by the scroll, not played, and chained so the line reads as
 // one: a clip's line leaves its panel at the right edge exactly as the next clip's line enters
 // at the left edge of the next panel — the same seam on screen. Only the stretch of each clip
-// where the line is on screen is used (data-line, in seconds), at the same pace for all.
+// where the line is on screen is used (data-line, in seconds), at the same pace for all; the
+// first clip also plays its opening, where the line appears, as its panel slides in.
 // Every clip also slowly zooms out while its panel is on screen.
 (() => {
   const section = document.querySelector('[data-connectivity]');
@@ -123,9 +124,13 @@
     let synced = true;
     videos.forEach((video, k) => {
       if (!video) return;
-      const p = clamp(seq - clipStart(k));
       const [from, to] = lines[k];
-      wanted.set(video, Math.round((from + p * (to - from)) / FRAME) * FRAME);
+      // The first clip has no line to take over, so as its panel slides in from the right it
+      // plays its opening too, where the line first appears (0 → `from`).
+      const t = k === 1 && seq < clipStart(1)
+        ? from * (seq / clipStart(1))
+        : from + clamp(seq - clipStart(k)) * (to - from);
+      wanted.set(video, Math.round(t / FRAME) * FRAME);
       if (!seek(video)) synced = false;
       // the panel is on screen while the strip is between k − 1 and k + 1 (the last one stays)
       video.style.setProperty('--zoom', 1 + ZOOM * (1 - clamp((strip - (k - 1)) / 2)));
