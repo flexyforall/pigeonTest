@@ -1,18 +1,15 @@
-// "Coverage starts with your space": the space-type tabs, switched the way the hero switches
-// audiences. A thin line sweeps up across the whole panel, cutting the old content away above
-// it, while the black block behind the active tab slides quickly to the new tab. The old copy is
-// pulled up and out of the panel and the new copy rises into place from below.
+// "Coverage starts with your space": the space-type tabs. On a switch the panel slides up as a
+// whole: the old content goes up and out at its own size, the new content follows right under
+// it, and a thin line runs along the seam between them. The black block behind the active tab
+// slides quickly to the new tab.
 (() => {
   const section = document.querySelector('.plans');
   if (!section) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SWITCH = 1000; // ms: the scan line
+  const SWITCH = 1000; // ms: the panel slide
   const SLIDE = 500; // ms: the tab block
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
-  const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
-  const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.3)';
-  const RISE = 220; // px the new copy rises from
 
   const tabRow = section.querySelector('.plans__tabs');
   const indicator = section.querySelector('.plans__indicator');
@@ -28,42 +25,13 @@
     indicator.style.transform = `translateX(${tab.offsetLeft}px)`;
   }
 
-  /* ---------- copy ---------- */
-  // the old copy is pulled up and out; the new one rises from low in the panel, piece by piece
-  const pieces = (panel) =>
-    ['.plans__icon', '.plans__title', '.plans__tags', '.plans__desc', '.btn'].map((sel) => panel.querySelector(sel));
-
-  // the old copy and the old plan each go as one block, their layout untouched, up and out of
-  // the panel; the grid behind the plan stays
-  function leave(ghost) {
-    const top = ghost.getBoundingClientRect().top;
-    const lift = (el, bottom) =>
-      el.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - bottom}px)`, opacity: 0.4 }], {
-        duration: 800,
-        easing: EASE_IN,
-        fill: 'forwards',
-      });
-    lift(ghost.querySelector('.plans__info'), Math.max(...pieces(ghost).map((el) => el.getBoundingClientRect().bottom)));
-    const plan = ghost.querySelector('.plans__plan');
-    lift(plan, plan.getBoundingClientRect().bottom);
-  }
-
-  function enterCopy(panel) {
-    pieces(panel).forEach((el, i) =>
-      el.animate([{ transform: `translateY(${RISE}px)`, opacity: 0 }, { opacity: 1, offset: 0.4 }, { transform: 'none', opacity: 1 }], {
-        duration: 1100,
-        delay: 250 + i * 50,
-        easing: EASE_OUT,
-        fill: 'backwards',
-      })
-    );
-  }
-
-  /* ---------- scan over the panel ---------- */
-  // a copy of the outgoing panel on top of the incoming one, cut away from the bottom
-  let scanning = null;
-  function scan(fromPanel, toPanel) {
-    if (scanning) scanning.forEach((el) => el.remove());
+  /* ---------- panel slide ---------- */
+  // a copy of the outgoing panel goes up out of the incoming one while its content comes up
+  // from below; the line is the seam between the two
+  let sliding = null;
+  function slide(fromPanel, toPanel) {
+    if (sliding) sliding.forEach((el) => el.remove());
+    const content = [...toPanel.children];
     const ghost = fromPanel.cloneNode(true);
     ghost.classList.add('plans__ghost');
     ['id', 'role', 'aria-labelledby', 'hidden'].forEach((a) => ghost.removeAttribute(a));
@@ -73,20 +41,20 @@
     line.className = 'plans__scan';
     line.append(document.createElement('i'));
     toPanel.append(ghost, line);
-    scanning = [ghost, line];
+    sliding = [ghost, line];
 
-    const opts = { duration: SWITCH, easing: SWITCH_EASE, fill: 'forwards' };
-    ghost.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], opts);
-    // the old copy and plan leave upwards; the ghost's backdrop stays opaque
-    leave(ghost);
+    const h = toPanel.offsetHeight;
+    const opts = { duration: SWITCH, easing: SWITCH_EASE };
+    ghost.animate([{ transform: 'none' }, { transform: `translateY(${-h}px)` }], { ...opts, fill: 'forwards' });
+    content.forEach((el) => el.animate([{ transform: `translateY(${h}px)` }, { transform: 'none' }], opts));
     const run = line.firstChild.animate(
       [{ top: '100%', opacity: 0 }, { opacity: 1, offset: 0.06 }, { opacity: 1, offset: 0.92 }, { top: '0%', opacity: 0 }],
-      opts
+      { ...opts, fill: 'forwards' }
     );
     run.finished.then(() => {
       ghost.remove();
       line.remove();
-      if (scanning && scanning[0] === ghost) scanning = null;
+      if (sliding && sliding[0] === ghost) sliding = null;
     }, () => {});
   }
 
@@ -102,9 +70,7 @@
     });
     moveIndicator(tab, !reduceMotion);
     if (reduceMotion || !fromPanel) return;
-    const panel = panelOf(tab);
-    scan(fromPanel, panel);
-    enterCopy(panel);
+    slide(fromPanel, panelOf(tab));
   }
 
   moveIndicator(tabs.find((t) => t.classList.contains('is-active')), false);
