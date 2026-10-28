@@ -19,7 +19,6 @@
   const panels = [...section.querySelectorAll('.connectivity__panel')];
   const title = section.querySelector('.connectivity__title');
   const videos = panels.map((panel) => panel.querySelector('video'));
-  const infos = [...section.querySelectorAll('.connectivity__info')]; // caption + number per image panel
 
   // scroll lengths in viewport heights
   const FILL = 1; // title fill, once the stage has stuck
@@ -154,76 +153,6 @@
   );
   primer.observe(section);
 
-  /* ---------- captions ---------- */
-  // Words sit in clipping boxes and flip like the hero headline: the old ones lift out of view,
-  // the new ones rise in behind them, word by word.
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
-  const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.2)';
-
-  infos.forEach((info) =>
-    info.querySelectorAll('p').forEach((line) => {
-      const words = line.textContent.trim().split(/\s+/);
-      line.textContent = '';
-      words.forEach((word, i) => {
-        const w = document.createElement('span');
-        w.className = 'w';
-        const inner = document.createElement('span');
-        inner.className = 'w__in';
-        inner.textContent = word;
-        w.append(inner);
-        line.append(w);
-        if (i < words.length - 1) line.append(' ');
-      });
-    })
-  );
-
-  let shownInfo = 0; // 1-based card number, 0 = none
-  const wordsOf = (info) => [...info.querySelectorAll('.w__in')];
-
-  function showInfo(n) {
-    if (n === shownInfo) return;
-    const prev = infos[shownInfo - 1];
-    const next = infos[n - 1];
-    shownInfo = n;
-
-    if (prev) {
-      const words = wordsOf(prev);
-      words.forEach((w) => w.getAnimations().forEach((a) => a.cancel()));
-      if (reduceMotion) prev.classList.remove('is-shown');
-      else {
-        const out = words.map((w, i) =>
-          w.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-105%)' }], {
-            duration: 450,
-            delay: i * 20,
-            easing: EASE_IN,
-            fill: 'forwards',
-          })
-        );
-        Promise.all(out.map((a) => a.finished)).then(() => {
-          if (infos[shownInfo - 1] !== prev) prev.classList.remove('is-shown');
-          out.forEach((a) => a.cancel());
-        }, () => {});
-      }
-    }
-
-    if (next) {
-      const words = wordsOf(next);
-      words.forEach((w) => w.getAnimations().forEach((a) => a.cancel()));
-      next.classList.add('is-shown');
-      if (!reduceMotion) {
-        words.forEach((w, i) =>
-          w.animate([{ transform: 'translateY(105%)' }, { transform: 'translateY(0)' }], {
-            duration: 900,
-            delay: 200 + i * 40,
-            easing: EASE_OUT,
-            fill: 'backwards',
-          })
-        );
-      }
-    }
-  }
-
   // the title panel starts at ENTER_SIZE of the box as the section enters and grows to full size
   // over the whole rise, settling just as the stage sticks
   const ENTER_SIZE = 0.83;
@@ -232,10 +161,6 @@
     const strip = stripAt(seq);
     title.style.setProperty('--fill', fill);
     const synced = scrub(seq, strip);
-    // a card's caption flips in with its clip's line and out as the next one's starts;
-    // the last one leaves as the finale begins
-    const focus = seq < clipStart(1) ? 0 : Math.min(changes, Math.floor(seq - clipStart(1)) + 1);
-    showInfo(seq >= changes ? 0 : focus);
 
     panels.forEach((panel, k) => {
       const offset = k - strip; // in panel widths, 0 = in the box
