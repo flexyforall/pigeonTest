@@ -249,7 +249,7 @@ body { background: var(--c-page); }
   left: 0;
   right: 0;
   height: 4px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.06); /* icon/disabled (#000 at 20%) on a 30% layer */
   opacity: var(--progress-fade, 1);
 }
 .connectivity__progress span {
