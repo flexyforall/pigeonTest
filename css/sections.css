@@ -181,6 +181,9 @@ body { background: var(--c-page); }
   position: relative;
   background: var(--c-page);
   border-bottom: 1px solid var(--c-rule);
+  /* the panels waiting off to the right must not widen the page; clip (not hidden) keeps the
+     sticky stage working */
+  overflow-x: clip;
 }
 .connectivity.is-scrolling { height: var(--track, 500vh); }
 
