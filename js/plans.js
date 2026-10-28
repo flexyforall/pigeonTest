@@ -48,7 +48,13 @@
     ghost.animate([{ transform: 'none' }, { transform: `translateY(${-h}px)` }], { ...opts, fill: 'forwards' });
     content.forEach((el) => el.animate([{ transform: `translateY(${h}px)` }, { transform: 'none' }], opts));
     const run = line.firstChild.animate(
-      [{ top: '100%', opacity: 0 }, { opacity: 1, offset: 0.06 }, { opacity: 1, offset: 0.92 }, { top: '0%', opacity: 0 }],
+      // moved by transform like the panels, so it runs on the same (compositor) clock as them
+      [
+        { transform: `translateY(${h}px)`, opacity: 0 },
+        { opacity: 1, offset: 0.06 },
+        { opacity: 1, offset: 0.92 },
+        { transform: 'none', opacity: 0 },
+      ],
       { ...opts, fill: 'forwards' }
     );
     run.finished.then(() => {
