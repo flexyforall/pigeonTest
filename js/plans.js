@@ -33,16 +33,19 @@
   const pieces = (panel) =>
     ['.plans__icon', '.plans__title', '.plans__tags', '.plans__desc', '.btn'].map((sel) => panel.querySelector(sel));
 
-  // the old copy goes as one block, its layout untouched, up and out of the panel
-  function leaveCopy(ghost) {
+  // the old copy and the old plan each go as one block, their layout untouched, up and out of
+  // the panel; the grid behind the plan stays
+  function leave(ghost) {
     const top = ghost.getBoundingClientRect().top;
-    const info = ghost.querySelector('.plans__info');
-    const bottom = Math.max(...pieces(ghost).map((el) => el.getBoundingClientRect().bottom));
-    info.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - bottom}px)`, opacity: 0.4 }], {
-      duration: 800,
-      easing: EASE_IN,
-      fill: 'forwards',
-    });
+    const lift = (el, bottom) =>
+      el.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - bottom}px)`, opacity: 0.4 }], {
+        duration: 800,
+        easing: EASE_IN,
+        fill: 'forwards',
+      });
+    lift(ghost.querySelector('.plans__info'), Math.max(...pieces(ghost).map((el) => el.getBoundingClientRect().bottom)));
+    const plan = ghost.querySelector('.plans__plan');
+    lift(plan, plan.getBoundingClientRect().bottom);
   }
 
   function enterCopy(panel) {
@@ -74,9 +77,8 @@
 
     const opts = { duration: SWITCH, easing: SWITCH_EASE, fill: 'forwards' };
     ghost.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], opts);
-    // the old plan pales as it goes, the old copy leaves upwards; the ghost's backdrop stays opaque
-    ghost.querySelector('.plans__illus').animate([{ opacity: 1 }, { opacity: 0.45 }], opts);
-    leaveCopy(ghost);
+    // the old copy and plan leave upwards; the ghost's backdrop stays opaque
+    leave(ghost);
     const run = line.firstChild.animate(
       [{ top: '100%', opacity: 0 }, { opacity: 1, offset: 0.06 }, { opacity: 1, offset: 0.92 }, { top: '0%', opacity: 0 }],
       opts
