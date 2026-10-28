@@ -165,8 +165,14 @@
   // over the whole rise, settling just as the stage sticks
   const ENTER_SIZE = 0.83;
 
+  const stage = section.querySelector('.connectivity__stage');
+  const FRAME_GAP = 3; // px, see .connectivity__stage in the CSS
+
   function draw({ enter, fill, progress: done, seq }) {
     const strip = stripAt(seq);
+    // the frame's top rule lies on the divider's bottom rule until the stage has stuck to the
+    // screen top, then opens up to the gap
+    stage.style.setProperty('--frame-top', `${clamp(-section.getBoundingClientRect().top - 1, -1, FRAME_GAP)}px`);
     title.style.setProperty('--fill', fill);
     const synced = scrub(seq, strip);
 

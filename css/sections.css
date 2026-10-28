@@ -200,14 +200,16 @@ body { background: var(--c-page); }
   top: 0;
 }
 /* the frame around the box: side and top rules, FRAME_GAP short of the screen's top and bottom
-   edges so the whole frame is in view; the bottom rule is the progress bar */
+   edges so the whole frame is in view; the bottom rule is the progress bar. Until the stage
+   sticks, its top rule lies on the divider's bottom one (--frame-top: -1px) and only opens up
+   to the gap as the stage reaches the top of the screen (set by connectivity.js) */
 .connectivity__stage {
   --frame-gap: 3px;
 }
 .connectivity__stage::before {
   content: "";
   position: absolute;
-  top: var(--frame-gap);
+  top: var(--frame-top, -1px);
   bottom: var(--frame-gap);
   left: max(40px, calc((100% - 1840px) / 2));
   right: max(40px, calc((100% - 1840px) / 2));
