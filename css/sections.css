@@ -634,6 +634,8 @@ body { background: var(--c-page); }
   height: calc(var(--h) * var(--u));
   overflow: hidden;
   pointer-events: none;
+  /* the waves tint the plan as one: where they overlap the tint stays the same */
+  mix-blend-mode: multiply;
 }
 .plans__wave {
   position: absolute;
@@ -642,9 +644,7 @@ body { background: var(--c-page); }
   width: calc(2 * var(--r) * var(--u));
   height: calc(2 * var(--r) * var(--u));
   border-radius: 50%;
-  /* a soft mint band with a crisper leading edge */
-  background: radial-gradient(closest-side, rgba(234, 255, 248, 0) 70%, #eafff8 91%, #c8f5e5 98%, rgba(200, 245, 229, 0) 100%);
-  mix-blend-mode: multiply;
+  background: #eafff8;
   opacity: 0;
   transform: scale(0);
 }
