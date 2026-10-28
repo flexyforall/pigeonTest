@@ -268,14 +268,14 @@ body { background: var(--c-page); }
   object-position: left top;
 }
 
-/* stays in Outfit 44/48, as in Figma */
+/* headline/H1: Satoshi 52/52 */
 .connectivity__title {
   position: absolute;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: calc(44 * var(--px));
-  font-weight: 500;
-  line-height: calc(48 * var(--px));
-  letter-spacing: calc(-0.88 * var(--px));
+  font-family: var(--f-display);
+  font-size: calc(52 * var(--px));
+  font-weight: 550;
+  line-height: calc(52 * var(--px));
+  letter-spacing: calc(-1.04 * var(--px));
   top: 50%;
   left: 50%;
   translate: -50% -50%;
