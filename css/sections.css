@@ -528,6 +528,32 @@ body { background: var(--c-page); }
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cpath d='M11 0h55v2H11zM0 11h2v55H0z' fill='%23000' fill-opacity='.033'/%3E%3Cpath d='M0 0h2v2H0z' fill='%23000' fill-opacity='.2'/%3E%3C/svg%3E") 53px 54px / 75px 75px;
 }
 
+/* tab switch (js/plans.js): a copy of the outgoing panel sits on top and is cut away from the
+   bottom as a thin line runs up across the whole panel */
+.plans__content { position: relative; }
+.plans__ghost {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background-color: var(--c-page);
+  pointer-events: none;
+}
+.plans__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.plans__scan i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #59b293; /* icon/accentForLight */
+}
+
 /* the plan and everything on it are laid out in design pixels of its 680px width (--u) */
 .plans__plan {
   position: relative;
