@@ -62,14 +62,34 @@
   }
 
   /* ---------- wifi signal ---------- */
-  // all the zones of a plan grow out of their access points together, then fade away together
-  section.querySelectorAll('.plans__panel').forEach((panel) =>
-    panel.querySelectorAll('.plans__signal').forEach((zone) => {
-      const ap = zone.querySelector('i');
-      zone.style.setProperty('--ax', ap.style.getPropertyValue('--x'));
-      zone.style.setProperty('--ay', ap.style.getPropertyValue('--y'));
-    })
-  );
+  // A single wave out of every access point, across the whole building (the zones together tile
+  // it), at one speed for all: a wave that has further to go takes longer.
+  const WAVE_SPEED = 320; // plan units (of the 680 wide plan) per second
+  section.querySelectorAll('.plans__plan').forEach((plan) => {
+    const zones = [...plan.querySelectorAll('.plans__signal')];
+    if (!zones.length) return;
+    const num = (el, v) => parseFloat(el.style.getPropertyValue(v));
+    const box = zones.map((z) => [num(z, '--x'), num(z, '--y'), num(z, '--w'), num(z, '--h')]);
+    const x0 = Math.min(...box.map((b) => b[0]));
+    const y0 = Math.min(...box.map((b) => b[1]));
+    const x1 = Math.max(...box.map((b) => b[0] + b[2]));
+    const y1 = Math.max(...box.map((b) => b[1] + b[3]));
+    const layer = document.createElement('span');
+    layer.className = 'plans__waves';
+    layer.setAttribute('aria-hidden', 'true');
+    Object.entries({ '--x': x0, '--y': y0, '--w': x1 - x0, '--h': y1 - y0 }).forEach(([k, v]) => layer.style.setProperty(k, v));
+    zones.forEach((z, i) => {
+      const ap = z.querySelector('i');
+      const cx = box[i][0] + num(ap, '--x') + 6 - x0; // the square's centre, in the layer
+      const cy = box[i][1] + num(ap, '--y') + 6 - y0;
+      const r = Math.max(...[[0, 0], [x1 - x0, 0], [0, y1 - y0], [x1 - x0, y1 - y0]].map(([x, y]) => Math.hypot(x - cx, y - cy)));
+      const wave = document.createElement('span');
+      wave.className = 'plans__wave';
+      Object.entries({ '--cx': cx, '--cy': cy, '--r': r, '--dur': `${(r / WAVE_SPEED).toFixed(2)}s` }).forEach(([k, v]) => wave.style.setProperty(k, v));
+      layer.append(wave);
+    });
+    plan.insertBefore(layer, zones[0]);
+  });
 
   new IntersectionObserver((entries, io) => {
     if (!entries.some((e) => e.isIntersecting)) return;
@@ -115,8 +135,8 @@
     ghost.setAttribute('aria-hidden', 'true');
     ghost.inert = true;
     ghost.querySelector('.plans__illus').style.background = 'none';
-    // the old zones are long gone; a fresh copy would play them again
-    ghost.querySelectorAll('.plans__signal').forEach((zone) => zone.remove());
+    // the old waves are long gone; a fresh copy would play them again
+    ghost.querySelectorAll('.plans__waves').forEach((layer) => layer.remove());
     const line = document.createElement('span');
     line.className = 'plans__scan';
     line.append(document.createElement('i'));

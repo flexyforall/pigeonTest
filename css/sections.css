@@ -614,7 +614,7 @@ body { background: var(--c-page); }
   color: rgba(16, 17, 17, 0.4); /* text/tertiary */
 }
 
-/* coverage zones, tinting what lies under them; a square marks the access point */
+/* coverage zones: each holds its access point, the square */
 .plans__signal {
   position: absolute;
   left: calc(var(--x) * var(--u));
@@ -622,28 +622,40 @@ body { background: var(--c-page); }
   width: calc(var(--w) * var(--u));
   height: calc(var(--h) * var(--u));
 }
-/* the wifi signal: once the section is in view (and each time a plan is shown) the zone grows
-   out of its access point, then fades away for good (--ax/--ay, the access point within the zone, are set from the square by plans.js) */
-.plans__signal::before {
-  content: "";
+
+/* the wifi signal: once the section is in view, and each time a plan is shown, a single wave
+   rings out of every access point and runs across the whole building (built by plans.js: the
+   layer covers the building, --cx/--cy is the access point, --r how far the wave goes) */
+.plans__waves {
   position: absolute;
-  inset: 0;
-  background: #eafff8;
-  mix-blend-mode: multiply;
-  --from: inset(
-    calc((var(--ay) + 6) * var(--u)) calc((var(--w) - var(--ax) - 6) * var(--u))
-    calc((var(--h) - var(--ay) - 6) * var(--u)) calc((var(--ax) + 6) * var(--u))
-  );
-  opacity: 0;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  overflow: hidden;
+  pointer-events: none;
 }
-.plans.is-seen .plans__signal::before { animation: plans-signal 1.8s both; }
-@keyframes plans-signal {
-  0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-  45% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-out; }
-  100% { clip-path: inset(0); opacity: 0; }
+.plans__wave {
+  position: absolute;
+  left: calc((var(--cx) - var(--r)) * var(--u));
+  top: calc((var(--cy) - var(--r)) * var(--u));
+  width: calc(2 * var(--r) * var(--u));
+  height: calc(2 * var(--r) * var(--u));
+  border-radius: 50%;
+  /* a soft mint band with a crisper leading edge */
+  background: radial-gradient(closest-side, rgba(234, 255, 248, 0) 70%, #eafff8 91%, #c8f5e5 98%, rgba(200, 245, 229, 0) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transform: scale(0);
+}
+.plans.is-seen .plans__wave { animation: plans-wave var(--dur) 0.35s cubic-bezier(0.25, 0.5, 0.35, 1) both; }
+@keyframes plans-wave {
+  0% { transform: scale(0.02); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .plans.is-seen .plans__signal::before { animation: none; }
+  .plans.is-seen .plans__wave { animation: none; }
 }
 .plans__signal i {
   position: absolute;
