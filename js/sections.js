@@ -104,18 +104,10 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
+      // the black block behind the active tab comes in ahead of its white text
+      from($('.plans__indicator', section), { opacity: 0 }, { duration: 600, delay: 100 });
       $$('.plan-tab', section).forEach((tab, i) => {
         const d = 300 + i * 120;
-        if (tab.classList.contains('is-active')) {
-          // the black comes in ahead of its white text; the end colour is explicit because the
-          // tab's own colour transition is still at its start when this is read
-          tab.animate([{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: 'rgb(0, 0, 0)' }], {
-            duration: 600,
-            delay: d - 200,
-            easing: EASE_OUT,
-            fill: 'backwards',
-          });
-        }
         rise($('.plan-tab__name', tab), d + 200, { word: 900, stagger: 40 });
         fadeUp($('.plan-tab__aps', tab), d + 400);
       });

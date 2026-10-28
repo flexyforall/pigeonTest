@@ -349,7 +349,7 @@ body { background: var(--c-page); }
 .is-pending .benefit > *,
 .is-pending .plans__head,
 .is-pending .plan-tab > * { visibility: hidden; }
-.is-pending .plan-tab.is-active { background: transparent; }
+.is-pending .plans__indicator { opacity: 0; }
 
 /* ===== Plans ("Coverage starts with your space") ===== */
 .plans {
@@ -394,6 +394,7 @@ body { background: var(--c-page); }
 
 /* tabs */
 .plans__tabs {
+  position: relative;
   display: flex;
   border-top: 1px solid var(--c-rule);
   border-bottom: 1px solid var(--c-rule);
@@ -408,13 +409,26 @@ body { background: var(--c-page); }
   min-width: 1px;
   /* 20px in Figma, where the row's 1px rules sit inside the 92px tabs */
   padding: calc(20 * var(--px) - 1px) calc(24 * var(--px));
-  color: var(--c-ink);
+  position: relative;
   text-align: left;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 .plan-tab + .plan-tab { border-left: 1px solid var(--c-rule); }
 .plan-tab:not(.is-active):hover { background: rgba(0, 0, 0, 0.03); }
-.plan-tab.is-active { background: var(--c-ink); color: var(--c-white); }
+
+/* the black block behind the active tab; slides between tabs in step with the scan line */
+.plans__indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  background: var(--c-ink);
+  pointer-events: none;
+}
+.plans__indicator.is-animated {
+  transition: transform var(--switch-duration) var(--switch-ease), width var(--switch-duration) var(--switch-ease);
+}
 
 .plan-tab__name {
   font-family: var(--f-display);
@@ -428,9 +442,16 @@ body { background: var(--c-page); }
   font-family: var(--f-body);
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
-  color: var(--c-ink-muted);
 }
-.plan-tab.is-active .plan-tab__aps { color: var(--c-muted); }
+
+/* white text inverted against what lies behind: black on the page, white over the sliding black
+   block, and split cleanly while the block passes under a tab */
+.plan-tab__name,
+.plan-tab__aps {
+  color: var(--c-white);
+  mix-blend-mode: difference;
+}
+.plan-tab__aps { color: rgba(255, 255, 255, 0.7); }
 
 /* panel: copy on the left, floor plan on the right; one per tab */
 .plans__panel { display: flex; }
@@ -528,21 +549,18 @@ body { background: var(--c-page); }
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cpath d='M11 0h55v2H11zM0 11h2v55H0z' fill='%23000' fill-opacity='.033'/%3E%3Cpath d='M0 0h2v2H0z' fill='%23000' fill-opacity='.2'/%3E%3C/svg%3E") 53px 54px / 75px 75px;
 }
 
-/* tab switch (js/plans.js): a copy of the outgoing panel sits on top and is cut away from the
-   bottom as a thin line runs up across the whole panel */
-.plans__content { position: relative; }
+/* tab switch (js/plans.js): a copy of the outgoing plan sits on top and is cut away from the
+   bottom as a thin line runs up over the plan */
 .plans__ghost {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: 0;
   z-index: 2;
   background-color: var(--c-page);
   pointer-events: none;
 }
 .plans__scan {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: 0;
   z-index: 3;
   pointer-events: none;
 }
