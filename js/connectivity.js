@@ -44,7 +44,10 @@
   // covers the corner it sits in.
   const CAPTION_END = (handovers - 1) * LAG + 0.65;
   const seqEnd = Math.max((handovers - 1) * LAG + 1, handovers * LAG + CLIP_START);
-  const travel = FILL + seqEnd * STEP + HOLD;
+  // Finale: once the last panel fills the box it keeps growing, out to the whole screen,
+  // over OUTRO more of the sequence.
+  const OUTRO = 0.35;
+  const travel = FILL + (seqEnd + OUTRO) * STEP + HOLD;
 
   // The drawn state chases the scroll position instead of jumping with it, so wheel steps
   // and trackpad flicks glide. SMOOTH is the time constant of that chase, in ms.
@@ -82,7 +85,7 @@
       // the fill starts just before the stage sticks, so it plays out in full view
       fill: clamp((scrolled + 0.15) / (FILL + 0.15)),
       // position along the panel sequence: 0 = title, 1 = first image, …
-      seq: clamp((scrolled - FILL) / STEP, 0, seqEnd),
+      seq: clamp((scrolled - FILL) / STEP, 0, seqEnd + OUTRO),
     };
   }
 
@@ -249,6 +252,20 @@
       if (k === 0) title.style.setProperty('--title-scale', to * grow);
       from = to;
     });
+
+    // finale: the last panel spreads from the box to the edges of the stage (the screen)
+    const outro = smoothstep(clamp((seq - seqEnd) / OUTRO));
+    if (outro > 0) {
+      const last = panels[handovers];
+      const stage = box.parentElement;
+      const growX = (stage.clientWidth - box.offsetWidth) * outro;
+      const growY = (stage.clientHeight - box.offsetHeight) * outro;
+      last.style.left = `${-box.offsetLeft * outro}px`;
+      last.style.top = `${-box.offsetTop * outro}px`;
+      last.style.width = `calc(100% + ${growX}px)`;
+      last.style.height = `calc(100% + ${growY}px)`;
+      last.style.setProperty('--corner-opacity', 1 - outro);
+    }
     return synced;
   }
 
