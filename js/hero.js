@@ -383,8 +383,8 @@
     });
 
   /* ---------- intro ---------- */
-  // afterLoader: the loader video is already on screen and the logo is in place
-  function intro({ afterLoader = false } = {}) {
+  // keepLogo: the logo is already in place (shown through the loader)
+  function intro({ keepLogo = false } = {}) {
     moveIndicator(false);
     moveHighlight(false);
     hero.classList.add('is-ready');
@@ -397,10 +397,8 @@
       return;
     }
 
-    if (!afterLoader) {
-      const bg = bgs.find((b) => b.dataset.bg === current);
-      from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
-    }
+    const bg = bgs.find((b) => b.dataset.bg === current);
+    from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
 
     // frame and hairlines draw in
     from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
@@ -414,7 +412,7 @@
 
     // header items
     $$('[data-intro="header"]')
-      .filter((el) => !(afterLoader && el.classList.contains('header__logo')))
+      .filter((el) => !(keepLogo && el.classList.contains('header__logo')))
       .forEach((el, i) =>
         from(el, { opacity: 0, transform: 'translateY(-14px)' }, { duration: 900, delay: 500 + i * 60 })
       );
@@ -434,9 +432,16 @@
   }
 
   /* ---------- loader ---------- */
-  // The loader video runs once per tab session; its last frame stays as the Business background.
+  // Once per tab session: the globe spins for a few seconds with only the logo on screen, then
+  // fades out while the hero draws in underneath.
   const video = $('.hero__video');
   const LOADER_KEY = 'pigeonm:loader-seen';
+  const LOADER = {
+    rate: 0.8, // the clip is played a little slower than it was rendered
+    fadeAt: 1.75, // s of the clip (≈ 2.2 s on screen) at which it starts to fade
+    fade: 900, // ms
+    introAfter: 250, // ms into the fade at which the hero starts to draw in
+  };
 
   const loaderSeen = () => {
     try { return sessionStorage.getItem(LOADER_KEY) === '1'; } catch { return false; }
@@ -451,35 +456,31 @@
     hero.classList.add('is-ready', 'is-loading');
     from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
 
-    let introStarted = false;
-    let finished = false;
-
-    // The hero UI comes in as the meeting-room doors open in the video (data-intro-at, seconds),
-    // while the video plays out underneath.
-    const startIntro = () => {
-      if (introStarted) return;
-      introStarted = true;
-      markLoaderSeen();
-      const played = video.currentTime > 0;
-      if (played) hero.classList.add('is-handoff');
-      // fonts are long loaded by now, but never split/measure before they are
-      Promise.race([fontsReady, timeout(500)]).then(() => intro({ afterLoader: played }));
-    };
-
-    // The video stops on its last frame, which is swapped for the identical still image.
+    let done = false;
     const finish = () => {
-      if (finished) return;
-      finished = true;
-      startIntro();
-      video.pause();
-      video.remove();
-      hero.classList.remove('is-handoff');
+      if (done) return;
+      done = true;
+      markLoaderSeen();
+      hero.classList.add('is-handoff');
+      const fade = video.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: LOADER.fade,
+        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+        fill: 'forwards',
+      });
+      // fonts are long loaded by now, but never split/measure before they are
+      timeout(LOADER.introAfter)
+        .then(() => Promise.race([fontsReady, timeout(500)]))
+        .then(() => intro({ keepLogo: true }));
+      fade.finished.then(() => {
+        video.pause();
+        video.remove();
+        hero.classList.remove('is-handoff');
+      });
     };
 
-    const introAt = Number(video.dataset.introAt) || Infinity;
     const watchTime = (mediaTime) => {
-      if (mediaTime >= introAt) startIntro();
-      else if (!finished) waitFrame();
+      if (mediaTime >= LOADER.fadeAt) finish();
+      else if (!done) waitFrame();
     };
     const waitFrame = () =>
       video.requestVideoFrameCallback
@@ -490,14 +491,15 @@
     video.addEventListener('ended', finish, { once: true });
     video.addEventListener('error', finish, { once: true });
 
-    // video that never starts (blocked autoplay, slow network) falls back to the still image
+    // video that never starts (blocked autoplay, slow network) just fades away
+    video.playbackRate = LOADER.rate;
     const started = new Promise((resolve) => video.addEventListener('playing', resolve, { once: true }));
     const play = video.play();
     if (play) play.catch(finish);
     Promise.race([started, timeout(3000)]).then(() => {
-      if (video.paused && !finished) finish();
+      if (video.paused && !done) finish();
       // safety net if playback stalls midway
-      else setTimeout(finish, ((video.duration || 16) + 4) * 1000);
+      else setTimeout(finish, (LOADER.fadeAt / LOADER.rate + 3) * 1000);
     });
   }
 

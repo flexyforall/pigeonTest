@@ -108,7 +108,7 @@ h1, h2, p { margin: 0; }
   pointer-events: none;
 }
 
-/* Loader video: plays once, its last frame equals hero-business.jpg */
+/* Loader: a spinning dotted globe on black, played once, then faded out over the hero */
 .hero__video {
   position: absolute;
   inset: 0;
@@ -116,7 +116,7 @@ h1, h2, p { margin: 0; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: var(--c-bg); /* black until the first frame, not the still image below */
+  background: #000; /* the video's own black, until the first frame */
   pointer-events: none;
   display: none;
 }
@@ -124,6 +124,7 @@ h1, h2, p { margin: 0; }
 .hero.is-handoff .hero__video { display: block; }
 
 /* While the loader plays only the logo is on screen */
+.hero.is-loading .hero__bg-img { opacity: 0; } /* the hero image fades in after the globe */
 .hero.is-loading .hero__frame > :not(.header),
 .hero.is-loading .header > :not(.header__logo) { opacity: 0; }
 .hero.is-loading .hero__frame::before,
