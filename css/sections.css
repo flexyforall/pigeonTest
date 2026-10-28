@@ -651,7 +651,7 @@ body { background: var(--c-page); }
 .plans.is-seen .plans__wave { animation: plans-wave 1s 0.35s both; }
 @keyframes plans-wave {
   0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-  65% { clip-path: inset(0); opacity: 1; animation-timing-function: linear; }
+  80% { clip-path: inset(0); opacity: 1; animation-timing-function: linear; }
   100% { clip-path: inset(0); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
