@@ -454,7 +454,7 @@ body { background: var(--c-page); }
 .plan-tab__aps { color: rgba(255, 255, 255, 0.7); }
 
 /* panel: copy on the left, floor plan on the right; one per tab */
-.plans__panel { position: relative; display: flex; }
+.plans__panel { position: relative; display: flex; overflow: clip; }
 .plans__panel[hidden] { display: none; }
 
 .plans__info {

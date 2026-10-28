@@ -1,18 +1,18 @@
 // "Coverage starts with your space": the space-type tabs, switched the way the hero switches
 // audiences. A thin line sweeps up across the whole panel, cutting the old content away above
-// it, while the black block behind the active tab slides quickly to the new tab; the new copy
-// comes in as the hero copy does on a switch, on its own clock.
+// it, while the black block behind the active tab slides quickly to the new tab. The old copy is
+// pulled up and out of the panel and the new copy rises into place from below.
 (() => {
   const section = document.querySelector('.plans');
   if (!section) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SWITCH = 1600; // ms: the scan line
-  const SLIDE = 650; // ms: the tab block
+  const SWITCH = 1000; // ms: the scan line
+  const SLIDE = 500; // ms: the tab block
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
-  const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
-  // the hero's SWITCH_TIMING
-  const T = { delay: 60, word: 800, stagger: 30, text: 120, button: 200, fade: 700 };
+  const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
+  const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.3)';
+  const RISE = 220; // px the new copy rises from
 
   const tabRow = section.querySelector('.plans__tabs');
   const indicator = section.querySelector('.plans__indicator');
@@ -28,45 +28,33 @@
     indicator.style.transform = `translateX(${tab.offsetLeft}px)`;
   }
 
-  /* ---------- copy, as the hero copy comes in on a switch ---------- */
-  section.querySelectorAll('.plans__title').forEach((title) => {
-    const label = title.textContent.trim();
-    title.textContent = '';
-    label.split(/\s+/).forEach((word, i, all) => {
-      const w = document.createElement('span');
-      w.className = 'w';
-      const inner = document.createElement('span');
-      inner.className = 'w__in';
-      inner.textContent = word;
-      w.append(inner);
-      title.append(w);
-      if (i < all.length - 1) title.append(' ');
-    });
-    title.setAttribute('aria-label', label);
-    [...title.children].forEach((el) => el.setAttribute('aria-hidden', 'true'));
-  });
+  /* ---------- copy ---------- */
+  // the old copy is pulled up and out; the new one rises from low in the panel, piece by piece
+  const pieces = (panel) =>
+    ['.plans__icon', '.plans__title', '.plans__tags', '.plans__desc', '.btn'].map((sel) => panel.querySelector(sel));
 
-  const from = (el, keyframe, opts) => {
-    const cs = getComputedStyle(el);
-    const end = Object.fromEntries(
-      Object.keys(keyframe).map((k) => [k, k === 'clipPath' && cs[k] === 'none' ? 'inset(0 0 0 0)' : cs[k]])
-    );
-    return el.animate([keyframe, end], { fill: 'backwards', easing: EASE_OUT, ...opts });
-  };
+  function leaveCopy(ghost) {
+    const top = ghost.getBoundingClientRect().top;
+    pieces(ghost).forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      el.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - r.bottom}px)`, opacity: 0.4 }], {
+        duration: 700,
+        delay: i * 25,
+        easing: EASE_IN,
+        fill: 'forwards',
+      });
+    });
+  }
 
   function enterCopy(panel) {
-    const d = T.delay;
-    from(panel.querySelector('.plans__icon'), { opacity: 0, transform: 'translateY(10px)' }, { duration: T.fade, delay: d });
-    panel.querySelectorAll('.plans__title .w__in').forEach((w, i) =>
-      from(w, { transform: 'translateY(105%)' }, { duration: T.word, delay: d + i * T.stagger })
+    pieces(panel).forEach((el, i) =>
+      el.animate([{ transform: `translateY(${RISE}px)`, opacity: 0 }, { opacity: 1, offset: 0.4 }, { transform: 'none', opacity: 1 }], {
+        duration: 1100,
+        delay: 250 + i * 50,
+        easing: EASE_OUT,
+        fill: 'backwards',
+      })
     );
-    [panel.querySelector('.plans__tags'), panel.querySelector('.plans__desc')].forEach((el, i) =>
-      from(el, { opacity: 0, transform: 'translateY(16px)', filter: 'blur(6px)' }, { duration: T.fade, delay: d + T.text + i * 60 })
-    );
-    from(panel.querySelector('.btn'), { opacity: 0, transform: 'translateY(16px)', clipPath: 'inset(100% 0 0 0)' }, {
-      duration: T.fade,
-      delay: d + T.button + 60,
-    });
   }
 
   /* ---------- scan over the panel ---------- */
@@ -87,8 +75,9 @@
 
     const opts = { duration: SWITCH, easing: SWITCH_EASE, fill: 'forwards' };
     ghost.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], opts);
-    // the old plan pales as it goes; the ghost's own backdrop stays opaque
-    [...ghost.children].forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0.45 }], opts));
+    // the old plan pales as it goes, the old copy leaves upwards; the ghost's backdrop stays opaque
+    ghost.querySelector('.plans__illus').animate([{ opacity: 1 }, { opacity: 0.45 }], opts);
+    leaveCopy(ghost);
     const run = line.firstChild.animate(
       [{ top: '100%', opacity: 0 }, { opacity: 1, offset: 0.06 }, { opacity: 1, offset: 0.92 }, { top: '0%', opacity: 0 }],
       opts
