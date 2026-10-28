@@ -608,8 +608,29 @@ body { background: var(--c-page); }
   top: calc(var(--y) * var(--u));
   width: calc(var(--w) * var(--u));
   height: calc(var(--h) * var(--u));
+}
+/* the wifi signal: the zone grows out of its access point, then fades away, over and over
+   (--ax/--ay, the access point within the zone, are set from the square by plans.js) */
+.plans__signal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: #eafff8;
   mix-blend-mode: multiply;
+  --from: inset(
+    calc((var(--ay) + 6) * var(--u)) calc((var(--w) - var(--ax) - 6) * var(--u))
+    calc((var(--h) - var(--ay) - 6) * var(--u)) calc((var(--ax) + 6) * var(--u))
+  );
+  animation: plans-signal 3.6s infinite both;
+  animation-delay: calc(var(--n, 0) * 0.9s);
+}
+@keyframes plans-signal {
+  0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  50% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-in-out; }
+  85%, 100% { clip-path: inset(0); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plans__signal::before { animation: none; }
 }
 .plans__signal i {
   position: absolute;
