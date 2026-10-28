@@ -129,9 +129,14 @@
       const [from, to] = lines[k];
       // The first clip has no line to take over, so as its panel slides in from the right it
       // plays its opening too, where the line first appears (0 → `from`).
-      const t = k === 1 && seq < clipStart(1)
+      let t = k === 1 && seq < clipStart(1)
         ? from * (seq / clipStart(1))
         : from + clamp(seq - clipStart(k)) * (to - from);
+      // The last clip has no next panel to hand its line to, so through the finale it plays on
+      // to its end, where the last of the line's dots have cleared the frame.
+      if (k === changes && seq > seqEnd && video.duration) {
+        t = to + clamp((seq - seqEnd) / (OUTRO_END - seqEnd)) * (video.duration - FRAME - to);
+      }
       wanted.set(video, Math.round(t / FRAME) * FRAME);
       if (!seek(video)) synced = false;
       // the panel is on screen while the strip is between k − 1 and k + 1 (the last one stays)
