@@ -4,6 +4,7 @@
   --c-ink: #000;
   --c-rule: #e2eae7;
   --c-mint: #c8f5e5;
+  --c-ink-muted: rgba(0, 0, 0, 0.7); /* text/secondary */
 }
 
 body { background: var(--c-page); }
@@ -11,16 +12,16 @@ body { background: var(--c-page); }
 .section-title {
   margin: 0;
   font-family: var(--f-display);
-  font-size: calc(44 * var(--px));
-  font-weight: 500;
-  line-height: calc(48 * var(--px));
-  letter-spacing: calc(-0.88 * var(--px));
+  font-size: calc(40 * var(--px));
+  font-weight: 600;
+  line-height: calc(40 * var(--px));
+  letter-spacing: calc(-0.6 * var(--px));
 }
 
 /* ===== Logos ===== */
 .logos {
   background: var(--c-page);
-  padding: 52px 100px;
+  padding: 60px 100px;
 }
 
 .logos__list {
@@ -52,7 +53,7 @@ body { background: var(--c-page); }
   flex-direction: column;
   align-items: center;
   gap: calc(60 * var(--px));
-  padding: calc(100 * var(--px)) 0;
+  padding: calc(100 * var(--px)) 0 0; /* the divider below closes the section */
   background: var(--c-page);
 }
 
@@ -69,9 +70,9 @@ body { background: var(--c-page); }
 .benefits__mark {
   position: absolute;
   top: 0;
-  left: calc(50% + 196 * var(--px));
-  width: calc(240 * var(--px));
-  height: calc(54 * var(--px));
+  left: calc(50% + 191 * var(--px));
+  width: calc(230 * var(--px));
+  height: calc(46 * var(--px));
   transform: translateX(-50%);
   background: var(--c-mint);
 }
@@ -134,7 +135,7 @@ body { background: var(--c-page); }
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: calc(8 * var(--px));
   width: 100%;
 }
 
@@ -142,9 +143,9 @@ body { background: var(--c-page); }
   margin: 0;
   font-family: var(--f-display);
   font-size: calc(24 * var(--px));
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: calc(-0.48 * var(--px));
+  font-weight: 600;
+  line-height: calc(28 * var(--px));
+  letter-spacing: calc(-0.24 * var(--px));
 }
 
 .benefit__desc {
@@ -152,8 +153,24 @@ body { background: var(--c-page); }
   font-family: var(--f-body);
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
-  letter-spacing: calc(0.28 * var(--px));
-  opacity: 0.5;
+  color: var(--c-ink-muted);
+}
+
+/* ===== Divider between benefits and connectivity ===== */
+/* an empty band of rules: top and bottom across the page, sides in line with the cards */
+.divider {
+  height: calc(117 * var(--px));
+  padding: 0 max(40px, calc((100% - 1760px) / 2));
+  background: var(--c-page);
+  border-top: 1px solid var(--c-rule);
+  border-bottom: 1px solid var(--c-rule);
+}
+.divider::before {
+  content: "";
+  display: block;
+  height: 100%;
+  border-left: 1px solid var(--c-rule);
+  border-right: 1px solid var(--c-rule);
 }
 
 /* ===== Connectivity ===== */
@@ -163,10 +180,12 @@ body { background: var(--c-page); }
 .connectivity {
   position: relative;
   background: var(--c-page);
+  border-bottom: 1px solid var(--c-rule);
 }
 .connectivity.is-scrolling { height: var(--track, 500vh); }
 
 .connectivity__stage {
+  position: relative;
   display: flex;
   height: 100vh;
   height: 100svh;
@@ -175,6 +194,18 @@ body { background: var(--c-page); }
 .connectivity.is-scrolling .connectivity__stage {
   position: sticky;
   top: 0;
+}
+/* rules down both sides of the box, the full height of the screen */
+.connectivity__stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(40px, calc((100% - 1840px) / 2));
+  right: max(40px, calc((100% - 1840px) / 2));
+  border-left: 1px solid var(--c-rule);
+  border-right: 1px solid var(--c-rule);
+  pointer-events: none;
 }
 
 /* fills the stage, up to the 1360 × 730 design box enlarged to 1840px wide, centred */
@@ -239,8 +270,14 @@ body { background: var(--c-page); }
   object-position: left top;
 }
 
+/* stays in Outfit 44/48, as in Figma */
 .connectivity__title {
   position: absolute;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: calc(44 * var(--px));
+  font-weight: 500;
+  line-height: calc(48 * var(--px));
+  letter-spacing: calc(-0.88 * var(--px));
   top: 50%;
   left: 50%;
   translate: -50% -50%;
@@ -275,7 +312,7 @@ body { background: var(--c-page); }
   margin: 0;
   font-family: var(--f-display);
   font-size: calc(14 * var(--px));
-  font-weight: 500;
+  font-weight: 650;
   line-height: calc(20 * var(--px));
   opacity: 0.5;
 }
@@ -286,16 +323,16 @@ body { background: var(--c-page); }
   bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: calc(4 * var(--px));
+  gap: calc(8 * var(--px));
 }
 
 .connectivity__name {
   margin: 0;
   font-family: var(--f-display);
   font-size: calc(24 * var(--px));
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: calc(-0.48 * var(--px));
+  font-weight: 600;
+  line-height: calc(28 * var(--px));
+  letter-spacing: calc(-0.24 * var(--px));
 }
 
 .connectivity__desc {
@@ -303,8 +340,7 @@ body { background: var(--c-page); }
   font-family: var(--f-body);
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
-  letter-spacing: calc(0.28 * var(--px));
-  opacity: 0.5;
+  color: var(--c-ink-muted);
 }
 
 .connectivity__corner {
@@ -333,11 +369,14 @@ body { background: var(--c-page); }
   .benefit::after,
   .benefit:first-child::after { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
   .benefits__mark { display: none; }
+  .divider { padding: 0 16px; }
 }
 
 @media (max-width: 560px) {
   .logos { padding: 32px 16px; }
   .connectivity__stage { padding: 32px 16px; }
+  .connectivity__stage::before { left: 16px; right: 16px; }
+  .divider { height: 64px; }
   .connectivity__title { width: 300px; white-space: normal; }
   /* the free corners are too small for the captions on a phone: they go under the box,
      the number above it */
@@ -345,7 +384,7 @@ body { background: var(--c-page); }
   .connectivity__caption { bottom: -62px; }
   .connectivity__count { top: -27px; }
   .section-title { font-size: 32px; line-height: 36px; letter-spacing: -0.64px; }
-  .benefits { padding: 64px 0; gap: 40px; }
+  .benefits { padding: 64px 0 0; gap: 40px; }
 }
 
 /* ===== Scroll reveal (js/sections.js) ===== */
