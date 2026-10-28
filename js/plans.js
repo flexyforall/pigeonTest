@@ -28,6 +28,12 @@
     })
   );
 
+  new IntersectionObserver((entries, io) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    section.classList.add('is-seen');
+    io.disconnect();
+  }, { threshold: 0.4 }).observe(section.querySelector('.plans__content'));
+
   /* ---------- tab block ---------- */
   function moveIndicator(tab, animated) {
     indicator.classList.toggle('is-animated', animated);
@@ -66,6 +72,8 @@
     ghost.setAttribute('aria-hidden', 'true');
     ghost.inert = true;
     ghost.querySelector('.plans__illus').style.background = 'none';
+    // the old zones are long gone; a fresh copy would play them again
+    ghost.querySelectorAll('.plans__signal').forEach((zone) => zone.remove());
     const line = document.createElement('span');
     line.className = 'plans__scan';
     line.append(document.createElement('i'));

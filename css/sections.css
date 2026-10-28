@@ -609,8 +609,8 @@ body { background: var(--c-page); }
   width: calc(var(--w) * var(--u));
   height: calc(var(--h) * var(--u));
 }
-/* the wifi signal: the zone grows out of its access point, then fades away, over and over
-   (--ax/--ay, the access point within the zone, are set from the square by plans.js) */
+/* the wifi signal: once the section is in view (and each time a plan is shown) the zone grows
+   out of its access point, then fades away for good (--ax/--ay, the access point within the zone, are set from the square by plans.js) */
 .plans__signal::before {
   content: "";
   position: absolute;
@@ -621,15 +621,16 @@ body { background: var(--c-page); }
     calc((var(--ay) + 6) * var(--u)) calc((var(--w) - var(--ax) - 6) * var(--u))
     calc((var(--h) - var(--ay) - 6) * var(--u)) calc((var(--ax) + 6) * var(--u))
   );
-  animation: plans-signal 3.6s infinite both;
+  opacity: 0;
 }
+.plans.is-seen .plans__signal::before { animation: plans-signal 3s both; }
 @keyframes plans-signal {
   0% { clip-path: var(--from); opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-  50% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-in-out; }
-  85%, 100% { clip-path: inset(0); opacity: 0; }
+  55% { clip-path: inset(0); opacity: 1; animation-timing-function: ease-in-out; }
+  100% { clip-path: inset(0); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .plans__signal::before { animation: none; }
+  .plans.is-seen .plans__signal::before { animation: none; }
 }
 .plans__signal i {
   position: absolute;
