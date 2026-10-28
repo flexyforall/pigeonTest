@@ -1,6 +1,6 @@
 // "Coverage starts with your space": the space-type tabs. On a switch the panel slides up as a
 // whole: the old content goes up and out at its own size, the new content follows right under
-// it, and a thin line runs along the seam between them. The black block behind the active tab
+// it, and a thin line runs along the seam between them. The grey block behind the active tab
 // slides quickly to the new tab.
 (() => {
   const section = document.querySelector('.plans');

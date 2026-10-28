@@ -104,7 +104,7 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
-      // the black block behind the active tab comes in ahead of its white text
+      // the block behind the active tab comes in ahead of the tab text
       from($('.plans__indicator', section), { opacity: 0 }, { duration: 600, delay: 100 });
       $$('.plan-tab', section).forEach((tab, i) => {
         const d = 300 + i * 120;

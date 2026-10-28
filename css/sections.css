@@ -419,14 +419,28 @@ body { background: var(--c-page); }
 .plan-tab + .plan-tab { border-left: 1px solid var(--c-rule); }
 .plan-tab:not(.is-active):hover { background: rgba(16, 17, 17, 0.03); }
 
-/* the black block behind the active tab; slides between tabs in step with the scan line */
+/* the block behind the active tab (Figma gridTab, active): a grey fill with four L-shaped mint
+   corners, 6px long, 1.275px stroke; slides between tabs on a switch */
 .plans__indicator {
+  --t: 1.275px;
+  --l: 6px;
+  --a: #59b293; /* icon/accentForLight */
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 0;
-  background: var(--c-ink);
+  background:
+    linear-gradient(var(--a), var(--a)) left top / var(--t) var(--l),
+    linear-gradient(var(--a), var(--a)) left top / var(--l) var(--t),
+    linear-gradient(var(--a), var(--a)) right top / var(--t) var(--l),
+    linear-gradient(var(--a), var(--a)) right top / var(--l) var(--t),
+    linear-gradient(var(--a), var(--a)) left bottom / var(--t) var(--l),
+    linear-gradient(var(--a), var(--a)) left bottom / var(--l) var(--t),
+    linear-gradient(var(--a), var(--a)) right bottom / var(--t) var(--l),
+    linear-gradient(var(--a), var(--a)) right bottom / var(--l) var(--t),
+    #eaf0ee; /* background/gray */
+  background-repeat: no-repeat;
   pointer-events: none;
 }
 .plans__indicator.is-animated {
@@ -447,14 +461,8 @@ body { background: var(--c-page); }
   line-height: calc(20 * var(--px));
 }
 
-/* white text inverted against what lies behind: black on the page, white over the sliding black
-   block, and split cleanly while the block passes under a tab */
-.plan-tab__name,
-.plan-tab__aps {
-  color: var(--c-white);
-  mix-blend-mode: difference;
-}
-.plan-tab__aps { color: rgba(255, 255, 255, 0.7); }
+.plan-tab__name { color: var(--c-ink); }
+.plan-tab__aps { color: var(--c-ink-muted); }
 
 /* panel: copy on the left, floor plan on the right; one per tab */
 .plans__panel { position: relative; display: flex; overflow: clip; }
