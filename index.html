@@ -276,28 +276,28 @@
     </div>
     <div class="plans__content">
       <div class="plans__tabs" role="tablist" aria-label="Space type">
-        <button class="plan-tab is-active" role="tab" aria-selected="true" data-plan="small-office">
+        <button class="plan-tab is-active" role="tab" id="tab-small-office" aria-controls="plan-small-office" aria-selected="true" data-plan="small-office">
           <span class="plan-tab__name">Small Office</span>
           <span class="plan-tab__aps">1–2 APs</span>
         </button>
-        <button class="plan-tab" role="tab" aria-selected="false" data-plan="retail">
+        <button class="plan-tab" role="tab" id="tab-retail" aria-controls="plan-retail" aria-selected="false" data-plan="retail">
           <span class="plan-tab__name">Retail Showroom</span>
           <span class="plan-tab__aps">2 APs</span>
         </button>
-        <button class="plan-tab" role="tab" aria-selected="false" data-plan="clinic">
+        <button class="plan-tab" role="tab" id="tab-clinic" aria-controls="plan-clinic" aria-selected="false" data-plan="clinic">
           <span class="plan-tab__name">Medical Clinic</span>
           <span class="plan-tab__aps">3 APs</span>
         </button>
-        <button class="plan-tab" role="tab" aria-selected="false" data-plan="restaurant">
+        <button class="plan-tab" role="tab" id="tab-restaurant" aria-controls="plan-restaurant" aria-selected="false" data-plan="restaurant">
           <span class="plan-tab__name">Restaurant</span>
           <span class="plan-tab__aps">2 APs</span>
         </button>
-        <button class="plan-tab" role="tab" aria-selected="false" data-plan="warehouse">
+        <button class="plan-tab" role="tab" id="tab-warehouse" aria-controls="plan-warehouse" aria-selected="false" data-plan="warehouse">
           <span class="plan-tab__name">Warehouse</span>
           <span class="plan-tab__aps">3–4 APs</span>
         </button>
       </div>
-      <div class="plans__panel" role="tabpanel">
+      <div class="plans__panel" role="tabpanel" id="plan-small-office" aria-labelledby="tab-small-office">
         <div class="plans__info">
           <div class="plans__texts">
             <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
@@ -322,6 +322,115 @@
             <span class="plans__label" style="--x: 499; --y: 289">Restroom</span>
             <span class="plans__signal" style="--x: 480; --y: 26; --w: 175; --h: 155"><i style="--x: 104; --y: 49"></i></span>
             <span class="plans__signal" style="--x: 40; --y: 117; --w: 410; --h: 274"><i style="--x: 47; --y: 225"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="plans__panel" role="tabpanel" id="plan-retail" aria-labelledby="tab-retail" hidden>
+        <div class="plans__info">
+          <div class="plans__texts">
+            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <div class="plans__copy">
+              <div class="plans__heading">
+                <h3 class="plans__title">Retail Showroom</h3>
+                <p class="plans__tags"><span>Customer-facing retail</span><span class="plans__bullet" aria-hidden="true"></span><span>1,500–4,000 sq ft</span></p>
+              </div>
+              <p class="plans__desc">Great shopping experiences depend on the details. Keep payments, staff devices, and customer WiFi running smoothly from the showroom floor to checkout.</p>
+            </div>
+          </div>
+          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+        </div>
+        <div class="plans__illus" aria-hidden="true">
+          <div class="plans__plan">
+            <img src="assets/plans/retail.svg" width="680" height="435" alt="">
+            <span class="plans__label" style="--x: 261; --y: 246">Sales floor</span>
+            <span class="plans__label" style="--x: 147; --y: 88">Stock room</span>
+            <span class="plans__label" style="--x: 348; --y: 86">Back office</span>
+            <span class="plans__label" style="--x: 510; --y: 201">Fitting room</span>
+            <span class="plans__label" style="--x: 568; --y: 88">WC</span>
+            <span class="plans__signal" style="--x: 55; --y: 64; --w: 336; --h: 242"><i style="--x: 265; --y: 49"></i></span>
+            <span class="plans__signal" style="--x: 431; --y: 114; --w: 221; --h: 289"><i style="--x: 154; --y: 233"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="plans__panel" role="tabpanel" id="plan-clinic" aria-labelledby="tab-clinic" hidden>
+        <div class="plans__info">
+          <div class="plans__texts">
+            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <div class="plans__copy">
+              <div class="plans__heading">
+                <h3 class="plans__title">Medical Clinic</h3>
+                <p class="plans__tags"><span>Multi-room clinic</span><span class="plans__bullet" aria-hidden="true"></span><span>2,000–6,000 sq ft</span></p>
+              </div>
+              <p class="plans__desc">Patient care comes first. Give your staff and connected systems the reliable, secure network they need to keep daily operations running smoothly.</p>
+            </div>
+          </div>
+          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+        </div>
+        <div class="plans__illus" aria-hidden="true">
+          <div class="plans__plan">
+            <img src="assets/plans/clinic.svg" width="680" height="436" alt="">
+            <span class="plans__label" style="--x: 93; --y: 99">Exam room</span>
+            <span class="plans__label" style="--x: 212; --y: 99">Exam room</span>
+            <span class="plans__label" style="--x: 334; --y: 99">Exam room</span>
+            <span class="plans__label" style="--x: 456; --y: 247">WC</span>
+            <span class="plans__label" style="--x: 528; --y: 315">Waiting</span>
+            <span class="plans__label" style="--x: 206; --y: 300">Lab / Imaging</span>
+            <span class="plans__signal" style="--x: 32; --y: 120; --w: 280; --h: 289"><i style="--x: 55; --y: 233"></i></span>
+            <span class="plans__signal" style="--x: 368; --y: 163; --w: 272; --h: 231"><i style="--x: 203; --y: 175"></i></span>
+            <span class="plans__signal" style="--x: 168; --y: 24; --w: 466; --h: 64"><i style="--x: 417; --y: 48"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="plans__panel" role="tabpanel" id="plan-restaurant" aria-labelledby="tab-restaurant" hidden>
+        <div class="plans__info">
+          <div class="plans__texts">
+            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <div class="plans__copy">
+              <div class="plans__heading">
+                <h3 class="plans__title">Restaurant</h3>
+                <p class="plans__tags"><span>Dining + kitchen</span><span class="plans__bullet" aria-hidden="true"></span><span>2,500–5,000 sq ft</span></p>
+              </div>
+              <p class="plans__desc">From the first order to the final payment, keep your restaurant connected. Reliable WiFi for your team, your systems, and your guests.</p>
+            </div>
+          </div>
+          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+        </div>
+        <div class="plans__illus" aria-hidden="true">
+          <div class="plans__plan">
+            <img src="assets/plans/restaurant.svg" width="680" height="431.2" alt="">
+            <span class="plans__label" style="--x: 292; --y: 245">Dining Area</span>
+            <span class="plans__label" style="--x: 261; --y: 102">Kitchen</span>
+            <span class="plans__label" style="--x: 542; --y: 196">Bar</span>
+            <span class="plans__label" style="--x: 442; --y: 96">Restroom</span>
+            <span class="plans__signal" style="--x: 25; --y: 27; --w: 409; --h: 188"><i style="--x: 70; --y: 49"></i></span>
+            <span class="plans__signal" style="--x: 148; --y: 224; --w: 504; --h: 139"><i style="--x: 432; --y: 117"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="plans__panel" role="tabpanel" id="plan-warehouse" aria-labelledby="tab-warehouse" hidden>
+        <div class="plans__info">
+          <div class="plans__texts">
+            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <div class="plans__copy">
+              <div class="plans__heading">
+                <h3 class="plans__title">Warehouse</h3>
+                <p class="plans__tags"><span>Industrial storage</span><span class="plans__bullet" aria-hidden="true"></span><span>10,000–50,000 sq ft</span></p>
+              </div>
+              <p class="plans__desc">Keep your operation connected across large, demanding spaces. Reliable WiFi for inventory systems, scanners, and teams on the move.</p>
+            </div>
+          </div>
+          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+        </div>
+        <div class="plans__illus" aria-hidden="true">
+          <div class="plans__plan">
+            <img src="assets/plans/warehouse.svg" width="680" height="453.33" alt="">
+            <span class="plans__label" style="--x: 74; --y: 76.67">Break</span>
+            <span class="plans__label" style="--x: 257; --y: 156.67">Storage zone</span>
+            <span class="plans__label" style="--x: 298; --y: 303.67">Shipping doc</span>
+            <span class="plans__signal" style="--x: 28; --y: 7.67; --w: 196; --h: 225"><i style="--x: 42; --y: 49"></i></span>
+            <span class="plans__signal" style="--x: 470; --y: 16.67; --w: 196; --h: 225"><i style="--x: 42; --y: 49"></i></span>
+            <span class="plans__signal" style="--x: 262; --y: 114.67; --w: 196; --h: 241"><i style="--x: 14; --y: 14"></i></span>
+            <span class="plans__signal" style="--x: 56; --y: 252.67; --w: 196; --h: 116"><i style="--x: 14; --y: 73"></i></span>
           </div>
         </div>
       </div>

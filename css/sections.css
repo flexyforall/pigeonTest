@@ -432,8 +432,9 @@ body { background: var(--c-page); }
 }
 .plan-tab.is-active .plan-tab__aps { color: var(--c-muted); }
 
-/* panel: copy on the left, floor plan on the right */
+/* panel: copy on the left, floor plan on the right; one per tab */
 .plans__panel { display: flex; }
+.plans__panel[hidden] { display: none; }
 
 .plans__info {
   display: flex;
