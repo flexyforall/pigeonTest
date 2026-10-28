@@ -107,8 +107,19 @@ h1, h2, p { margin: 0; }
   opacity: 0;
   pointer-events: none;
 }
+/* the same line, across, leading the hero in from the top after the loader */
+.hero__wipe--down {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  width: auto;
+  height: 1px;
+  margin: -0.5px 0 0;
+}
 
-/* Loader: a spinning dotted globe on black, played once, then faded out over the hero */
+/* Loader: a spinning dotted globe on black, played once, then swept away over the hero */
 .hero__video {
   position: absolute;
   inset: 0;

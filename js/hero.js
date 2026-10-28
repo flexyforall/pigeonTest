@@ -437,17 +437,16 @@
   }
 
   /* ---------- loader ---------- */
-  // Once per tab session: the globe spins for a few seconds with only the logo on screen, then
-  // fades out while the hero draws in underneath.
+  // Once per tab session: the globe spins with only the logo on screen, then a line sweeps down
+  // and the hero is drawn in behind it.
   const video = $('.hero__video');
   const LOADER_KEY = 'pigeonm:loader-seen';
   const LOADER = {
     rate: 0.8, // the clip is played a little slower than it was rendered
-    linesAt: 0.9, // s of the clip at which the hero's frame starts to draw in around the globe
-    fadeAt: 1.6, // s of the clip (2 s on screen) at which the globe starts to fade
-    fade: 1600, // ms
-    introAfter: 400, // ms into the fade at which the rest of the hero starts to come in
-    bg: 3000, // ms the hero image takes to come up from black
+    linesAt: 0.6, // s of the clip at which the hero's frame starts to draw in around the globe
+    revealAt: 1.2, // s of the clip (1.5 s on screen) at which the line starts to sweep down
+    reveal: 1400, // ms the line takes from top to bottom
+    introAfter: 300, // ms into the sweep at which the rest of the hero starts to come in
   };
 
   const loaderSeen = () => {
@@ -471,35 +470,40 @@
       hero.classList.add('is-lines');
       drawLines();
     };
+    // A hairline sweeps down the screen, as the background wipe between audiences sweeps across:
+    // above it the hero, below it the globe, still spinning.
     const finish = () => {
       if (done) return;
       done = true;
       startLines();
       markLoaderSeen();
-      hero.classList.add('is-handoff');
-      // the globe fades and drifts slightly back while the hero image comes up underneath
-      const fade = video.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.94)' }], {
-        duration: LOADER.fade,
-        easing: 'cubic-bezier(0.45, 0, 0.25, 1)',
-        fill: 'forwards',
-      });
+      hero.classList.add('is-handoff', 'is-bg');
+      const opts = { duration: LOADER.reveal, easing: WIPE_EASE, fill: 'forwards' };
       const bg = bgs.find((b) => b.dataset.bg === current);
-      hero.classList.add('is-bg');
-      from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: LOADER.bg, easing: 'cubic-bezier(0.33, 0, 0.2, 1)' });
+      bg.animate([{ transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { ...opts, fill: 'none' });
+      const reveal = video.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(100% 0 0 0)' }], opts);
+      const line = document.createElement('span');
+      line.className = 'hero__wipe hero__wipe--down';
+      wipeLine.after(line);
+      line.animate(
+        [{ top: '0%', opacity: 0 }, { opacity: 1, offset: 0.06 }, { opacity: 1, offset: 0.94 }, { top: '100%', opacity: 0 }],
+        opts
+      );
       // fonts are long loaded by now, but never split/measure before they are
       timeout(LOADER.introAfter)
         .then(() => Promise.race([fontsReady, timeout(500)]))
         .then(() => intro({ keepLogo: true, linesDrawn: true, bgDuration: 0 }));
-      fade.finished.then(() => {
+      reveal.finished.then(() => {
         video.pause();
         video.remove();
+        line.remove();
         hero.classList.remove('is-handoff');
       });
     };
 
     const watchTime = (mediaTime) => {
       if (mediaTime >= LOADER.linesAt) startLines();
-      if (mediaTime >= LOADER.fadeAt) finish();
+      if (mediaTime >= LOADER.revealAt) finish();
       else if (!done) waitFrame();
     };
     const waitFrame = () =>
@@ -519,7 +523,7 @@
     Promise.race([started, timeout(3000)]).then(() => {
       if (video.paused && !done) finish();
       // safety net if playback stalls midway
-      else setTimeout(finish, (LOADER.fadeAt / LOADER.rate + 3) * 1000);
+      else setTimeout(finish, (LOADER.revealAt / LOADER.rate + 3) * 1000);
     });
   }
 
