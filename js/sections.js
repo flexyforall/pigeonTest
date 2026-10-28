@@ -113,8 +113,9 @@
       });
     },
 
-    // like the benefits: heading and mint block, then the cards one after another, each with its
-    // number rising ahead of its title
+    // heading and mint block as everywhere else; then the "+" grid runs across the three cards
+    // from left to right, on a clock of its own once the cards are in view, and lights each card
+    // up as it passes: the grey copy turns dark, and the grid stays on the last card
     steps(section) {
       rise($('.section-title', section));
       from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
@@ -123,12 +124,43 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
-      $$('.step', section).forEach((card, i) => {
-        const d = 300 + i * 120;
-        $$('.step__grid, .step__fade', card).forEach((el) => from(el, { opacity: 0 }, { duration: 1400, delay: d }));
-        rise($('.step__num', card), d + 100, { word: 900, stagger: 40 });
-        rise($('.step__title', card), d + 200, { word: 900, stagger: 40 });
-        fadeUp($('.step__desc', card), d + 400);
+      const STEP = 650; // ms the grid takes across one card
+      const START = 200;
+      const ease = 'cubic-bezier(0.45, 0, 0.55, 1)';
+      const cards = $$('.step', section);
+      // the cards wait, grey and without their grid, until they are well in view themselves
+      section.classList.add('is-dim');
+      new IntersectionObserver((entries, io) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        section.classList.remove('is-dim');
+        sweep();
+      }, { threshold: 0.6 }).observe($('.steps__row', section));
+
+      const sweep = () => cards.forEach((card, i) => {
+        const grid = $('.step__grid', card);
+        const w = card.offsetWidth;
+        const right = grid.offsetWidth - w; // the grid runs on past the card's right edge
+        const t0 = START + i * STEP;
+        // in from the left edge to the right edge…
+        grid.animate([{ clipPath: `inset(0 ${grid.offsetWidth}px 0 0)` }, { clipPath: `inset(0 ${right}px 0 0)` }], {
+          duration: STEP,
+          delay: t0,
+          easing: ease,
+          fill: i === cards.length - 1 ? 'backwards' : 'both',
+        });
+        // …and, but on the last card, out the same way as it moves on to the next
+        if (i < cards.length - 1) {
+          grid.animate([{ clipPath: `inset(0 ${right}px 0 0)` }, { clipPath: `inset(0 ${right}px 0 ${w}px)` }], {
+            duration: STEP,
+            delay: t0 + STEP,
+            easing: ease,
+            fill: 'forwards',
+          });
+        }
+        $$('.step__num, .step__text', card).forEach((el) =>
+          from(el, { opacity: 0.35 }, { duration: 700, delay: t0 + STEP * 0.4, easing: ease })
+        );
       });
     },
   };
@@ -142,7 +174,7 @@
 
   sections.forEach(([, section]) => {
     section.classList.add('is-pending');
-    $$('.section-title, .benefit__title, .plan-tab__name, .step__num, .step__title', section).forEach(splitWords);
+    $$('.section-title, .benefit__title, .plan-tab__name', section).forEach(splitWords);
   });
 
   const observer = new IntersectionObserver(

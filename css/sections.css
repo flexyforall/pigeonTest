@@ -354,6 +354,10 @@ body { background: var(--c-page); }
 .is-pending .plan-tab > *,
 .is-pending .steps__head,
 .is-pending .step > * { visibility: hidden; }
+/* the step cards before the grid has run across them (js/sections.js) */
+.steps.is-dim .step__grid { clip-path: inset(0 100% 0 0); }
+.steps.is-dim .step__num,
+.steps.is-dim .step__text { opacity: 0.35; }
 .is-pending .plans__indicator { opacity: 0; }
 
 /* ===== Plans ("Coverage starts with your space") ===== */
