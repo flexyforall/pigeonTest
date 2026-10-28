@@ -268,6 +268,67 @@
   </div>
 </section>
 
+<section class="plans" aria-labelledby="plans-title">
+  <div class="plans__frame">
+    <div class="plans__head">
+      <span class="plans__mark" aria-hidden="true"></span>
+      <h2 class="section-title" id="plans-title">Coverage starts with your space.</h2>
+    </div>
+    <div class="plans__content">
+      <div class="plans__tabs" role="tablist" aria-label="Space type">
+        <button class="plan-tab is-active" role="tab" aria-selected="true" data-plan="small-office">
+          <span class="plan-tab__name">Small Office</span>
+          <span class="plan-tab__aps">1–2 APs</span>
+        </button>
+        <button class="plan-tab" role="tab" aria-selected="false" data-plan="retail">
+          <span class="plan-tab__name">Retail Showroom</span>
+          <span class="plan-tab__aps">2 APs</span>
+        </button>
+        <button class="plan-tab" role="tab" aria-selected="false" data-plan="clinic">
+          <span class="plan-tab__name">Medical Clinic</span>
+          <span class="plan-tab__aps">3 APs</span>
+        </button>
+        <button class="plan-tab" role="tab" aria-selected="false" data-plan="restaurant">
+          <span class="plan-tab__name">Restaurant</span>
+          <span class="plan-tab__aps">2 APs</span>
+        </button>
+        <button class="plan-tab" role="tab" aria-selected="false" data-plan="warehouse">
+          <span class="plan-tab__name">Warehouse</span>
+          <span class="plan-tab__aps">3–4 APs</span>
+        </button>
+      </div>
+      <div class="plans__panel" role="tabpanel">
+        <div class="plans__info">
+          <div class="plans__texts">
+            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <div class="plans__copy">
+              <div class="plans__heading">
+                <h3 class="plans__title">Small Office</h3>
+                <p class="plans__tags"><span>5–20 employees</span><span class="plans__bullet" aria-hidden="true"></span><span>800–2,000 sq ft</span></p>
+              </div>
+              <p class="plans__desc">Every office is different. We build your network around the way you work, handling setup and support so your team can stay focused.</p>
+            </div>
+          </div>
+          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+        </div>
+        <div class="plans__illus" aria-hidden="true">
+          <div class="plans__plan">
+            <img src="assets/plans/small-office.svg" width="680" height="438" alt="">
+            <span class="plans__label" style="--x: 131; --y: 117">Meeting room</span>
+            <span class="plans__label" style="--x: 316; --y: 101">Private room</span>
+            <span class="plans__label" style="--x: 553; --y: 100">Server</span>
+            <span class="plans__label" style="--x: 381; --y: 178">Hallway</span>
+            <span class="plans__label" style="--x: 174; --y: 280">Open space</span>
+            <span class="plans__label" style="--x: 499; --y: 289">Restroom</span>
+            <span class="plans__signal" style="--x: 480; --y: 26; --w: 175; --h: 155"><i style="--x: 104; --y: 49"></i></span>
+            <span class="plans__signal" style="--x: 40; --y: 117; --w: 410; --h: 274"><i style="--x: 47; --y: 225"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <template id="dots-icon">
   <svg width="50" height="50" viewBox="0 0 50 50" fill="#fff" xmlns="http://www.w3.org/2000/svg">
     <g class="dots__outer">
@@ -299,5 +360,6 @@
 <script src="js/hero.js" defer></script>
 <script src="js/sections.js" defer></script>
 <script src="js/connectivity.js" defer></script>
+<script src="js/plans.js" defer></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /* ===== Sections below the hero (design width 1440) ===== */
 :root {
-  --c-page: #f5faf8;
+  --c-page: #f2f7f5; /* background/secondary */
   --c-ink: #000;
   --c-rule: #e2eae7;
   --c-mint: #c8f5e5;
@@ -347,3 +347,238 @@ body { background: var(--c-page); }
 .is-pending .logos__list,
 .is-pending .benefits__head,
 .is-pending .benefit > * { visibility: hidden; }
+
+/* ===== Plans ("Coverage starts with your space") ===== */
+.plans {
+  padding: 0 40px;
+  background: var(--c-page);
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.plans__frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(60 * var(--px));
+  max-width: 1840px;
+  margin: 0 auto;
+  padding-top: calc(160 * var(--px));
+  border-left: 1px solid var(--c-rule);
+  border-right: 1px solid var(--c-rule);
+}
+
+.plans__head {
+  position: relative;
+  width: 100%;
+  padding: 0 40px;
+  color: var(--c-ink);
+  text-align: center;
+}
+.plans__head .section-title { position: relative; }
+
+/* mint block behind "your space." */
+.plans__mark {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 185.5 * var(--px));
+  width: calc(213 * var(--px));
+  height: calc(46 * var(--px));
+  transform: translateX(-50%);
+  background: var(--c-mint);
+}
+
+.plans__content { width: 100%; }
+
+/* tabs */
+.plans__tabs {
+  display: flex;
+  border-top: 1px solid var(--c-rule);
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.plan-tab {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(8 * var(--px));
+  min-width: 1px;
+  /* 20px in Figma, where the row's 1px rules sit inside the 92px tabs */
+  padding: calc(20 * var(--px) - 1px) calc(24 * var(--px));
+  color: var(--c-ink);
+  text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.plan-tab + .plan-tab { border-left: 1px solid var(--c-rule); }
+.plan-tab:not(.is-active):hover { background: rgba(0, 0, 0, 0.03); }
+.plan-tab.is-active { background: var(--c-ink); color: var(--c-white); }
+
+.plan-tab__name {
+  font-family: var(--f-display);
+  font-size: calc(20 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.2 * var(--px));
+}
+
+.plan-tab__aps {
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink-muted);
+}
+.plan-tab.is-active .plan-tab__aps { color: var(--c-muted); }
+
+/* panel: copy on the left, floor plan on the right */
+.plans__panel { display: flex; }
+
+.plans__info {
+  display: flex;
+  flex: 1 1 50%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: calc(638 * var(--px));
+  padding: calc(120 * var(--px)) calc(60 * var(--px));
+  color: var(--c-ink);
+}
+
+.plans__texts {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20 * var(--px));
+}
+.plans__icon { width: calc(50 * var(--px)); height: calc(50 * var(--px)); }
+
+.plans__copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--px));
+}
+
+.plans__heading {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--px));
+}
+
+.plans__title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(40 * var(--px));
+  font-weight: 600;
+  line-height: calc(40 * var(--px));
+  letter-spacing: calc(-0.6 * var(--px));
+}
+
+.plans__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(12 * var(--px));
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(14 * var(--px));
+  font-weight: 600;
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.56 * var(--px));
+  text-transform: uppercase;
+}
+.plans__bullet {
+  width: 4px;
+  height: 4px;
+  background: var(--c-accent-light, #59b293);
+}
+
+.plans__desc {
+  max-width: calc(430 * var(--px));
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+  color: var(--c-ink-muted);
+}
+
+/* dark button: the same "+" grid and fade as the light one, inverted */
+.btn--dark {
+  background:
+    linear-gradient(90deg, var(--c-ink) 42.308%, rgba(0, 0, 0, 0)),
+    url("../assets/patterns/button-grid-dark.svg") calc(62 * var(--px)) calc(-2 * var(--px)) / calc(691 * var(--px)) calc(503 * var(--px)) no-repeat,
+    var(--c-ink);
+  color: var(--c-white);
+  transition: color 0.45s var(--ease-out);
+}
+.btn--dark:hover { color: var(--c-ink); }
+
+/* floor plan on a light grid (75px tiles: 2px lines broken around a dot) */
+.plans__illus {
+  position: relative;
+  display: flex;
+  flex: 1 1 50%;
+  align-items: center;
+  min-width: 0;
+  min-height: calc(638 * var(--px));
+  overflow: hidden;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cpath d='M11 0h55v2H11zM0 11h2v55H0z' fill='%23000' fill-opacity='.033'/%3E%3Cpath d='M0 0h2v2H0z' fill='%23000' fill-opacity='.2'/%3E%3C/svg%3E") 53px 54px / 75px 75px;
+}
+
+/* the plan and everything on it are laid out in design pixels of its 680px width (--u) */
+.plans__plan {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  container-type: inline-size;
+  --u: calc(100cqw / 680);
+}
+.plans__plan > img { display: block; width: 100%; height: auto; }
+
+.plans__label {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  font-family: var(--f-display);
+  font-size: calc(12 * var(--u));
+  font-weight: 600;
+  line-height: calc(16 * var(--u));
+  letter-spacing: calc(0.48 * var(--u));
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4); /* text/tertiary */
+}
+
+/* coverage zones, tinting what lies under them; a square marks the access point */
+.plans__signal {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  background: #eafff8;
+  mix-blend-mode: multiply;
+}
+.plans__signal i {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(12 * var(--u));
+  height: calc(12 * var(--u));
+  background: #59b293; /* icon/accentForLight */
+}
+
+@media (max-width: 960px) {
+  .plans { padding: 0 16px; }
+  .plans__tabs { overflow-x: auto; scrollbar-width: none; }
+  .plans__tabs::-webkit-scrollbar { display: none; }
+  .plan-tab { flex: 0 0 auto; min-width: 180px; }
+  .plans__panel { flex-direction: column; }
+  .plans__info { min-height: 0; padding: 48px 24px; gap: 40px; }
+  .plans__illus { min-height: 0; padding: 32px 16px; }
+}
+
+@media (max-width: 560px) {
+  .plans__frame { padding-top: 80px; gap: 40px; }
+  .plans__mark { display: none; }
+}
