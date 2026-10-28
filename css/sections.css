@@ -470,7 +470,7 @@ body { background: var(--c-page); }
 
 .plans__info {
   display: flex;
-  flex: 1 1 50%;
+  flex: 0 0 41.18%; /* 560 of the 1360 row, as in Figma; the plan takes the other 800 */
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
@@ -483,6 +483,7 @@ body { background: var(--c-page); }
 .plans__texts {
   display: flex;
   flex-direction: column;
+  max-width: calc(440 * var(--px));
   gap: calc(20 * var(--px));
 }
 .plans__icon { width: calc(50 * var(--px)); height: calc(50 * var(--px)); }
@@ -552,12 +553,12 @@ body { background: var(--c-page); }
 .plans__illus {
   position: relative;
   display: flex;
-  flex: 1 1 50%;
+  flex: 1 1 0;
   align-items: center;
   min-width: 0;
   min-height: calc(638 * var(--px));
   overflow: hidden;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cpath d='M11 0h55v2H11zM0 11h2v55H0z' fill='%23000' fill-opacity='.033'/%3E%3Cpath d='M0 0h2v2H0z' fill='%23000' fill-opacity='.2'/%3E%3C/svg%3E") 53px 54px / 75px 75px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cpath d='M11 0h55v2H11zM0 11h2v55H0z' fill='%23000' fill-opacity='.033'/%3E%3Cpath d='M0 0h2v2H0z' fill='%23000' fill-opacity='.2'/%3E%3C/svg%3E") 48px 68px / 75px 75px;
 }
 
 /* tab switch (js/plans.js): a copy of the outgoing plan sits on top and is cut away from the
@@ -587,11 +588,12 @@ body { background: var(--c-page); }
   background: #59b293; /* icon/accentForLight */
 }
 
-/* the plan and everything on it are laid out in design pixels of its 680px width (--u) */
+/* the plan and everything on it are laid out in design pixels of a 680px wide plan (--u); it
+   is shown up to 800px wide */
 .plans__plan {
   position: relative;
   width: 100%;
-  max-width: 680px;
+  max-width: calc(800 * var(--px));
   margin: 0 auto;
   container-type: inline-size;
   --u: calc(100cqw / 680);
@@ -658,6 +660,7 @@ body { background: var(--c-page); }
   .plans__tabs::-webkit-scrollbar { display: none; }
   .plan-tab { flex: 0 0 auto; min-width: 180px; }
   .plans__panel { flex-direction: column; }
+  .plans__info, .plans__illus { flex: none; }
   .plans__info { min-height: 0; padding: 48px 24px; gap: 40px; }
   .plans__illus { min-height: 0; padding: 32px 16px; }
 }
