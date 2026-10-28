@@ -115,7 +115,8 @@
 
     // heading and mint block as everywhere else. Then, on a clock of its own once the cards are
     // in view, a band of the "+" grid runs across them from left to right: the first card is
-    // there from the start, the second and third come in behind the band as it passes.
+    // there from the start, the second and third come in behind the band as it passes. The grid
+    // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
       rise($('.section-title', section));
       from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
@@ -124,8 +125,8 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
-      const RUN = 1100; // ms for the band to cross all three cards
-      const ease = 'cubic-bezier(0.5, 0, 0.3, 1)';
+      const RUN = 2400; // ms for the band to cross all three cards
+      const ease = 'cubic-bezier(0.45, 0, 0.55, 1)';
       const row = $('.steps__row', section);
       const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
@@ -164,6 +165,23 @@
               { clipPath: 'inset(0 0% 0 0)', offset: 1 },
             ],
             opts
+          );
+        });
+        // the grid clears off every card but the last right behind the band's tail
+        const lag = bw / width;
+        cards.slice(0, -1).forEach((card) => {
+          const grid = $('.step__grid', card);
+          const w = card.offsetWidth;
+          const a = Math.min(1, card.offsetLeft / width + lag);
+          const b = Math.min(1, (card.offsetLeft + w) / width + lag);
+          grid.animate(
+            [
+              { clipPath: 'inset(0 0 0 0px)', offset: 0 },
+              { clipPath: 'inset(0 0 0 0px)', offset: a },
+              { clipPath: `inset(0 0 0 ${w}px)`, offset: b },
+              { clipPath: `inset(0 0 0 ${w}px)`, offset: 1 },
+            ],
+            { ...opts, fill: 'forwards' }
           );
         });
       }
