@@ -384,7 +384,19 @@
 
   /* ---------- intro ---------- */
   // keepLogo: the logo is already in place (shown through the loader)
-  function intro({ keepLogo = false } = {}) {
+  // frame and header hairlines draw in
+  function drawLines(delay = 0) {
+    from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
+      pseudoElement: '::before',
+      duration: 1400,
+      delay: delay + 100,
+      easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+    });
+    from($('.header'), { transform: 'scaleX(0)' }, { pseudoElement: '::after', duration: 1400, delay: delay + 200 });
+  }
+
+  // keepLogo, linesDrawn: the logo and hairlines are already in place (shown through the loader)
+  function intro({ keepLogo = false, linesDrawn = false, bgDuration = 2200 } = {}) {
     moveIndicator(false);
     moveHighlight(false);
     hero.classList.add('is-ready');
@@ -398,16 +410,9 @@
     }
 
     const bg = bgs.find((b) => b.dataset.bg === current);
-    from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
+    if (bgDuration) from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: bgDuration });
 
-    // frame and hairlines draw in
-    from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
-      pseudoElement: '::before',
-      duration: 1400,
-      delay: 100,
-      easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
-    });
-    from($('.header'), { transform: 'scaleX(0)' }, { pseudoElement: '::after', duration: 1400, delay: 200 });
+    if (!linesDrawn) drawLines();
     from($('.cards'), { transform: 'scaleX(0)' }, { pseudoElement: '::before', duration: 1400, delay: 400 });
 
     // header items
@@ -438,9 +443,11 @@
   const LOADER_KEY = 'pigeonm:loader-seen';
   const LOADER = {
     rate: 0.8, // the clip is played a little slower than it was rendered
-    fadeAt: 1.75, // s of the clip (≈ 2.2 s on screen) at which it starts to fade
-    fade: 900, // ms
-    introAfter: 250, // ms into the fade at which the hero starts to draw in
+    linesAt: 0.9, // s of the clip at which the hero's frame starts to draw in around the globe
+    fadeAt: 1.6, // s of the clip (2 s on screen) at which the globe starts to fade
+    fade: 1600, // ms
+    introAfter: 400, // ms into the fade at which the rest of the hero starts to come in
+    bg: 3000, // ms the hero image takes to come up from black
   };
 
   const loaderSeen = () => {
@@ -457,20 +464,32 @@
     from($('.header__logo'), { opacity: 0 }, { duration: 900, delay: 200 });
 
     let done = false;
+    let lines = false;
+    const startLines = () => {
+      if (lines) return;
+      lines = true;
+      hero.classList.add('is-lines');
+      drawLines();
+    };
     const finish = () => {
       if (done) return;
       done = true;
+      startLines();
       markLoaderSeen();
       hero.classList.add('is-handoff');
-      const fade = video.animate([{ opacity: 1 }, { opacity: 0 }], {
+      // the globe fades and drifts slightly back while the hero image comes up underneath
+      const fade = video.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.94)' }], {
         duration: LOADER.fade,
-        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+        easing: 'cubic-bezier(0.45, 0, 0.25, 1)',
         fill: 'forwards',
       });
+      const bg = bgs.find((b) => b.dataset.bg === current);
+      hero.classList.add('is-bg');
+      from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: LOADER.bg, easing: 'cubic-bezier(0.33, 0, 0.2, 1)' });
       // fonts are long loaded by now, but never split/measure before they are
       timeout(LOADER.introAfter)
         .then(() => Promise.race([fontsReady, timeout(500)]))
-        .then(() => intro({ keepLogo: true }));
+        .then(() => intro({ keepLogo: true, linesDrawn: true, bgDuration: 0 }));
       fade.finished.then(() => {
         video.pause();
         video.remove();
@@ -479,6 +498,7 @@
     };
 
     const watchTime = (mediaTime) => {
+      if (mediaTime >= LOADER.linesAt) startLines();
       if (mediaTime >= LOADER.fadeAt) finish();
       else if (!done) waitFrame();
     };

@@ -124,11 +124,11 @@ h1, h2, p { margin: 0; }
 .hero.is-handoff .hero__video { display: block; }
 
 /* While the loader plays only the logo is on screen */
-.hero.is-loading .hero__bg-img { opacity: 0; } /* the hero image fades in after the globe */
+.hero.is-loading:not(.is-bg) .hero__bg-img { opacity: 0; } /* the hero image comes up as the globe fades */
 .hero.is-loading .hero__frame > :not(.header),
 .hero.is-loading .header > :not(.header__logo) { opacity: 0; }
-.hero.is-loading .hero__frame::before,
-.hero.is-loading .header::after { opacity: 0; }
+.hero.is-loading:not(.is-lines) .hero__frame::before,
+.hero.is-loading:not(.is-lines) .header::after { opacity: 0; } /* drawn in around the globe */
 .hero.is-loading .hero__frame > :not(.header),
 .hero.is-loading .header > :not(.header__logo) { pointer-events: none; }
 
