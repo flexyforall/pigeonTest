@@ -11,8 +11,8 @@
   const SLIDE = 500; // ms: the tab block
   const SWITCH_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
-  // the hero's SWITCH_TIMING; the copy starts as the new panel comes up into view
-  const T = { delay: 450, word: 800, stagger: 30, text: 120, fade: 700 };
+  // the hero's SWITCH_TIMING; the copy waits, hidden, until the new panel has nearly come to rest
+  const T = { delay: 650, word: 800, stagger: 30, text: 120, fade: 700 };
 
   const tabRow = section.querySelector('.plans__tabs');
   const indicator = section.querySelector('.plans__indicator');
