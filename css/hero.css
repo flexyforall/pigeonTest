@@ -308,7 +308,7 @@ h1, h2, p { margin: 0; }
     linear-gradient(90deg, var(--c-white) 42.308%, rgba(255, 255, 255, 0)),
     url("../assets/patterns/button-grid.svg") calc(62 * var(--px)) calc(-2 * var(--px)) / calc(691 * var(--px)) calc(503 * var(--px)) no-repeat,
     var(--c-white);
-  color: #000;
+  color: #101111; /* text/primary */
   font-size: calc(16 * var(--px));
   font-weight: 650;
   line-height: calc(24 * var(--px));

@@ -1,10 +1,10 @@
 /* ===== Sections below the hero (design width 1440) ===== */
 :root {
   --c-page: #f2f7f5; /* background/secondary */
-  --c-ink: #000;
+  --c-ink: #101111; /* text/primary, background/primaryInverse */
   --c-rule: #e2eae7;
   --c-mint: #c8f5e5;
-  --c-ink-muted: rgba(0, 0, 0, 0.7); /* text/secondary */
+  --c-ink-muted: rgba(16, 17, 17, 0.7); /* text/secondary */
 }
 
 body { background: var(--c-page); }
@@ -157,18 +157,19 @@ body { background: var(--c-page); }
 }
 
 /* ===== Divider between benefits and connectivity ===== */
-/* an empty band of rules: top and bottom across the page, sides in line with the cards */
+/* an empty band of rules (Figma 257:27209): top and bottom across the page, and twelve columns
+   in line with the cards, each with its own rule on both sides */
 .divider {
-  height: calc(117 * var(--px));
+  display: flex;
+  height: calc(120 * var(--px));
   padding: 0 max(40px, calc((100% - 1760px) / 2));
   background: var(--c-page);
   border-top: 1px solid var(--c-rule);
   border-bottom: 1px solid var(--c-rule);
 }
-.divider::before {
-  content: "";
-  display: block;
-  height: 100%;
+.divider i {
+  flex: 1 0 0;
+  min-width: 1px;
   border-left: 1px solid var(--c-rule);
   border-right: 1px solid var(--c-rule);
 }
@@ -414,7 +415,7 @@ body { background: var(--c-page); }
   transition: background-color 0.3s ease;
 }
 .plan-tab + .plan-tab { border-left: 1px solid var(--c-rule); }
-.plan-tab:not(.is-active):hover { background: rgba(0, 0, 0, 0.03); }
+.plan-tab:not(.is-active):hover { background: rgba(16, 17, 17, 0.03); }
 
 /* the black block behind the active tab; slides between tabs in step with the scan line */
 .plans__indicator {
@@ -529,7 +530,7 @@ body { background: var(--c-page); }
 /* dark button: the same "+" grid and fade as the light one, inverted */
 .btn--dark {
   background:
-    linear-gradient(90deg, var(--c-ink) 42.308%, rgba(0, 0, 0, 0)),
+    linear-gradient(90deg, var(--c-ink) 42.308%, rgba(16, 17, 17, 0)),
     url("../assets/patterns/button-grid-dark.svg") calc(62 * var(--px)) calc(-2 * var(--px)) / calc(691 * var(--px)) calc(503 * var(--px)) no-repeat,
     var(--c-ink);
   color: var(--c-white);
@@ -598,7 +599,7 @@ body { background: var(--c-page); }
   letter-spacing: calc(0.48 * var(--u));
   white-space: nowrap;
   text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.4); /* text/tertiary */
+  color: rgba(16, 17, 17, 0.4); /* text/tertiary */
 }
 
 /* coverage zones, tinting what lies under them; a square marks the access point */
