@@ -262,8 +262,12 @@ body { background: var(--c-page); }
   opacity: var(--progress-fade, 1);
 }
 .connectivity__progress span {
-  display: block;
-  height: 100%;
+  /* thicker than the rule it runs along, so it reads; it sits on the rule, growing upwards */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
   background: var(--c-ink);
   transform: scaleX(var(--progress, 0));
   transform-origin: left center;

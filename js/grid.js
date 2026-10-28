@@ -91,13 +91,15 @@
   function draw() {
     frame = 0;
     const h = window.innerHeight;
-    // over the last screen of the page the front speeds up to the very bottom, so the lines at
-    // the end of the page get drawn in full too
-    const left = document.documentElement.scrollHeight - h - window.scrollY;
-    const tail = clamp(1 - left / h);
-    const front = window.scrollY + h * (FRONT + tail * (1 - FRONT)) + tail * SWEEP;
+    const end = document.documentElement.scrollHeight;
+    // over the last screen of the page the front slides on down to the screen's bottom edge, so
+    // it reaches the very end of the page as the scroll does; it never runs ahead of the screen
+    const tail = clamp(1 - (end - h - window.scrollY) / h);
+    const front = window.scrollY + h * (FRONT + tail * (1 - FRONT));
     lines.forEach((l) => {
-      const p = l.vertical ? clamp((front - l.y) / l.len) : clamp((front - l.y) / SWEEP);
+      // a horizontal line near the end of the page has less room to sweep across in
+      const sweep = Math.max(1, Math.min(SWEEP, end - l.y));
+      const p = l.vertical ? clamp((front - l.y) / l.len) : clamp((front - l.y) / sweep);
       if (Math.abs(p - l.drawn) < 0.001) return;
       l.drawn = p;
       l.el.style.transform = l.vertical ? `scaleY(${p.toFixed(4)})` : `scaleX(${p.toFixed(4)})`;
