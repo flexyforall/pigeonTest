@@ -33,16 +33,15 @@
   const pieces = (panel) =>
     ['.plans__icon', '.plans__title', '.plans__tags', '.plans__desc', '.btn'].map((sel) => panel.querySelector(sel));
 
+  // the old copy goes as one block, its layout untouched, up and out of the panel
   function leaveCopy(ghost) {
     const top = ghost.getBoundingClientRect().top;
-    pieces(ghost).forEach((el, i) => {
-      const r = el.getBoundingClientRect();
-      el.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - r.bottom}px)`, opacity: 0.4 }], {
-        duration: 700,
-        delay: i * 25,
-        easing: EASE_IN,
-        fill: 'forwards',
-      });
+    const info = ghost.querySelector('.plans__info');
+    const bottom = Math.max(...pieces(ghost).map((el) => el.getBoundingClientRect().bottom));
+    info.animate([{ transform: 'none', opacity: 1 }, { transform: `translateY(${top - bottom}px)`, opacity: 0.4 }], {
+      duration: 800,
+      easing: EASE_IN,
+      fill: 'forwards',
     });
   }
 
