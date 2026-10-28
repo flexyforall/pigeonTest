@@ -113,9 +113,9 @@
       });
     },
 
-    // heading and mint block as everywhere else; then the "+" grid runs across the three cards
-    // from left to right, on a clock of its own once the cards are in view, and lights each card
-    // up as it passes: the grey copy turns dark, and the grid stays on the last card
+    // heading and mint block as everywhere else. Then, on a clock of its own once the cards are
+    // in view, a band of the "+" grid runs across them from left to right: the first card is
+    // there from the start, the second and third come in behind the band as it passes.
     steps(section) {
       rise($('.section-title', section));
       from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
@@ -124,44 +124,49 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
-      const STEP = 650; // ms the grid takes across one card
-      const START = 200;
-      const ease = 'cubic-bezier(0.45, 0, 0.55, 1)';
+      const RUN = 1100; // ms for the band to cross all three cards
+      const ease = 'cubic-bezier(0.5, 0, 0.3, 1)';
+      const row = $('.steps__row', section);
+      const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
-      // the cards wait, grey and without their grid, until they are well in view themselves
+
       section.classList.add('is-dim');
       new IntersectionObserver((entries, io) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         io.disconnect();
         section.classList.remove('is-dim');
         sweep();
-      }, { threshold: 0.6 }).observe($('.steps__row', section));
+      }, { threshold: 0.6 }).observe(row);
 
-      const sweep = () => cards.forEach((card, i) => {
-        const grid = $('.step__grid', card);
-        const w = card.offsetWidth;
-        const right = grid.offsetWidth - w; // the grid runs on past the card's right edge
-        const t0 = START + i * STEP;
-        // in from the left edge to the right edge…
-        grid.animate([{ clipPath: `inset(0 ${grid.offsetWidth}px 0 0)` }, { clipPath: `inset(0 ${right}px 0 0)` }], {
-          duration: STEP,
-          delay: t0,
-          easing: ease,
-          fill: i === cards.length - 1 ? 'backwards' : 'both',
-        });
-        // …and, but on the last card, out the same way as it moves on to the next
-        if (i < cards.length - 1) {
-          grid.animate([{ clipPath: `inset(0 ${right}px 0 0)` }, { clipPath: `inset(0 ${right}px 0 ${w}px)` }], {
-            duration: STEP,
-            delay: t0 + STEP,
-            easing: ease,
-            fill: 'forwards',
-          });
-        }
-        $$('.step__num, .step__text', card).forEach((el) =>
-          from(el, { opacity: 0.35 }, { duration: 700, delay: t0 + STEP * 0.4, easing: ease })
+      function sweep() {
+        const width = row.clientWidth;
+        const bw = band.offsetWidth;
+        const opts = { duration: RUN, easing: ease, fill: 'backwards' };
+        // the band's leading edge goes from the row's left edge to its right edge
+        band.animate(
+          [
+            { transform: `translateX(${-bw}px)`, opacity: 1 },
+            { opacity: 1, offset: 0.85 },
+            { transform: `translateX(${width - bw}px)`, opacity: 0 },
+          ],
+          { ...opts, fill: 'both' }
         );
-      });
+        // every card but the first is uncovered right behind that edge: its reveal runs over the
+        // stretch of the band's way that crosses it (keyframe offsets are in the band's progress)
+        cards.slice(1).forEach((card) => {
+          const a = card.offsetLeft / width;
+          const b = (card.offsetLeft + card.offsetWidth) / width;
+          card.animate(
+            [
+              { clipPath: 'inset(0 100% 0 0)', offset: 0 },
+              { clipPath: 'inset(0 100% 0 0)', offset: a },
+              { clipPath: 'inset(0 0% 0 0)', offset: b },
+              { clipPath: 'inset(0 0% 0 0)', offset: 1 },
+            ],
+            opts
+          );
+        });
+      }
     },
   };
 

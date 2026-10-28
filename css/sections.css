@@ -355,9 +355,8 @@ body { background: var(--c-page); }
 .is-pending .steps__head,
 .is-pending .step > * { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
-.steps.is-dim .step__grid { clip-path: inset(0 100% 0 0); }
-.steps.is-dim .step__num,
-.steps.is-dim .step__text { opacity: 0.35; }
+.steps.is-dim .step:not(:first-child) { clip-path: inset(0 100% 0 0); }
+.steps.is-dim .steps__sweep { opacity: 0; }
 .is-pending .plans__indicator { opacity: 0; }
 
 /* ===== Plans ("Coverage starts with your space") ===== */
@@ -690,15 +689,16 @@ body { background: var(--c-page); }
 
 /* ===== How it works ("From setup to always on.", Figma 264:28245) ===== */
 .steps {
-  padding: 0 max(40px, calc((100% - 1760px) / 2));
   background: var(--c-white);
-  border-bottom: 1px solid var(--c-rule);
 }
+.steps__frame { margin: 0 max(40px, calc((100% - 1760px) / 2)); }
+/* the band of rules below closes the section (Figma 265:28641) */
+.divider--white { background: var(--c-white); }
 .steps__frame {
   display: flex;
   flex-direction: column;
   gap: calc(60 * var(--px));
-  padding: calc(160 * var(--px)) 0;
+  padding: calc(160 * var(--px)) 0 0;
   /* side rules; Figma strokes don't take up layout space, so they are inset shadows */
   box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
 }
@@ -722,6 +722,7 @@ body { background: var(--c-page); }
 }
 
 .steps__row {
+  position: relative;
   display: flex;
   height: calc(240 * var(--px));
   margin: 0;
@@ -802,9 +803,28 @@ body { background: var(--c-page); }
   color: var(--c-ink-muted);
 }
 
+/* the "+" grid running across the cards as they come in: a band of mint crosses, its leading
+   edge brightest (js/sections.js moves it) */
+.steps__sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: calc(420 * var(--px));
+  background: #59b293; /* icon/accentForLight */
+  -webkit-mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px repeat-x,
+    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 80%, #000 97%, transparent);
+  -webkit-mask-composite: source-in;
+  mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px repeat-x,
+    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 80%, #000 97%, transparent);
+  mask-composite: intersect;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media (max-width: 960px) {
-  .steps { padding: 0 16px; }
-  .steps__frame { padding: 64px 0; gap: 40px; }
+  .steps__frame { margin: 0 16px; padding: 64px 0 0; gap: 40px; }
   .steps__mark { display: none; }
   .steps__row { flex-direction: column; height: auto; }
   .step { flex: none; height: 200px; }
