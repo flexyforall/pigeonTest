@@ -120,7 +120,7 @@
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
       const WIPE = 900; // ms: the mint block's wipe, as in the other headings
-      const RUN = 1800; // ms: the band's run across the cards, setting off with the block
+      const RUN = WIPE; // ms: the band's run across the cards, in step with the block
       const DELAY = 350;
       const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'; // the mint blocks' wipe everywhere
       const row = $('.steps__row', section);
@@ -138,7 +138,7 @@
         rise($('.section-title', section));
         from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, { duration: WIPE, delay: DELAY, easing: ease });
         sweep();
-      }, { threshold: 0.6 }).observe(row);
+      }, { threshold: 0.25 }).observe(row);
 
       function sweep() {
         const width = row.clientWidth;
