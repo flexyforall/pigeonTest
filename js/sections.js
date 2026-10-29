@@ -141,7 +141,7 @@
     steps(section) {
       const WIPE = 1800; // ms: the mint block's wipe (slow enough for the band to be seen)
       const RUN = WIPE; // ms: the band's run across the cards, in step with the block
-      const DELAY = 150;
+      const DELAY = 0;
       const ease = 'cubic-bezier(0.45, 0, 0.2, 1)'; // soft at both ends
       const row = $('.steps__row', section);
       const band = $('.steps__sweep', section);
@@ -163,44 +163,47 @@
       function sweep() {
         const width = row.clientWidth;
         const bw = band.offsetWidth;
+        const travel = width - bw;
         const opts = { duration: RUN, delay: DELAY, easing: ease, fill: 'backwards' };
-        // the band's leading edge goes from the row's left edge to its right edge
+        // the band sets off over the first card, at the row's left edge, and runs until its
+        // leading edge reaches the row's right edge; it fades in as it starts and out as it ends
         band.animate(
           [
-            // it fades in as it sets off, so it doesn't just appear at the left edge
-            { transform: `translateX(${-bw}px)`, opacity: 0 },
-            { opacity: 0.75, offset: 0.3 },
-            { opacity: 0.75, offset: 0.7 },
-            { transform: `translateX(${width - bw}px)`, opacity: 0 },
+            { transform: 'translateX(0px)', opacity: 0 },
+            { opacity: 0.75, offset: 0.15 },
+            { opacity: 0.75, offset: 0.75 },
+            { transform: `translateX(${travel}px)`, opacity: 0 },
           ],
           { ...opts, fill: 'both' }
         );
-        // every card but the first fades in as the band crosses it, and the grid fades off every
-        // card but the last right behind the band (keyframe offsets are in the band's progress)
+        // the share of the run at which the band's leading edge / its tail reaches x
+        const lead = (x) => Math.min(1, Math.max(0, (x - bw) / travel));
+        const tail = (x) => Math.min(1, Math.max(0, x / travel));
+        // every card but the first fades in as the band's head crosses it
         cards.slice(1).forEach((card) => {
-          const a = card.offsetLeft / width;
-          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 1.2) / width);
+          const a = lead(card.offsetLeft);
+          const b = Math.max(a + 0.05, lead(card.offsetLeft + card.offsetWidth));
           card.animate(
             [
               { opacity: 0, offset: 0 },
               { opacity: 0, offset: a, easing: 'ease-in-out' },
-              { opacity: 1, offset: b },
-              { opacity: 1, offset: 1 },
+              { opacity: 1, offset: Math.min(1, b) },
+              ...(b < 1 ? [{ opacity: 1, offset: 1 }] : []),
             ],
             opts
           );
         });
-        const lag = bw / width;
+        // and the grid fades off every card but the last as its tail goes over it
         cards.slice(0, -1).forEach((card) => {
           const grid = $('.step__grid', card);
-          const a = Math.min(1, card.offsetLeft / width + lag * 0.5);
-          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 1.3) / width + lag);
+          const a = tail(card.offsetLeft);
+          const b = Math.max(a + 0.05, tail(card.offsetLeft + card.offsetWidth));
           grid.animate(
             [
               { opacity: 1, offset: 0 },
               { opacity: 1, offset: a, easing: 'ease-in-out' },
-              { opacity: 0, offset: b },
-              { opacity: 0, offset: 1 },
+              { opacity: 0, offset: Math.min(1, b) },
+              ...(b < 1 ? [{ opacity: 0, offset: 1 }] : []),
             ],
             { ...opts, fill: 'forwards' }
           );
