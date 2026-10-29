@@ -1,12 +1,20 @@
-// The call to action's "+" grid (Figma 285:5210, as assets/patterns/connectivity-grid.svg) is
-// drawn on a canvas so it can answer the pointer: while it moves over the panel, the pluses
-// around it lean in towards it, a little larger and brighter the nearer they are, and take on
-// the hero's mint glow in a wide soft spot; they settle back when it leaves.
+// The dark panels' "+" grid (assets/patterns/connectivity-grid.svg: the call to action, Figma
+// 285:5210, and the connectivity title) is drawn on a canvas so it can answer the pointer: while
+// it moves over the panel, the pluses around it lean in towards it, a little larger and brighter
+// the nearer they are, and take on the hero's mint glow in a wide soft spot; they settle back
+// when it leaves. The grid covers its box from the top left, as the <img> it replaces did
+// (object-fit: cover; object-position: left top).
 (() => {
-  const img = document.querySelector('.cta__pattern');
-  const panel = document.querySelector('.cta__panel');
-  if (!img || !panel) return;
+  [
+    ['.cta__pattern', '.cta__panel'],
+    ['.connectivity__pattern', '.connectivity__panel'],
+  ].forEach(([imgSel, areaSel]) => {
+    const img = document.querySelector(imgSel);
+    const panel = img && img.closest(areaSel);
+    if (panel) attach(img, panel);
+  });
 
+function attach(img, panel) {
   // the grid, in the pattern's 1388 × 979 design pixels
   const W = 1388;
   const H = 979;
@@ -40,7 +48,7 @@
   function size() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = canvas.clientWidth;
-    scale = w / W;
+    scale = Math.max(w / W, canvas.clientHeight / H); // cover, from the top left
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
     ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
@@ -120,4 +128,5 @@
   }
 
   new ResizeObserver(size).observe(canvas);
+}
 })();
