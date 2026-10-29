@@ -480,11 +480,13 @@
   const grid = loader?.querySelector('.loader__grid');
   const HOLD = 0.8;
   const reveal = { from: 0, to: HOLD, start: performance.now(), duration: SPIN * 1.6, p: 0 };
-  const smooth = (t) => 1 - Math.pow(1 - t, 2);
+  // a gentle start while it waits, an ease out on the run to the end
+  const easeInOut = (t) => t * t * (3 - 2 * t);
+  const easeOut = (t) => 1 - Math.pow(1 - t, 2);
   function gridFrame(now) {
     if (!grid || !grid.isConnected) return;
     const t = Math.min(1, (now - reveal.start) / reveal.duration);
-    reveal.p = reveal.from + (reveal.to - reveal.from) * smooth(t);
+    reveal.p = reveal.from + (reveal.to - reveal.from) * (reveal.to < 1 ? easeInOut(t) : easeOut(t));
     const box = grid.getBoundingClientRect();
     const full = Math.hypot(box.width, box.height) / 2 + 240; // the soft edge clears the corners
     grid.style.setProperty('--grid-reveal', `${(reveal.p * full).toFixed(1)}px`);
