@@ -99,6 +99,12 @@ h1, h2, p { margin: 0; }
   mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal, 0px) - 240px), transparent var(--grid-reveal, 0px));
 }
 
+/* the hero's grid while the loader's reveal runs on into it (js/hero.js) */
+.hero__pattern.is-revealing {
+  -webkit-mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal, 0px) - 240px), transparent var(--grid-reveal, 0px));
+  mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal, 0px) - 240px), transparent var(--grid-reveal, 0px));
+}
+
 /* the turning sphere, 188 × 183 in the middle of the screen, its edges melting into the page */
 .loader__sphere {
   position: absolute;

@@ -460,6 +460,7 @@
   const SPHERE_FADE = 700;
   const FADE = 350; // the loader's own fade, once the hero has started
   const GRID_END = 1500; // from the sphere's fade to the grid's full reveal
+  const HERO_AT = 400; // the hero starts this long into the sphere's fade (the grid ~80% in)
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const firstBg = bgs.find((b) => b.dataset.bg === current);
@@ -484,13 +485,23 @@
   // a gentle start while it waits, an ease out on the run to the end
   const easeInOut = (t) => t * t * (3 - 2 * t);
   const easeOut = (t) => 1 - Math.pow(1 - t, 2);
+  // the hero's own grid is revealed on the same clock, so the reveal runs on in the hero once
+  // the loader has gone
+  const heroGrid = $('.hero__pattern');
+  if (grid && !reduceMotion) heroGrid.classList.add('is-revealing');
   function gridFrame(now) {
-    if (!grid || !grid.isConnected) return;
+    if (!grid) return;
     const t = Math.min(1, (now - reveal.start) / reveal.duration);
     reveal.p = reveal.from + (reveal.to - reveal.from) * (reveal.to < 1 ? easeInOut(t) : easeOut(t));
-    const box = grid.getBoundingClientRect();
+    const box = heroGrid.parentElement.getBoundingClientRect(); // the content box both grids fill
     const full = Math.hypot(box.width, box.height) / 2 + 240; // the soft edge clears the corners
-    grid.style.setProperty('--grid-reveal', `${(reveal.p * full).toFixed(1)}px`);
+    const r = `${(reveal.p * full).toFixed(1)}px`;
+    grid.style.setProperty('--grid-reveal', r);
+    heroGrid.style.setProperty('--grid-reveal', r);
+    if (reveal.to === 1 && t === 1) {
+      heroGrid.classList.remove('is-revealing');
+      return;
+    }
     requestAnimationFrame(gridFrame);
   }
   if (grid && !reduceMotion) requestAnimationFrame(gridFrame);
@@ -498,15 +509,14 @@
 
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
-    // the sphere fades while the grid runs on to its edges; just before it gets there the hero
-    // starts drawing itself in and the loader clears off it, gone as the grid completes
+    // the sphere fades while the grid runs on to its edges; at about four fifths of the way the
+    // hero starts drawing itself in and the loader clears off it, the grid going on in the hero
     finishGrid(GRID_END);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
-    // the grid stays: it is the hero's own, in its place
     loader.querySelectorAll('.loader__logo, .loader__sphere').forEach((el) =>
       el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SPHERE_FADE, easing: ease, fill: 'forwards' })
     );
-    await timeout(GRID_END - FADE);
+    await timeout(HERO_AT);
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();
