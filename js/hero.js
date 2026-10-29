@@ -456,7 +456,7 @@
   // the hero starts drawing itself in underneath and the loader clears off it, so the one runs
   // into the other with no pause between and the hero's lines are seen drawing.
   const loader = document.querySelector('.loader');
-  const SPIN = 2000;
+  const SPIN = 1400;
   const SPHERE_FADE = 600;
   const FADE = 700; // the loader's own fade, over the hero's start
   const GRID_END = 2000; // from the hand-over to the grid's full reveal, with the hero's intro
