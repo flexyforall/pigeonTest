@@ -452,11 +452,12 @@
   }
 
   /* ---------- loader ---------- */
-  // The sphere turns until the page is ready (and for SPIN at least), then fades away with the
-  // logo; the loader goes and the hero draws itself in on the same dark page.
+  // The sphere turns until the page is ready (and for SPIN at least); then the hero starts drawing
+  // itself in underneath while the loader fades off it, the sphere a little ahead, so the one
+  // runs into the other with no pause between.
   const loader = document.querySelector('.loader');
   const SPIN = 2000;
-  const FADE = 800;
+  const FADE = 1000;
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const firstBg = bgs.find((b) => b.dataset.bg === current);
@@ -473,13 +474,13 @@
 
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
-    await Promise.all(
-      [...loader.children].map((el) =>
-        el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: 'ease-in-out', fill: 'forwards' }).finished
-      )
+    const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
+    [...loader.children].forEach((el) =>
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE * 0.6, easing: ease, fill: 'forwards' })
     );
-    removeLoader();
     intro();
+    await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
+    removeLoader();
   }
 
   if (reduceMotion || !loader) {
