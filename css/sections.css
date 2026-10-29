@@ -690,7 +690,7 @@ body { background: var(--c-page); }
 .plans__wave {
   position: absolute;
   inset: 0;
-  background: #eaeaea; /* a grey that reads as grey on the mint page (#f8f8f8 reads as white here) */
+  background: #e3efe9; /* light grey with a hint of the accent green: reads as the wifi signal */
   opacity: 0;
   --from: inset(
     calc(var(--cy) * var(--u)) calc((var(--w) - var(--cx)) * var(--u))
