@@ -77,6 +77,10 @@
     layer.className = 'plans__waves';
     layer.setAttribute('aria-hidden', 'true');
     Object.entries({ '--x': x0, '--y': y0, '--w': x1 - x0, '--h': y1 - y0 }).forEach(([k, v]) => layer.style.setProperty(k, v));
+    const img = plan.querySelector('img');
+    // an absolute URL: a relative one would resolve against the stylesheet that uses it
+    const floor = new URL(img.getAttribute('src').replace(/\.svg$/, '-floor.png'), document.baseURI).href;
+    layer.style.setProperty('--mask', `url("${floor}")`);
     zones.forEach((z, i) => {
       const ap = z.querySelector('i');
       const wave = document.createElement('span');

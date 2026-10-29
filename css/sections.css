@@ -648,6 +648,7 @@ body { background: var(--c-page); }
 
 .plans__label {
   position: absolute;
+  z-index: 1; /* above the signal's fill */
   left: calc(var(--x) * var(--u));
   top: calc(var(--y) * var(--u));
   font-family: var(--f-display);
@@ -681,8 +682,10 @@ body { background: var(--c-page); }
   height: calc(var(--h) * var(--u));
   overflow: hidden;
   pointer-events: none;
-  /* the waves tint the plan as one: where they overlap the tint stays the same */
-  mix-blend-mode: multiply;
+  /* the waves fill the floor only: the plan's walls, doors and fittings stay on top
+     (--mask: the plan's floor, made by plans.js from <plan>-floor.png) */
+  -webkit-mask: var(--mask) calc(var(--x) * var(--u) * -1) calc(var(--y) * var(--u) * -1) / calc(680 * var(--u)) auto no-repeat;
+  mask: var(--mask) calc(var(--x) * var(--u) * -1) calc(var(--y) * var(--u) * -1) / calc(680 * var(--u)) auto no-repeat;
 }
 .plans__wave {
   position: absolute;
