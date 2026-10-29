@@ -2,12 +2,16 @@
 :root {
   --c-page: #f2f7f5; /* background/secondary */
   --c-ink: #101111; /* text/primary, background/primaryInverse */
-  --c-rule: #e2eae7;
+  --c-rule: #e2eae7; /* border/primaryBg, on white */
+  --c-rule-mint: #dbe3e0; /* border/secondaryBg, on the mint page */
   --c-mint: #c8f5e5;
   --c-ink-muted: rgba(16, 17, 17, 0.7); /* text/secondary */
 }
 
 body { background: var(--c-page); }
+
+/* the sections on the mint page take its own, slightly darker rule */
+.benefits, .divider:not(.divider--white), .plans { --c-rule: var(--c-rule-mint); }
 
 .section-title {
   margin: 0;
@@ -182,7 +186,7 @@ body { background: var(--c-page); }
 .connectivity {
   position: relative;
   background: var(--c-page);
-  border-bottom: 1px solid var(--c-rule);
+  border-bottom: 1px solid var(--c-rule-mint);
   /* the panels waiting off to the right must not widen the page; clip (not hidden) keeps the
      sticky stage working */
   overflow-x: clip;

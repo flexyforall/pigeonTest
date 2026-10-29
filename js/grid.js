@@ -20,37 +20,39 @@
   layer.setAttribute('aria-hidden', 'true');
   document.body.append(layer);
 
+  // the rules' colours, as computed: border/primaryBg on white, border/secondaryBg on the mint page
+  const RULES = ['rgb(226, 234, 231)', 'rgb(219, 227, 224)'];
   let lines = [];
-  let rule = null; // the rules' colour, as computed
 
   // Rules are drawn as borders or as inset box-shadows (Figma strokes take no layout space);
   // read both off every element (and the card ::after overlays) while they are still showing.
   function collect() {
     root.classList.remove('grid-drawn');
-    rule = rule || getComputedStyle(document.querySelector('.divider')).borderTopColor;
     const segs = new Map();
-    const add = (x, y, len, vertical) => {
+    const add = (x, y, len, vertical, color) => {
       if (len < 2) return;
       const key = `${vertical ? 'v' : 'h'}${Math.round(x)}:${Math.round(y)}:${Math.round(len)}`;
-      segs.set(key, { x, y, len, vertical });
+      segs.set(key, { x, y, len, vertical, color });
     };
+    // s holds each side's colour (or nothing, for a side without a rule)
     const sides = (r, s) => {
-      if (s.top) add(r.left, r.top, r.width, false);
-      if (s.bottom) add(r.left, r.bottom - 1, r.width, false);
-      if (s.left) add(r.left, r.top, r.height, true);
-      if (s.right) add(r.right - 1, r.top, r.height, true);
+      if (s.top) add(r.left, r.top, r.width, false, s.top);
+      if (s.bottom) add(r.left, r.bottom - 1, r.width, false, s.bottom);
+      if (s.left) add(r.left, r.top, r.height, true, s.left);
+      if (s.right) add(r.right - 1, r.top, r.height, true, s.right);
     };
     const shadowSides = (shadow) => {
       const s = {};
       if (!shadow || shadow === 'none') return s;
       shadow.split(/,(?![^(]*\))/).forEach((one) => {
-        if (!one.includes('inset') || !one.includes(rule)) return;
-        const [x, y, , spread = 0] = (one.replace(rule, '').match(/-?[\d.]+px/g) || []).map(parseFloat);
-        if (!x && !y && spread) Object.assign(s, { top: 1, bottom: 1, left: 1, right: 1 });
-        if (x > 0) s.left = 1;
-        if (x < 0) s.right = 1;
-        if (y > 0) s.top = 1;
-        if (y < 0) s.bottom = 1;
+        const c = RULES.find((rule) => one.includes(rule));
+        if (!one.includes('inset') || !c) return;
+        const [x, y, , spread = 0] = (one.replace(c, '').match(/-?[\d.]+px/g) || []).map(parseFloat);
+        if (!x && !y && spread) Object.assign(s, { top: c, bottom: c, left: c, right: c });
+        if (x > 0) s.left = c;
+        if (x < 0) s.right = c;
+        if (y > 0) s.top = c;
+        if (y < 0) s.bottom = c;
       });
       return s;
     };
@@ -64,7 +66,7 @@
         if (!b.width || !b.height) return;
         const r = { left: b.left + sx, right: b.right + sx, top: b.top + sy, bottom: b.bottom + sy, width: b.width, height: b.height };
         const cs = getComputedStyle(el);
-        const border = (side) => parseFloat(cs[`border${side}Width`]) > 0 && cs[`border${side}Color`] === rule;
+        const border = (side) => parseFloat(cs[`border${side}Width`]) > 0 && RULES.find((c) => c === cs[`border${side}Color`]);
         sides(r, { top: border('Top'), bottom: border('Bottom'), left: border('Left'), right: border('Right') });
         sides(r, shadowSides(cs.boxShadow));
         const after = getComputedStyle(el, '::after');
@@ -80,6 +82,7 @@
         left: `${seg.x}px`,
         top: `${seg.y}px`,
         [seg.vertical ? 'height' : 'width']: `${seg.len}px`,
+        background: seg.color,
       });
       layer.append(line);
       return { ...seg, el: line, drawn: -1 };
