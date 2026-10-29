@@ -100,7 +100,19 @@ h1, h2, p { margin: 0; }
   -webkit-mask: radial-gradient(closest-side, #000 82%, transparent);
   mask: radial-gradient(closest-side, #000 82%, transparent);
 }
-.loader__sphere video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.loader__sphere {
+  /* the clip's own near-black isn't quite the page's: lightened over the page colour (and a touch
+     darker first, so all of its noise falls below it) its background becomes exactly #101111 */
+  background: var(--c-bg);
+}
+.loader__sphere video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.94);
+  mix-blend-mode: lighten;
+}
 /* the line down the middle, then the two it parts into (border/primaryInverseBg) */
 .js .loader-lines {
   position: fixed;
