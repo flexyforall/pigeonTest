@@ -209,6 +209,21 @@
     },
   };
 
+  /* ---------- the network globe ---------- */
+  // It turns slowly (slower than the clip was made), and only while it's on screen.
+  const globe = document.querySelector('.network__media video');
+  if (globe) {
+    const rate = Number(globe.dataset.rate) || 1;
+    globe.defaultPlaybackRate = rate;
+    globe.playbackRate = rate;
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        globe.playbackRate = rate;
+        globe.play().catch(() => {});
+      } else globe.pause();
+    }, { rootMargin: '200px 0px' }).observe(globe);
+  }
+
   const sections = Object.keys(REVEALS)
     .map((name) => [name, document.querySelector(`.${name}`)])
     .filter(([, el]) => el);
