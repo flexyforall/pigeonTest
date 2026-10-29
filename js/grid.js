@@ -10,7 +10,7 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const wide = window.matchMedia('(min-width: 961px)');
 
-  const SCOPE = '.benefits, .divider, .plans, .steps, .services, .network';
+  const SCOPE = '.benefits, .divider, .plans, .steps, .services, .network, .solana, .about, .testimonials, .faq, .cta, .footer';
   const FRONT = 0.9; // the drawing front, as a share of the screen height from its top
   const SWEEP = 420; // px of scroll a horizontal line takes to draw across
 

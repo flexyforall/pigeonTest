@@ -27,6 +27,10 @@
     const split = (node, wrap) => {
       const frag = document.createDocumentFragment();
       node.childNodes.forEach((child) => {
+        if (child.nodeName === 'BR') {
+          frag.append(document.createElement('br'));
+          return;
+        }
         if (child.nodeType === Node.ELEMENT_NODE) {
           frag.append(split(child, (inner) => {
             const shell = child.cloneNode(false);
@@ -241,7 +245,65 @@
         });
       }, { threshold: 0.7 }).observe(stats);
     },
+
+    // the dark panel's copy rises like the other headings, then the record and the cards follow
+    solana(section) {
+      rise($('.section-title', section));
+      fadeUp($('.solana__desc', section), 300);
+      fadeUp($('.solana__link', section), 400);
+      fadeUp($('.solana__record', section), 550, 1000);
+      $$('.benefit', section).forEach((card, i) => {
+        const d = 500 + i * 120;
+        $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
+          from(el, { opacity: 0 }, { duration: 1400, delay: d })
+        );
+        from($('.benefit__icon', card), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: d + 100 });
+        rise($('.benefit__title', card), d + 200, { word: 900, stagger: 40 });
+        fadeUp($('.benefit__desc', card), d + 400);
+      });
+    },
+
+    // heading and mint block, then the mission, the figures (counting up) and the logos
+    about(section) {
+      heading(section, '.about__mark');
+      $$('.about__mission > *', section).forEach((el, i) => fadeUp(el, 300 + i * 150, 1000));
+      $$('.about__stat', section).forEach((stat, i) => {
+        const d = 400 + i * 120;
+        fadeUp($('.about__value', stat), d);
+        countUp($('.about__value', stat), d);
+        fadeUp($('.about__texts', stat), d + 100);
+      });
+      $$('.about__logos li', section).forEach((el, i) => fadeUp(el, 600 + i * 90, 1000));
+    },
+
+    testimonials(section) {
+      heading(section, '.testimonials__mark');
+      fadeUp($('.quote', section), 400, 1000);
+    },
+
+    faq(section) {
+      heading(section, '.faq__mark');
+      $$('.faq__item', section).forEach((el, i) => fadeUp(el, 300 + i * 60));
+    },
+
+    cta(section) {
+      from($('.cta__icon', section), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900 });
+      rise($('.section-title', section), 150);
+      fadeUp($('.cta__desc', section), 450);
+      from($('.cta__btn', section), { opacity: 0, transform: 'translateY(16px)', clipPath: 'inset(100% 0 0 0)' }, { duration: 900, delay: 600 });
+      $$('.cta__stat', section).forEach((el, i) => fadeUp(el, 500 + i * 100));
+    },
   };
+
+  // the heading rises word by word while its mint block wipes in behind the last words
+  function heading(section, mark) {
+    rise($('.section-title', section));
+    from($(mark, section), { clipPath: 'inset(0 100% 0 0)' }, {
+      duration: 900,
+      delay: 350,
+      easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+    });
+  }
 
   /* ---------- the network globe ---------- */
   // It turns slowly (the clip is slowed down, with in-between frames, when made), and only while it's on screen.

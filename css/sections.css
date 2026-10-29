@@ -381,6 +381,19 @@ body { background: var(--c-page); }
 .is-pending .network__media,
 .is-pending .network__texts,
 .is-pending .stat { visibility: hidden; }
+.is-pending .solana__head,
+.is-pending .solana__record,
+.is-pending .solana__row .benefit > *,
+.is-pending .about__head,
+.is-pending .about__mission > *,
+.is-pending .about__stat > *,
+.is-pending .about__logos li,
+.is-pending .testimonials__head,
+.is-pending .quote,
+.is-pending .faq__head,
+.is-pending .faq__item,
+.is-pending .cta__head,
+.is-pending .cta__stat { visibility: hidden; }
 .network__stats.is-waiting .stat { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
 .steps.is-dim .step:not(:first-child) { clip-path: inset(0 100% 0 0); }
@@ -862,7 +875,7 @@ body { background: var(--c-page); }
 
 /* ===== Layout grid drawn in with the scroll (js/grid.js) ===== */
 /* the sections' own rules give way to the drawn ones */
-.grid-drawn :is(.benefits, .divider, .plans, .steps, .services, .network) { --c-rule: transparent; }
+.grid-drawn :is(.benefits, .divider, .plans, .steps, .services, .network, .solana, .about, .testimonials, .faq, .cta, .footer) { --c-rule: transparent; }
 .grid-lines {
   position: absolute;
   top: 0;
@@ -1264,3 +1277,627 @@ body { background: var(--c-page); }
 }
 /* the services' cards change width as they open, so their rules stay their own */
 .grid-drawn .services__row { --c-rule: #e2eae7; }
+
+/* ===== Proof on Solana ("Network performance you can verify", Figma 281:4447) ===== */
+.solana { background: var(--c-white); }
+.solana__frame {
+  margin: 0 max(40px, calc((100% - 1760px) / 2));
+  padding-top: calc(40 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+}
+.solana__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(60 * var(--px));
+  padding: calc(140 * var(--px)) 0 calc(120 * var(--px));
+  overflow: hidden;
+  background: var(--c-ink);
+  color: var(--c-white);
+}
+/* the hero's grid of cells, centred */
+.solana__pattern {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1514 * var(--px));
+  height: calc(1276 * var(--px));
+  transform: translate(-50%, -50%);
+  background: url("../assets/patterns/hero-grid.svg") 0 0 / calc(75 * var(--px)) calc(75 * var(--px));
+}
+.solana__head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(20 * var(--px));
+  width: calc(688 * var(--px));
+  max-width: 100%;
+  text-align: center;
+}
+.solana__desc,
+.cta__desc {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+  color: rgba(255, 255, 255, 0.7); /* text/secondaryInverse */
+}
+.solana__link {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(4 * var(--px));
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+}
+.solana__link img { width: calc(20 * var(--px)); height: calc(20 * var(--px)); transition: transform 0.35s var(--ease-out); }
+.solana__link:hover img { transform: translateX(3px); }
+
+.solana__record {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: calc(20 * var(--px));
+  width: calc(890 * var(--px));
+  max-width: calc(100% - 40px);
+  padding: calc(20 * var(--px)) calc(20 * var(--px)) calc(20 * var(--px)) calc(32 * var(--px));
+  background: #171717; /* background/secondaryInverse */
+  box-shadow: inset 0 0 0 1px #1f1f1f; /* border/primaryInverseBg */
+}
+.solana__logo { flex: none; width: calc(56 * var(--px)); height: auto; margin: calc(4 * var(--px)) 0 calc(3.2 * var(--px)); }
+.solana__texts { display: flex; flex: 1 0 0; flex-direction: column; gap: calc(4 * var(--px)); min-width: 0; }
+.solana__hash {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(20 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.2 * var(--px));
+}
+.solana__time {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+  color: rgba(255, 255, 255, 0.7);
+}
+.solana__open {
+  display: flex;
+  flex: none;
+  padding: calc(16 * var(--px));
+  background: rgba(255, 255, 255, 0.1); /* background/lightSubdued */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background-color 0.3s ease;
+}
+.solana__open:hover { background: rgba(255, 255, 255, 0.18); }
+.solana__open img { width: calc(24 * var(--px)); height: calc(24 * var(--px)); }
+
+/* the benefit cards again, on white and 240 high; the band below closes them */
+.solana__row {
+  height: calc(240 * var(--px));
+  padding: 0;
+  box-shadow: inset 0 1px var(--c-rule);
+}
+.solana__row .benefit__grid { left: -0.5px; }
+
+/* ===== Shared by the mint-page sections below: a framed column with the heading cell on top,
+   dotted at its corners like the plans and how-it-works sections ===== */
+.about, .testimonials { --c-rule: var(--c-rule-mint); background: var(--c-page); }
+.faq, .cta, .footer { background: var(--c-white); }
+.about__frame,
+.testimonials__frame,
+.faq__frame {
+  display: flex;
+  flex-direction: column;
+  gap: calc(60 * var(--px));
+  margin: 0 max(40px, calc((100% - 1760px) / 2));
+  padding-top: calc(160 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) right 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat,
+    var(--dot) right 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat;
+}
+.about__head,
+.testimonials__head,
+.faq__head {
+  position: relative;
+  padding: 0 40px;
+  color: var(--c-ink);
+  text-align: center;
+}
+.about__head .section-title,
+.testimonials__head .section-title,
+.faq__head .section-title { position: relative; }
+.about__mark,
+.testimonials__mark,
+.faq__mark {
+  position: absolute;
+  top: 0;
+  height: calc(46 * var(--px));
+  transform: translateX(-50%);
+  background: var(--c-mint);
+}
+/* mint blocks behind "who we are.", "WiFi just works.", "worth knowing." */
+.about__mark { left: calc(50% + 167.5 * var(--px)); width: calc(225 * var(--px)); }
+.testimonials__mark { top: -1px; left: calc(50% + 188 * var(--px)); width: calc(292 * var(--px)); }
+.faq__mark { top: -2px; left: calc(50% + 113.5 * var(--px)); width: calc(287 * var(--px)); }
+
+/* ===== About ("A little more about who we are.", Figma 284:2666) ===== */
+/* cells share their rules: each draws its top and left, the grid its right and bottom */
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr calc(680 * var(--px));
+  grid-template-rows: calc(384 * var(--px)) calc(226 * var(--px));
+  color: var(--c-ink);
+}
+.about__mission,
+.about__stat,
+.about__logos { box-shadow: inset 1px 0 var(--c-rule), inset 0 1px var(--c-rule), inset -1px 0 var(--c-rule); }
+.about__mission {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(40 * var(--px)) calc(100 * var(--px)) calc(40 * var(--px)) calc(40 * var(--px));
+  background: #eaf0ee; /* background/secondaryGray */
+}
+.about__overline {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(14 * var(--px));
+  font-weight: 600;
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.56 * var(--px));
+  text-transform: uppercase;
+  color: rgba(16, 17, 17, 0.4); /* text/tertiary */
+}
+.about__overline span { margin-right: calc(20 * var(--px)); }
+.about__statement {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(24 * var(--px));
+  font-weight: 550;
+  line-height: calc(32 * var(--px));
+  letter-spacing: calc(-0.24 * var(--px));
+}
+.about__stats { display: flex; flex-direction: column; margin: 0; }
+.about__stat {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  gap: calc(16 * var(--px));
+  padding: calc(20 * var(--px)) calc(40 * var(--px));
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) right 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px bottom 8px / 4px 4px no-repeat,
+    var(--dot) right 9px bottom 8px / 4px 4px no-repeat;
+}
+.about__value {
+  flex: none;
+  width: calc(128 * var(--px));
+  font-family: var(--f-display);
+  font-size: calc(52 * var(--px));
+  font-weight: 550;
+  line-height: calc(52 * var(--px));
+  letter-spacing: calc(-1.04 * var(--px));
+  color: rgba(16, 17, 17, 0.2); /* text/disabled */
+}
+.about__texts { display: flex; flex: 1 0 0; flex-direction: column; gap: calc(4 * var(--px)); margin: 0; }
+.about__texts b,
+.quote__who b {
+  font-family: var(--f-display);
+  font-size: calc(16 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.16 * var(--px));
+}
+.about__texts span,
+.quote__who span {
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink-muted);
+}
+.about__logos {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(64 * var(--px));
+  margin: 0;
+  padding: calc(40 * var(--px)) 0;
+  list-style: none;
+}
+.about__logos li {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: calc(196 * var(--px));
+  height: calc(106 * var(--px));
+  padding: calc(30 * var(--px)) calc(16 * var(--px));
+}
+.about__logos img { flex: none; width: auto; height: auto; max-width: none; object-fit: cover; }
+.about__logos img[alt="Turner"] { width: calc(136 * var(--px)); }
+.about__logos img[alt="Forto"] { width: calc(157 * var(--px)); }
+.about__logos img[alt="HUUS"] { width: calc(100 * var(--px)); }
+.about__logos img[alt^="vph"] { width: calc(180 * var(--px)); }
+.about__logos img[alt="Hive"] { width: calc(160 * var(--px)); }
+
+/* ===== Testimonials ("What happens when WiFi just works.", Figma 284:2962) ===== */
+.testimonials__band {
+  padding: 0 calc(200 * var(--px));
+  box-shadow: inset 0 1px var(--c-rule);
+  background:
+    var(--dot) left 10px top 9px / 4px 4px no-repeat,
+    var(--dot) right 10px top 9px / 4px 4px no-repeat,
+    var(--dot) left 10px bottom 8px / 4px 4px no-repeat,
+    var(--dot) right 10px bottom 8px / 4px 4px no-repeat;
+}
+.testimonials__col {
+  display: flex;
+  justify-content: center;
+  padding: calc(60 * var(--px)) 0;
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+}
+.quote { width: calc(960 * var(--px)); max-width: 100%; margin: 0; color: var(--c-ink); }
+.quote__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(320 * var(--px));
+  padding: calc(40 * var(--px)) calc(120 * var(--px)) calc(60 * var(--px)) calc(40 * var(--px));
+  background: var(--c-white);
+  box-shadow: inset 0 0 0 1px var(--c-rule);
+}
+.quote__tags {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--px));
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(14 * var(--px));
+  font-weight: 600;
+  line-height: calc(20 * var(--px));
+  letter-spacing: calc(0.56 * var(--px));
+  text-transform: uppercase;
+  color: var(--c-ink-muted);
+}
+.quote__tags i { width: 4px; height: 4px; background: #59b293; /* icon/accentForLight */ }
+.quote__text {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(24 * var(--px));
+  font-weight: 550;
+  line-height: calc(32 * var(--px));
+  letter-spacing: calc(-0.24 * var(--px));
+}
+.quote__mark {
+  position: absolute;
+  top: calc(39.5 * var(--px));
+  right: calc(39.5 * var(--px));
+  width: calc(60 * var(--px));
+  height: calc(60 * var(--px));
+}
+.quote__person {
+  display: flex;
+  align-items: stretch;
+  background: #eaf0ee;
+  box-shadow: inset 0 -1px var(--c-rule), inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+}
+.quote__person > * + * { box-shadow: inset 1px 0 var(--c-rule); }
+.quote__avatar { flex: none; width: calc(72 * var(--px)); height: calc(72 * var(--px)); object-fit: cover; }
+.quote__who {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(2 * var(--px));
+  min-width: 0;
+  padding: calc(12 * var(--px));
+}
+.quote__who span { opacity: 0.8; }
+.quote__nav {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: calc(72 * var(--px));
+  transition: background-color 0.3s ease;
+}
+.quote__nav:hover { background: rgba(16, 17, 17, 0.04); }
+.quote__nav img { width: calc(24 * var(--px)); height: calc(24 * var(--px)); transition: transform 0.35s var(--ease-out); }
+.quote__nav[data-step="-1"]:hover img { transform: translateX(-3px); }
+.quote__nav[data-step="1"]:hover img { transform: translateX(3px); }
+
+/* ===== FAQ ("A few things worth knowing.", Figma 285:4890) ===== */
+.faq__frame { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule); }
+.faq__band {
+  display: flex;
+  justify-content: center;
+  box-shadow: inset 0 1px var(--c-rule), inset 0 -1px var(--c-rule);
+  background:
+    var(--dot) left 10px top 9px / 4px 4px no-repeat,
+    var(--dot) right 10px top 9px / 4px 4px no-repeat,
+    var(--dot) left 10px bottom 8px / 4px 4px no-repeat,
+    var(--dot) right 10px bottom 8px / 4px 4px no-repeat;
+}
+.faq__list { width: calc(720 * var(--px)); max-width: 100%; }
+.faq__item {
+  position: relative;
+  background: var(--c-white);
+  box-shadow: inset 0 0 0 1px var(--c-rule);
+  transition: background-color 0.4s ease;
+}
+.faq__item + .faq__item { margin-top: -1px; }
+/* the open one: grey, with the accent corners of the active tabs */
+.faq__item.is-open { background: #f8f8f8; /* background/primaryGray */ }
+.faq__item::after {
+  --t: 1.275px;
+  --l: 6px;
+  --c: #59b293;
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background:
+    linear-gradient(var(--c), var(--c)) left top / var(--t) var(--l),
+    linear-gradient(var(--c), var(--c)) left top / var(--l) var(--t),
+    linear-gradient(var(--c), var(--c)) right top / var(--t) var(--l),
+    linear-gradient(var(--c), var(--c)) right top / var(--l) var(--t),
+    linear-gradient(var(--c), var(--c)) left bottom / var(--t) var(--l),
+    linear-gradient(var(--c), var(--c)) left bottom / var(--l) var(--t),
+    linear-gradient(var(--c), var(--c)) right bottom / var(--t) var(--l),
+    linear-gradient(var(--c), var(--c)) right bottom / var(--l) var(--t);
+  background-repeat: no-repeat;
+}
+.faq__item.is-open::after { opacity: 1; }
+.faq__q { margin: 0; }
+.faq__q button {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--px));
+  width: 100%;
+  padding: calc(28 * var(--px));
+  font-family: var(--f-display);
+  font-size: calc(20 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.2 * var(--px));
+  text-align: left;
+  color: var(--c-ink);
+}
+.faq__icon {
+  position: relative;
+  flex: none;
+  width: calc(24 * var(--px));
+  height: calc(24 * var(--px));
+  margin-left: auto;
+  background: url("../assets/icons/faq-plus.svg") center / 100% no-repeat;
+  transition: transform 0.4s var(--ease-out);
+}
+.faq__item.is-open .faq__icon { background-image: url("../assets/icons/faq-close.svg"); }
+.faq__q button:hover .faq__icon { transform: rotate(90deg); }
+/* the answer opens out below the question */
+.faq__a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.faq__item.is-open .faq__a { grid-template-rows: 1fr; }
+.faq__a p {
+  min-height: 0;
+  margin: 0;
+  padding: 0 calc(28 * var(--px));
+  overflow: hidden;
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+  color: var(--c-ink-muted);
+  opacity: 0;
+  transition: opacity 0.3s ease, padding 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.faq__item.is-open .faq__a p { padding-bottom: calc(28 * var(--px)); opacity: 1; transition-delay: 0s, 0s; }
+/* the question sits 12 above its answer when open (28 → 16 below it) */
+.faq__item.is-open .faq__q button { padding-bottom: calc(12 * var(--px)); }
+.faq__q button { transition: padding 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
+
+/* ===== Call to action ("Ready to cover every corner of your business?", Figma 285:4995) ===== */
+.cta__frame {
+  margin: 0 max(40px, calc((100% - 1760px) / 2));
+  padding-top: calc(40 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 -1px var(--c-rule);
+}
+.cta__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(80 * var(--px)) 0;
+  overflow: hidden;
+  background: var(--c-ink);
+  color: var(--c-white);
+}
+.cta__pattern {
+  position: absolute;
+  top: calc(-247.5 * var(--px));
+  left: calc(-17 * var(--px));
+  width: calc(1388 * var(--px));
+  height: calc(979 * var(--px));
+  max-width: none;
+}
+.cta__head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(20 * var(--px));
+  width: calc(688 * var(--px));
+  max-width: calc(100% - 40px);
+  text-align: center;
+}
+.cta__icon { position: relative; width: calc(80 * var(--px)); height: calc(80 * var(--px)); }
+.cta__icon img {
+  position: absolute;
+  top: calc(8.89 * var(--px));
+  left: calc(7.14 * var(--px));
+  width: calc(68.41 * var(--px));
+  height: calc(61.88 * var(--px));
+}
+.cta__btn { height: auto; padding: calc(16 * var(--px)) calc(26 * var(--px)); }
+.cta__stats {
+  display: flex;
+  margin: 0;
+  padding: calc(20 * var(--px)) 0;
+  background: var(--c-ink);
+  box-shadow: inset 0 1px #1f1f1f;
+  text-align: center;
+}
+.cta__stat {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: calc(16 * var(--px));
+  min-width: 0;
+  padding: calc(20 * var(--px));
+}
+.cta__stat dt {
+  font-family: var(--f-display);
+  font-size: calc(32 * var(--px));
+  font-weight: 600;
+  line-height: calc(36 * var(--px));
+  letter-spacing: calc(-0.48 * var(--px));
+  color: var(--c-white);
+}
+.cta__stat dd {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== Footer (Figma 285:5837) ===== */
+.footer { color: var(--c-ink); }
+.footer__frame { margin: 0 max(40px, calc((100% - 1760px) / 2)); }
+.footer__top { display: flex; align-items: stretch; }
+/* cells share their rules: each draws its left and top, the frame its right and bottom */
+.footer__top > *,
+.footer__socials li,
+.footer__legal { box-shadow: inset 1px 0 var(--c-rule), inset 0 1px var(--c-rule); }
+.footer__top { box-shadow: inset -1px 0 var(--c-rule); }
+.footer__legal { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule), inset 0 1px var(--c-rule), inset 0 -1px var(--c-rule); }
+.footer__brand {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: calc(400 * var(--px));
+  padding: calc(32 * var(--px));
+}
+.footer__logo img { display: block; width: calc(159 * var(--px)); height: calc(39.78 * var(--px)); }
+.footer__tagline {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink-muted);
+}
+.footer__menu {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: calc(12 * var(--px));
+  min-width: 0;
+  padding: calc(32 * var(--px));
+}
+.footer__title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: calc(16 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.16 * var(--px));
+}
+.footer__menu ul { margin: 0; padding: 0; list-style: none; }
+.footer__menu li > * {
+  display: block;
+  padding: calc(10 * var(--px)) 0;
+  font-family: var(--f-body);
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.08 * var(--px));
+  color: var(--c-ink-muted);
+  transition: color 0.3s ease;
+}
+.footer__menu li > a:hover { color: var(--c-ink); }
+.footer__socials {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: calc(92 * var(--px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: none;
+}
+.footer__socials li { display: flex; flex: 1 0 0; }
+.footer__socials a {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+.footer__socials a:hover { background: rgba(16, 17, 17, 0.04); }
+.footer__socials img { width: calc(24 * var(--px)); height: calc(24 * var(--px)); }
+.footer__socials img[width="22"] { width: calc(22 * var(--px)); height: calc(22 * var(--px)); }
+.footer__legal {
+  margin: 0;
+  padding: calc(32 * var(--px));
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  text-align: center;
+  color: rgba(16, 17, 17, 0.4); /* text/tertiary */
+}
+.footer__legal i { font-style: normal; }
+.footer__legal a { color: var(--c-ink); }
+.footer__legal a:hover { text-decoration: underline; }
+
+@media (max-width: 960px) {
+  .solana__frame, .about__frame, .testimonials__frame, .faq__frame, .cta__frame, .footer__frame { margin: 0 16px; }
+  .solana__panel { padding: 64px 0; gap: 40px; }
+  .solana__desc br, .cta__title br, .cta__desc br { display: none; }
+  .solana__row { flex-direction: column; height: auto; }
+  .solana__row .benefit { width: 100%; flex: none; height: 200px; }
+  .about__frame, .testimonials__frame, .faq__frame { padding-top: 64px; gap: 40px; background: none; }
+  .about__mark, .testimonials__mark, .faq__mark { display: none; }
+  .about__grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .about__mission { gap: 40px; padding: 32px 20px; }
+  .about__stat { padding: 20px; }
+  .about__logos { flex-wrap: wrap; gap: 0; padding: 20px 0; }
+  .testimonials__band { padding: 0; background: none; }
+  .testimonials__col { padding: 0; }
+  .quote__card { height: auto; gap: 32px; padding: 24px 20px 32px; }
+  .quote__mark { display: none; }
+  .faq__band { background: none; }
+  .cta__stats { flex-wrap: wrap; }
+  .cta__stat { flex: 1 0 50%; }
+  .footer__top { flex-wrap: wrap; }
+  .footer__brand { width: 100%; gap: 32px; }
+  .footer__menu { flex: 1 0 50%; }
+  .footer__socials { flex-direction: row; width: 100%; height: 64px; }
+}
