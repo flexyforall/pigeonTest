@@ -236,7 +236,7 @@
   };
 
   /* ---------- the network globe ---------- */
-  // It turns slowly (slower than the clip was made), and only while it's on screen.
+  // It turns slowly (the clip is slowed down, with in-between frames, when made), and only while it's on screen.
   const globe = document.querySelector('.network__media video');
   if (globe) {
     const rate = Number(globe.dataset.rate) || 1;

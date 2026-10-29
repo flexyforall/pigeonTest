@@ -1207,7 +1207,6 @@ body { background: var(--c-page); }
   padding: calc(20 * var(--px));
 }
 .stat__value {
-  font-variant-numeric: tabular-nums; /* steady while counting up */
   font-family: var(--f-display);
   font-size: calc(32 * var(--px));
   font-weight: 600;
