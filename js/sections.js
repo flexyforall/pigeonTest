@@ -119,10 +119,10 @@
     // there from the start, the second and third come in behind the band as it passes. The grid
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
-      const WIPE = 900; // ms: the mint block's wipe, as in the other headings
+      const WIPE = 700; // ms: the mint block's wipe
       const RUN = WIPE; // ms: the band's run across the cards, in step with the block
-      const DELAY = 350;
-      const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'; // the mint blocks' wipe everywhere
+      const DELAY = 150;
+      const ease = 'cubic-bezier(0.5, 0, 0.3, 1)';
       const row = $('.steps__row', section);
       const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
@@ -147,7 +147,9 @@
         // the band's leading edge goes from the row's left edge to its right edge
         band.animate(
           [
-            { transform: `translateX(${-bw}px)`, opacity: 1 },
+            // it fades in as it sets off, so it doesn't just appear at the left edge
+            { transform: `translateX(${-bw}px)`, opacity: 0 },
+            { opacity: 1, offset: 0.2 },
             { opacity: 1, offset: 0.85 },
             { transform: `translateX(${width - bw}px)`, opacity: 0 },
           ],
