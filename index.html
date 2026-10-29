@@ -9,20 +9,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400..700&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/img/hero-business-1920.jpg" imagesrcset="assets/img/hero-business-1440.jpg 1440w, assets/img/hero-business-1920.jpg 1920w, assets/img/hero-business-2880.jpg 2880w" imagesizes="100vw">
+  <link rel="preload" as="image" href="assets/img/hero-business.webp" imagesrcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x">
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/sections.css">
 </head>
 <body>
 
 <section class="hero" data-hero data-state="business">
+  <!-- the content box's backdrop: the grid pattern and each audience's dithered illustration
+       (Figma 293:6185, 293:6186 / 291:5317 / 292:5711) -->
   <div class="hero__bg" aria-hidden="true">
-    <img class="hero__bg-img is-active" data-bg="business" src="assets/img/hero-business-1920.jpg"
-         srcset="assets/img/hero-business-1440.jpg 1440w, assets/img/hero-business-1920.jpg 1920w, assets/img/hero-business-2880.jpg 2880w" sizes="100vw" alt="">
-    <img class="hero__bg-img" data-bg="residential" data-src="assets/img/hero-residential-1920.jpg"
-         data-srcset="assets/img/hero-residential-1440.jpg 1440w, assets/img/hero-residential-1920.jpg 1920w, assets/img/hero-residential-2880.jpg 2880w, assets/img/hero-residential-3840.jpg 3840w" sizes="100vw" alt="">
-    <img class="hero__bg-img" data-bg="mobile" data-src="assets/img/hero-mobile-1920.jpg"
-         data-srcset="assets/img/hero-mobile-1440.jpg 1440w, assets/img/hero-mobile-1920.jpg 1920w, assets/img/hero-mobile-2880.jpg 2880w, assets/img/hero-mobile-3840.jpg 3840w" sizes="100vw" alt="">
+    <span class="hero__pattern"></span>
+    <img class="hero__bg-img is-active" data-bg="business" src="assets/img/hero-business.webp"
+         srcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x" width="922" height="754" alt="">
+    <img class="hero__bg-img" data-bg="residential" data-src="assets/img/hero-residential.webp"
+         data-srcset="assets/img/hero-residential.webp 1x, assets/img/hero-residential@2x.webp 2x" width="944" height="754" alt="">
+    <img class="hero__bg-img" data-bg="mobile" data-src="assets/img/hero-mobile.webp"
+         data-srcset="assets/img/hero-mobile.webp 1x, assets/img/hero-mobile@2x.webp 2x" width="942" height="754" alt="">
     <span class="hero__wipe"></span>
   </div>
 
@@ -44,7 +47,7 @@
         <div class="header__links">
           <a class="header__link" href="#about" data-intro="header">
             About
-            <span class="icon icon--chevron" aria-hidden="true"><img src="assets/icons/chevron-down.svg" width="9.88356" height="5.38388" alt=""></span>
+            <span class="icon icon--plus" aria-hidden="true"><img src="assets/icons/plus-light.svg" width="20" height="20" alt=""></span>
           </a>
           <a class="header__link" href="#security" data-intro="header">Security report</a>
           <a class="header__link" href="#contact" data-intro="header">Contact</a>
@@ -73,19 +76,19 @@
         <div class="panel is-active" data-panel="business">
           <h1 class="panel__title" data-split>Business WiFi that covers every corner of your operation</h1>
           <p class="panel__text">From offices and clinics to fleets, vessels and aircraft. We design, install and manage your network, sized to your space and fully supported.</p>
-          <a class="btn" href="#start"><span>Get started</span></a>
+          <a class="btn btn--mint" href="#start"><span>Get started</span></a>
         </div>
 
         <div class="panel" data-panel="residential" aria-hidden="true">
           <h2 class="panel__title" data-split>One network for your<br>entire building</h2>
           <p class="panel__text">For owners, managers and developers. We design, install and manage WiFi across every unit and common area, so residents move in already connected.</p>
-          <a class="btn" href="#start"><span>Connect your building</span></a>
+          <a class="btn btn--mint" href="#start"><span>Get started</span></a>
         </div>
 
         <div class="panel" data-panel="mobile" aria-hidden="true">
           <h2 class="panel__title" data-split>WiFi that moves with<br>you around the world</h2>
           <p class="panel__text">Stay connected automatically and securely through OpenRoaming WiFi networks in 150 countries. No passwords, no repeated sign-ins.</p>
-          <a class="btn" href="#start"><span>Get connected</span></a>
+          <a class="btn btn--mint" href="#start"><span>Get started</span></a>
         </div>
       </div>
     </div>
@@ -96,17 +99,14 @@
       <a class="card is-active" href="#business" data-target="business" data-intro="card">
         <span class="card__icon" aria-hidden="true"></span>
         <span class="card__label">For Business</span>
-        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
       </a>
       <a class="card" href="#residential" data-target="residential" data-intro="card">
         <span class="card__icon" aria-hidden="true"></span>
         <span class="card__label">For Residential</span>
-        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
       </a>
       <a class="card" href="#mobile" data-target="mobile" data-intro="card">
         <span class="card__icon" aria-hidden="true"></span>
         <span class="card__label">For Mobile</span>
-        <span class="icon icon--chevron icon--right" aria-hidden="true"><img src="assets/icons/chevron-card.svg" width="9.88454" height="5.38388" alt=""></span>
       </a>
     </div>
   </div>

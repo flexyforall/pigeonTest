@@ -235,13 +235,31 @@
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   /* ---------- background wipe ---------- */
-  // A hairline sweeps across the hero from right to left and repaints it with the next background.
+  // A hairline sweeps across the content box from right to left and repaints it with the next
+  // illustration.
   const wipeLine = $('.hero__wipe');
+  const wipeArea = $('.hero__bg'); // the box the line runs across
   const WIPE = 1100;
   const WIPE_EASE = 'cubic-bezier(0.6, 0, 0.3, 1)';
   // the tab pill and card highlight move with the same timing as the line
   hero.style.setProperty('--wipe-duration', `${WIPE}ms`);
   hero.style.setProperty('--wipe-ease', WIPE_EASE);
+
+  // A clip for `el` as the line runs from the right edge of the wipe area to its left one: `side`
+  // 'left' keeps what is right of the line, 'right' what is left of it. The insets are linear in
+  // the line's position (and may run past the box), so the line's easing keeps them in step.
+  function clipAlongLine(el, side, pad = 0) {
+    const area = wipeArea.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    const scale = el.offsetWidth ? box.width / el.offsetWidth : 1;
+    const inset = (lineX) => {
+      const x = area.left + lineX;
+      const left = side === 'left' ? (x - box.left) / scale : -pad;
+      const right = side === 'right' ? (box.right - x) / scale : -pad;
+      return `inset(${-pad}px ${right}px ${-pad}px ${left}px)`;
+    };
+    return [inset(area.width), inset(0)];
+  }
 
   function wipeBackground(next) {
     const prevBg = bgs.find((b) => b.dataset.bg === current);
@@ -251,29 +269,27 @@
     prevBg.style.zIndex = 0;
     nextBg.classList.add('is-active');
 
-    const hidden = 'inset(0 0 0 100%)';
     const opts = { duration: WIPE, easing: WIPE_EASE };
-    // explicit end value: `none` doesn't interpolate with inset()
-    nextBg.animate(
-      [{ clipPath: hidden, transform: 'scale(1.04)' }, { clipPath: 'inset(0 0 0 0)', transform: 'scale(1)' }],
-      opts
-    );
+    // the illustrations are see-through, so the outgoing one gives way behind the line as the
+    // incoming one comes in ahead of it
+    const [shown, hidden] = clipAlongLine(prevBg, 'right');
+    prevBg.animate([{ clipPath: shown }, { clipPath: hidden }], { ...opts, fill: 'forwards' });
+    const [from0, to0] = clipAlongLine(nextBg, 'left');
+    nextBg.animate([{ clipPath: from0, transform: 'scale(1.04)' }, { clipPath: to0, transform: 'scale(1)' }], opts);
     wipeLine.animate(
       [{ left: '100%', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { left: '0%', opacity: 0 }],
       opts
     );
-    return timeout(WIPE).then(() => prevBg.classList.remove('is-active'));
+    return timeout(WIPE).then(() => {
+      prevBg.classList.remove('is-active');
+      prevBg.getAnimations().forEach((anim) => anim.cancel());
+    });
   }
 
-  // Clips `el` to the part of the hero the line hasn't reached yet, in step with the wipe.
-  // The clip's right inset is linear in the line's position, so the same easing keeps them in sync.
+  // Clips `el` to the part of the content box the line hasn't reached yet, in step with the wipe.
   function eraseBehindLine(el) {
-    const heroBox = hero.getBoundingClientRect();
-    const box = el.getBoundingClientRect();
-    const right = box.right - heroBox.left; // el's right edge in hero coordinates
-    const pad = 40; // room for descenders and transforms above/below/left
-    const clip = (lineX) => `inset(${-pad}px ${right - lineX}px ${-pad}px ${-pad}px)`;
-    return el.animate([{ clipPath: clip(heroBox.width) }, { clipPath: clip(0) }], {
+    const [from0, to0] = clipAlongLine(el, 'right', 40); // room for descenders and transforms
+    return el.animate([{ clipPath: from0 }, { clipPath: to0 }], {
       duration: WIPE,
       easing: WIPE_EASE,
       fill: 'forwards',

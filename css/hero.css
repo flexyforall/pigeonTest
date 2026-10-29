@@ -28,12 +28,13 @@
 
 /* ===== Tokens ===== */
 :root {
-  --c-bg: #040707;
+  --c-bg: #101111; /* background/primaryInverse */
   --c-white: #fff;
   --c-line: rgba(255, 255, 255, 0.1);
   --c-fill: rgba(255, 255, 255, 0.1);
   --c-muted: rgba(255, 255, 255, 0.7);
   --c-accent: #6fc6a7;
+  --c-mint: #c8f5e5; /* background/accent, icon/accentForDark */
 
   --f-display: "Satoshi", "Outfit", system-ui, sans-serif;
   --f-body: "Inter", system-ui, sans-serif;
@@ -84,18 +85,39 @@ h1, h2, p { margin: 0; }
 .js .hero { visibility: hidden; }
 .js .hero.is-ready { visibility: visible; }
 
-.hero__bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hero__bg {
+  position: absolute;
+  inset: calc(56 * var(--px)) calc(40 * var(--px)) 0;
+  z-index: 0;
+  overflow: hidden;
+}
 
+/* the grid of cells behind the content (1514 × 1276, centred on the content box) */
+.hero__pattern {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(1514 * var(--px));
+  height: calc(1276 * var(--px));
+  transform: translate(-50%, -50%);
+  background: url("../assets/patterns/hero-grid.svg") 0 0 / calc(75 * var(--px)) calc(75 * var(--px));
+  pointer-events: none;
+}
+
+/* the audience's dithered illustration, standing on the cards at the right edge; the
+   images are the Figma renders with the sky cut out, so the grid shows through */
 .hero__bg-img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  right: 0;
+  bottom: 0;
+  width: calc(944 * var(--px));
+  height: calc(754 * var(--px));
   opacity: 0;
   pointer-events: none;
   will-change: opacity, transform;
 }
+.hero__bg-img[data-bg="business"] { width: calc(922 * var(--px)); }
+.hero__bg-img[data-bg="mobile"] { width: calc(942 * var(--px)); }
 .hero__bg-img.is-active { opacity: 1; }
 
 /* hairline that leads the background wipe between audiences */
@@ -212,14 +234,14 @@ h1, h2, p { margin: 0; }
   height: 100%;
   pointer-events: none;
   background:
-    linear-gradient(var(--c-accent), var(--c-accent)) left top / var(--t) var(--l),
-    linear-gradient(var(--c-accent), var(--c-accent)) left top / var(--l) var(--t),
-    linear-gradient(var(--c-accent), var(--c-accent)) right top / var(--t) var(--l),
-    linear-gradient(var(--c-accent), var(--c-accent)) right top / var(--l) var(--t),
-    linear-gradient(var(--c-accent), var(--c-accent)) left bottom / var(--t) var(--l),
-    linear-gradient(var(--c-accent), var(--c-accent)) left bottom / var(--l) var(--t),
-    linear-gradient(var(--c-accent), var(--c-accent)) right bottom / var(--t) var(--l),
-    linear-gradient(var(--c-accent), var(--c-accent)) right bottom / var(--l) var(--t),
+    linear-gradient(var(--c-mint), var(--c-mint)) left top / var(--t) var(--l),
+    linear-gradient(var(--c-mint), var(--c-mint)) left top / var(--l) var(--t),
+    linear-gradient(var(--c-mint), var(--c-mint)) right top / var(--t) var(--l),
+    linear-gradient(var(--c-mint), var(--c-mint)) right top / var(--l) var(--t),
+    linear-gradient(var(--c-mint), var(--c-mint)) left bottom / var(--t) var(--l),
+    linear-gradient(var(--c-mint), var(--c-mint)) left bottom / var(--l) var(--t),
+    linear-gradient(var(--c-mint), var(--c-mint)) right bottom / var(--t) var(--l),
+    linear-gradient(var(--c-mint), var(--c-mint)) right bottom / var(--l) var(--t),
     var(--c-fill);
   background-repeat: no-repeat;
 }
@@ -256,7 +278,9 @@ h1, h2, p { margin: 0; }
 }
 .header__link .icon { opacity: 1; }
 .header__link:hover { opacity: 1; }
-.header__link:hover .icon--chevron img { transform: translateY(1.5px); }
+/* About: the text keeps its 24px inset, the plus closes up 4px after it */
+.header__link:has(.icon--plus) { gap: calc(4 * var(--px)); padding-right: calc(20 * var(--px)); }
+.header__link:hover .icon--plus img { transform: translateY(1.5px); }
 
 .header__cta { display: flex; align-items: stretch; }
 
@@ -298,6 +322,13 @@ h1, h2, p { margin: 0; }
   isolation: isolate;
 }
 .btn--sm { height: auto; padding: 0 calc(26 * var(--px)); border-radius: 0; }
+/* the hero's call to action: the same button in mint */
+.btn--mint {
+  background:
+    linear-gradient(90deg, var(--c-mint) 42.308%, rgba(200, 245, 229, 0)),
+    url("../assets/patterns/button-grid.svg") calc(62 * var(--px)) calc(-2 * var(--px)) / calc(691 * var(--px)) calc(503 * var(--px)) no-repeat,
+    var(--c-mint);
+}
 
 /* hover: accent wipe from bottom */
 .btn::before {
@@ -316,14 +347,8 @@ h1, h2, p { margin: 0; }
 /* ===== Icons ===== */
 .icon { position: relative; flex: none; display: block; }
 
-.icon--chevron { width: 12px; height: 12px; opacity: 0.7; }
-.icon--chevron img {
-  position: absolute;
-  left: 1.058px;
-  top: 5.308px;
-  transition: transform 0.35s var(--ease-out);
-}
-.icon--right { transform: rotate(-90deg); }
+.icon--plus { width: calc(20 * var(--px)); height: calc(20 * var(--px)); }
+.icon--plus img { width: 100%; height: 100%; transition: transform 0.35s var(--ease-out); }
 
 .icon--star { width: 16px; height: 16px; }
 .icon--star img { width: 100%; height: auto; }
@@ -435,8 +460,16 @@ h1, h2, p { margin: 0; }
   align-items: center;
   gap: calc(8 * var(--px));
   padding: calc(32 * var(--px)) calc(20 * var(--px));
+  /* the illustration runs on under the cards: the others hide it, the active one frosts it */
+  background: var(--c-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  transition: background-color var(--wipe-duration, 0s) var(--wipe-ease, ease);
+}
+.card.is-active {
+  background-color: rgba(16, 17, 17, 0);
+  backdrop-filter: blur(70px);
+  -webkit-backdrop-filter: blur(70px);
 }
 .card + .card { border-left: 1px solid var(--c-line); }
 .card > * { position: relative; z-index: 2; }
@@ -451,7 +484,6 @@ h1, h2, p { margin: 0; }
   z-index: 1;
 }
 .card:not(.is-active):hover::after { opacity: 1; }
-.card:hover .icon--chevron img { transform: translateY(2.5px); }
 
 .card__icon { width: 50px; height: 50px; flex: none; }
 .card__icon svg { display: block; overflow: visible; }
@@ -477,6 +509,8 @@ h1, h2, p { margin: 0; }
 
 @media (max-width: 860px) {
   .hero__frame { inset: 0 16px; }
+  .hero__bg { inset: 56px 16px 0; }
+  .hero__bg-img.is-active { opacity: 0.4; } /* behind the copy here */
   .header__logo { left: 20px; }
   .header__lang { display: none; }
   .audience { left: auto; right: 112px; }
