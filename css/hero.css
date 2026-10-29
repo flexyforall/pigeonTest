@@ -177,17 +177,25 @@ h1, h2, p { margin: 0; }
 .hero__bg-img[data-bg="mobile"] { width: calc(942 * var(--px)); }
 .hero__bg-img.is-active { opacity: 1; }
 
-/* the glow: a blurred mint disc (r 123.5, blur 40) laid over the illustration in overlay, so it
+/* the glow: a soft mint spot (after Figma's blurred disc) laid over the illustration in overlay, so it
    only tints its lit parts; it follows the pointer while it is over the hero (js/hero.js) */
 .hero__glow {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(407 * var(--px));
-  height: calc(407 * var(--px));
-  margin: calc(-203.5 * var(--px)) 0 0 calc(-203.5 * var(--px));
+  width: calc(300 * var(--px));
+  height: calc(300 * var(--px));
+  margin: calc(-150 * var(--px)) 0 0 calc(-150 * var(--px));
   border-radius: 50%;
-  background: radial-gradient(circle closest-side, #c8f5e5 45%, rgba(200, 245, 229, 0.55) 68%, rgba(200, 245, 229, 0) 100%);
+  /* no edge to read: the tint falls off gradually all the way from the centre */
+  background: radial-gradient(
+    circle closest-side,
+    rgba(200, 245, 229, 0.85),
+    rgba(200, 245, 229, 0.6) 25%,
+    rgba(200, 245, 229, 0.3) 50%,
+    rgba(200, 245, 229, 0.1) 75%,
+    rgba(200, 245, 229, 0)
+  );
   mix-blend-mode: overlay;
   opacity: 0;
   pointer-events: none;
