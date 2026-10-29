@@ -7,6 +7,12 @@
   const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.2)';
   const STATES = ['business', 'residential', 'mobile'];
 
+  // the page stays put (html.is-locked, set in the head) until the hero has drawn itself in
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+  const unlock = () => document.documentElement.classList.remove('is-locked');
+  setTimeout(unlock, 15000); // whatever happens, never for good
+
   const $ = (sel, root = hero) => root.querySelector(sel);
   const $$ = (sel, root = hero) => [...root.querySelectorAll(sel)];
 
@@ -394,8 +400,11 @@
     const activePanel = panels.find((p) => p.dataset.panel === current);
 
     if (reduceMotion) {
+      unlock();
       return;
     }
+    // the last of it, the cards, are in by then
+    setTimeout(unlock, 2200);
 
     if (!afterLoader) {
       const bg = bgs.find((b) => b.dataset.bg === current);

@@ -51,6 +51,11 @@
 *::before,
 *::after { box-sizing: border-box; }
 
+/* no scrolling down the page until the hero has drawn itself in (js/hero.js lets go) */
+html.is-locked,
+html.is-locked body { overflow: hidden; }
+html { scrollbar-gutter: stable; }
+
 html, body { margin: 0; }
 
 body {
