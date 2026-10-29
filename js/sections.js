@@ -146,7 +146,7 @@
     // there from the start, the second and third come in behind the band as it passes. The grid
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
-      const WIPE = 700; // ms: the mint block's wipe
+      const WIPE = 1300; // ms: the mint block's wipe (slow enough for the band to be seen)
       const RUN = WIPE; // ms: the band's run across the cards, in step with the block
       const DELAY = 150;
       const ease = 'cubic-bezier(0.5, 0, 0.3, 1)';
