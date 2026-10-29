@@ -177,6 +177,42 @@ h1, h2, p { margin: 0; }
 .hero__bg-img[data-bg="mobile"] { width: calc(942 * var(--px)); }
 .hero__bg-img.is-active { opacity: 1; }
 
+/* the glow: a blurred mint disc (r 123.5, blur 40) laid over the illustration in overlay, so it
+   only tints its lit parts; it follows the pointer while it is over the hero (js/hero.js) */
+.hero__glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(407 * var(--px));
+  height: calc(407 * var(--px));
+  margin: calc(-203.5 * var(--px)) 0 0 calc(-203.5 * var(--px));
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side, #c8f5e5 45%, rgba(200, 245, 229, 0.55) 68%, rgba(200, 245, 229, 0) 100%);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2; /* above the illustrations, even the one lifted for a wipe */
+  transition: opacity 0.6s ease;
+  will-change: transform;
+}
+.hero__glow.is-on { opacity: 1; }
+/* the active illustration's box (set by js/hero.js) */
+.hero__glow-area {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--glow-w, calc(922 * var(--px)));
+  height: calc(754 * var(--px));
+  pointer-events: none;
+  /* no z-index or overflow clip here: either would cut the glow off from the picture below */
+}
+/* the mask rides on the glow itself, held still against the area as the glow moves (a mask on
+   the area would cut the glow off from the picture it is laid over) */
+.hero__glow {
+  -webkit-mask: var(--glow-mask, none) var(--mx, 0px) var(--my, 0px) / var(--mw, 100%) var(--mh, 100%) no-repeat;
+  mask: var(--glow-mask, none) var(--mx, 0px) var(--my, 0px) / var(--mw, 100%) var(--mh, 100%) no-repeat;
+}
+
 /* hairline that leads the background wipe between audiences */
 .hero__wipe {
   position: absolute;

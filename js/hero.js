@@ -451,6 +451,53 @@
     from(highlight, { opacity: 0 }, { duration: 900, delay: 1300 });
   }
 
+  /* ---------- glow ---------- */
+  // While the pointer is over the hero's backdrop, a mint glow trails it, tinting the
+  // illustration's lit parts (it is laid over them in overlay).
+  const glow = $('.hero__glow');
+  if (glow && !reduceMotion && window.matchMedia('(hover: hover)').matches) {
+    const area = $('.hero__glow-area');
+    // the glow keeps to the shape of the illustration on show
+    const fit = () => {
+      const img = bgs.find((b) => b.dataset.bg === current);
+      if (!img || area.dataset.state === current) return;
+      area.dataset.state = current;
+      area.style.setProperty('--glow-w', getComputedStyle(img).width);
+      glow.style.setProperty('--glow-mask', `url("${img.currentSrc || img.src}")`);
+    };
+    fit();
+    hero.addEventListener('pointerenter', fit);
+    const pos = { x: 0, y: 0, tx: 0, ty: 0 };
+    let raf = 0;
+    const step = () => {
+      pos.x += (pos.tx - pos.x) * 0.12;
+      pos.y += (pos.ty - pos.y) * 0.12;
+      glow.style.transform = `translate(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px)`;
+      // the picture's mask, held in place against the area: offset back by the glow's position
+      const half = glow.offsetWidth / 2;
+      glow.style.setProperty('--mx', `${(half - pos.x).toFixed(1)}px`);
+      glow.style.setProperty('--my', `${(half - pos.y).toFixed(1)}px`);
+      glow.style.setProperty('--mw', `${area.clientWidth}px`);
+      glow.style.setProperty('--mh', `${area.clientHeight}px`);
+      raf = Math.abs(pos.tx - pos.x) + Math.abs(pos.ty - pos.y) > 0.3 ? requestAnimationFrame(step) : 0;
+    };
+    hero.addEventListener('pointermove', (e) => {
+      fit();
+      const r = area.getBoundingClientRect();
+      const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      pos.tx = e.clientX - r.left;
+      pos.ty = e.clientY - r.top;
+      if (inside && !glow.classList.contains('is-on')) {
+        // it appears where the pointer is, rather than gliding over from where it last was
+        pos.x = pos.tx;
+        pos.y = pos.ty;
+      }
+      glow.classList.toggle('is-on', inside);
+      if (!raf) raf = requestAnimationFrame(step);
+    });
+    hero.addEventListener('pointerleave', () => glow.classList.remove('is-on'));
+  }
+
   /* ---------- loader ---------- */
   // The sphere turns until the page is ready (and for SPIN at least), then fades; halfway through
   // the hero starts drawing itself in underneath and the loader clears off it, so the one runs
