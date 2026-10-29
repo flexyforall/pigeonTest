@@ -364,6 +364,7 @@ body { background: var(--c-page); }
 .is-pending .network__media,
 .is-pending .network__texts,
 .is-pending .stat { visibility: hidden; }
+.network__stats.is-waiting .stat { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
 .steps.is-dim .step:not(:first-child) { clip-path: inset(0 100% 0 0); }
 .steps.is-dim .steps__sweep { opacity: 0; }

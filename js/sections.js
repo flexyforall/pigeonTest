@@ -228,10 +228,18 @@
     network(section) {
       from($('.network__media', section), { opacity: 0 }, { duration: 1400 });
       fadeUp($('.network__texts', section), 200);
-      $$('.stat', section).forEach((el, i) => {
-        fadeUp(el, 400 + i * 100);
-        countUp($('.stat__value', el), 400 + i * 100);
-      });
+      // the figures wait for their own row to be well in view, so their count is seen
+      const stats = $('.network__stats', section);
+      stats.classList.add('is-waiting');
+      new IntersectionObserver((entries, io) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        stats.classList.remove('is-waiting');
+        $$('.stat', section).forEach((el, i) => {
+          fadeUp(el, i * 100);
+          countUp($('.stat__value', el), i * 100);
+        });
+      }, { threshold: 0.7 }).observe(stats);
     },
   };
 
