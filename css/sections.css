@@ -857,3 +857,41 @@ body { background: var(--c-page); }
 }
 .grid-lines .is-v { width: 1px; transform: scaleY(0); transform-origin: top; }
 .grid-lines .is-h { height: 1px; transform: scaleX(0); transform-origin: left; }
+
+/* ===== Corner dots (Figma "Frame 2121453412"): a 4px square 9px in from each corner of a cell
+   of the grid (icon/disabled at 60%) ===== */
+:root {
+  --dot: linear-gradient(rgba(16, 17, 17, 0.12), rgba(16, 17, 17, 0.12));
+}
+/* the bands between sections: all four corners of every column */
+.divider i {
+  background:
+    var(--dot) left 9px top 8px / 4px 4px no-repeat,
+    var(--dot) right 9px top 8px / 4px 4px no-repeat,
+    var(--dot) left 9px bottom 8px / 4px 4px no-repeat,
+    var(--dot) right 9px bottom 8px / 4px 4px no-repeat;
+}
+/* the heading cells of the plans and how-it-works sections, down to the row below them (260) */
+.plans__frame {
+  background:
+    var(--dot) left 8px top 9px / 4px 4px no-repeat,
+    var(--dot) right 8px top 9px / 4px 4px no-repeat,
+    var(--dot) left 8px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat,
+    var(--dot) right 8px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat;
+}
+.steps__frame {
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) right 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat,
+    var(--dot) right 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat;
+}
+/* the plans' copy cell: its two left corners */
+.plans__info {
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px bottom 9px / 4px 4px no-repeat;
+}
+@media (max-width: 960px) {
+  .plans__frame, .steps__frame, .plans__info { background: none; }
+}
