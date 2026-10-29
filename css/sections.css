@@ -687,7 +687,7 @@ body { background: var(--c-page); }
 .plans__wave {
   position: absolute;
   inset: 0;
-  background: #eafff8;
+  background: #f8f8f8; /* background/primaryGray */
   opacity: 0;
   --from: inset(
     calc(var(--cy) * var(--u)) calc((var(--w) - var(--cx)) * var(--u))
