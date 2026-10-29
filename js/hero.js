@@ -451,20 +451,94 @@
     from(highlight, { opacity: 0 }, { duration: 900, delay: 1300 });
   }
 
-  /* ---------- start ---------- */
-  const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+  /* ---------- loader ---------- */
+  // The sphere turns until the page is ready (and for SPIN at least), then a line is drawn down
+  // the middle of the screen; it parts into two that run out to the hero's frame lines, and the
+  // loader opens between them onto the hero, whose intro plays meanwhile. The hero's frame draws
+  // in from the centre on the same clock, so the lines land on it.
+  const loader = document.querySelector('.loader');
+  const lines = [...document.querySelectorAll('.loader-lines i')];
+  const SPIN = 2000;
+  const DRAW = 700;
+  const OPEN = 1400;
+  const OPEN_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
 
-  function start() {
-    const firstBg = bgs.find((b) => b.dataset.bg === current);
-    const bgReady = firstBg.complete
-      ? Promise.resolve()
-      : new Promise((resolve) => {
-          firstBg.addEventListener('load', resolve, { once: true });
-          firstBg.addEventListener('error', resolve, { once: true });
-        });
-    // wait for fonts so the split text and tab widths are measured correctly
-    Promise.race([Promise.all([fontsReady, bgReady]), timeout(2500)]).then(() => intro());
+  const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+  const firstBg = bgs.find((b) => b.dataset.bg === current);
+  const bgReady = firstBg.complete
+    ? Promise.resolve()
+    : new Promise((resolve) => {
+        firstBg.addEventListener('load', resolve, { once: true });
+        firstBg.addEventListener('error', resolve, { once: true });
+      });
+  // wait for fonts so the split text and tab widths are measured correctly
+  const ready = Promise.race([Promise.all([fontsReady, bgReady]), timeout(6000)]);
+
+  function removeLoader() {
+    loader?.remove();
+    document.querySelector('.loader-lines')?.remove();
   }
 
-  start();
+  // cubic-bezier(0.65, 0, 0.35, 1) as a function, for the opening's clip (stepped per frame)
+  const easeInOut = (() => {
+    const [x1, y1, x2, y2] = [0.65, 0, 0.35, 1];
+    const bez = (t, a, b) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3;
+    return (x) => {
+      let lo = 0;
+      let hi = 1;
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2;
+        if (bez(mid, x1, x2) < x) lo = mid;
+        else hi = mid;
+      }
+      return bez((lo + hi) / 2, y1, y2);
+    };
+  })();
+
+  async function runLoader() {
+    await Promise.all([ready, timeout(SPIN)]);
+
+    // the line is drawn down the middle, out from the centre
+    const mid = Math.round(document.documentElement.clientWidth / 2);
+    lines.forEach((l) => (l.style.left = `${mid}px`));
+    await lines[0].animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], {
+      duration: DRAW,
+      easing: OPEN_EASE,
+      fill: 'forwards',
+    }).finished;
+    lines[1].style.transform = 'scaleY(1)';
+
+    // it parts in two, which run out to the frame's side lines, opening the loader between them
+    const frame = $('.hero__frame').getBoundingClientRect();
+    const toL = frame.left;
+    const toR = frame.right - 1;
+    const opts = { duration: OPEN, easing: OPEN_EASE, fill: 'forwards' };
+    lines[0].animate([{ left: `${mid}px` }, { left: `${toL}px` }], opts);
+    lines[1].animate([{ left: `${mid}px` }, { left: `${toR}px` }], opts);
+    intro();
+    const t0 = performance.now();
+    await new Promise((resolve) => {
+      const step = (now) => {
+        const t = Math.min(1, (now - t0) / OPEN);
+        const p = t < 1 ? easeInOut(t) : 1;
+        const l = mid + (toL - mid) * p;
+        const r = mid + (toR + 1 - mid) * p;
+        loader.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${l}px 0, ${l}px 100%, ${r}px 100%, ${r}px 0, ${l}px 0)`;
+        if (t < 1) requestAnimationFrame(step);
+        else resolve();
+      };
+      requestAnimationFrame(step);
+    });
+    // the hero's own frame has drawn in under the lines by now
+    loader.remove();
+    await Promise.all(lines.map((l) => l.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished));
+    removeLoader();
+  }
+
+  if (reduceMotion || !loader) {
+    removeLoader();
+    ready.then(() => intro());
+  } else {
+    runLoader();
+  }
 })();

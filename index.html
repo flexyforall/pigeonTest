@@ -15,6 +15,19 @@
 </head>
 <body>
 
+<!-- Loader (Figma 302:3618): the sphere turns, a line is drawn down the middle, then it parts
+     into two that run out to the hero's frame, opening onto the hero (js/hero.js) -->
+<div class="loader" aria-hidden="true">
+  <img class="loader__logo" src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
+  <div class="loader__sphere">
+    <video muted loop playsinline autoplay preload="auto" poster="assets/img/loader-sphere.jpg" tabindex="-1">
+      <source src="assets/video/loader-sphere.webm" type="video/webm">
+      <source src="assets/video/loader-sphere.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+<div class="loader-lines" aria-hidden="true"><i></i><i></i></div>
+
 <section class="hero" data-hero data-state="business">
   <!-- the content box's backdrop: the grid pattern and each audience's dithered illustration
        (Figma 293:6185, 293:6186 / 291:5317 / 292:5711) -->
