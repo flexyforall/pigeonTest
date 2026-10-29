@@ -1445,7 +1445,7 @@ body { background: var(--c-page); }
 }
 .about__mission,
 .about__stat,
-.about__logos { box-shadow: inset 1px 0 var(--c-rule), inset 0 1px var(--c-rule), inset -1px 0 var(--c-rule); }
+.about__logos { box-shadow: inset 1px 0 var(--c-rule), inset 0 1px var(--c-rule); } /* the frame draws the right edge */
 .about__mission {
   display: flex;
   flex-direction: column;
