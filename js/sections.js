@@ -110,15 +110,8 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
       });
 
-      $$('.benefit', section).forEach((card, i) => {
-        const d = 300 + i * 120;
-        $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
-          from(el, { opacity: 0 }, { duration: 1400, delay: d })
-        );
-        from($('.benefit__icon', card), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: d + 100 });
-        rise($('.benefit__title', card), d + 200, { word: 900, stagger: 40 });
-        fadeUp($('.benefit__desc', card), d + 400);
-      });
+      // the cards wait for their own row to be well in view, then come in one after another
+      waitForView($('.benefits__row', section), (row) => benefitCards(row));
     },
 
     // same reveal as the benefits: the heading rises, the mint block wipes in, then the tabs
@@ -146,7 +139,7 @@
     // there from the start, the second and third come in behind the band as it passes. The grid
     // goes on with the band, so in the end it is left on the last card only.
     steps(section) {
-      const WIPE = 1300; // ms: the mint block's wipe (slow enough for the band to be seen)
+      const WIPE = 1800; // ms: the mint block's wipe (slow enough for the band to be seen)
       const RUN = WIPE; // ms: the band's run across the cards, in step with the block
       const DELAY = 150;
       const ease = 'cubic-bezier(0.45, 0, 0.2, 1)'; // soft at both ends
@@ -176,8 +169,8 @@
           [
             // it fades in as it sets off, so it doesn't just appear at the left edge
             { transform: `translateX(${-bw}px)`, opacity: 0 },
-            { opacity: 1, offset: 0.2 },
-            { opacity: 1, offset: 0.85 },
+            { opacity: 0.75, offset: 0.3 },
+            { opacity: 0.75, offset: 0.7 },
             { transform: `translateX(${width - bw}px)`, opacity: 0 },
           ],
           { ...opts, fill: 'both' }
@@ -186,12 +179,12 @@
         // card but the last right behind the band (keyframe offsets are in the band's progress)
         cards.slice(1).forEach((card) => {
           const a = card.offsetLeft / width;
-          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 0.8) / width);
+          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 1.2) / width);
           card.animate(
             [
               { opacity: 0, offset: 0 },
-              { opacity: 0, offset: a },
-              { opacity: 1, offset: b, easing: 'ease-out' },
+              { opacity: 0, offset: a, easing: 'ease-in-out' },
+              { opacity: 1, offset: b },
               { opacity: 1, offset: 1 },
             ],
             opts
@@ -201,11 +194,11 @@
         cards.slice(0, -1).forEach((card) => {
           const grid = $('.step__grid', card);
           const a = Math.min(1, card.offsetLeft / width + lag * 0.5);
-          const b = Math.min(1, (card.offsetLeft + card.offsetWidth) / width + lag);
+          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 1.3) / width + lag);
           grid.animate(
             [
               { opacity: 1, offset: 0 },
-              { opacity: 1, offset: a },
+              { opacity: 1, offset: a, easing: 'ease-in-out' },
               { opacity: 0, offset: b },
               { opacity: 0, offset: 1 },
             ],
@@ -251,14 +244,7 @@
       fadeUp($('.solana__link', section), 400);
       fadeUp($('.solana__record', section), 550, 1000);
       // the cards below the dark panel come in as the benefit cards do, once their own row is in view
-      const row = $('.solana__row', section);
-      row.classList.add('is-waiting');
-      new IntersectionObserver((entries, io) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-        row.classList.remove('is-waiting');
-        benefitCards(row);
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(row);
+      waitForView($('.solana__row', section), (row) => benefitCards(row));
     },
 
     // heading and mint block, then the mission, the figures (counting up) and the logos
@@ -301,10 +287,22 @@
     },
   };
 
+  // runs `run(el)` once `el` is well in view; until then its content stays hidden (.is-waiting)
+  function waitForView(el, run) {
+    el.classList.add('is-waiting');
+    new IntersectionObserver((entries, io) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      el.classList.remove('is-waiting');
+      run(el);
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(el);
+  }
+
   // benefit-style cards: grid and fade come in, then the icon, the title rising, the line below
   function benefitCards(root, delay = 0) {
     $$('.benefit', root).forEach((card, i) => {
-      const d = delay + i * 120;
+      const d = delay + i * 150;
+      from(card, { opacity: 0, transform: 'translateY(24px)' }, { duration: 1200, delay: d });
       $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
         from(el, { opacity: 0 }, { duration: 1400, delay: d })
       );
