@@ -8,8 +8,8 @@
   const tabs = items.map((item) => item.querySelector('.svc__tab'));
 
   /* ---------- copy, coming in as the hero copy does on a switch ---------- */
-  // the hero's SWITCH_TIMING, set off with the card sliding open (0.9s, see the CSS)
-  const T = { delay: 150, word: 800, stagger: 30, text: 120, button: 200, items: 260, fade: 700 };
+  // the hero's SWITCH_TIMING, waiting until the card has slid most of the way open (0.9s, see the CSS)
+  const T = { delay: 500, word: 800, stagger: 30, text: 120, button: 200, items: 260, fade: 700 };
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
