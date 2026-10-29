@@ -459,6 +459,7 @@
   const SPIN = 2000;
   const SPHERE_FADE = 700;
   const FADE = 350; // the loader's own fade, once the hero has started
+  const GRID_END = 1500; // from the sphere's fade to the grid's full reveal
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const firstBg = bgs.find((b) => b.dataset.bg === current);
@@ -497,17 +498,15 @@
 
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
-    // the grid completes as the loader goes: the sphere's fade, its second half overlapping the
-    // loader's own
-    finishGrid(SPHERE_FADE / 2 + FADE);
+    // the sphere fades while the grid runs on to its edges; just before it gets there the hero
+    // starts drawing itself in and the loader clears off it, gone as the grid completes
+    finishGrid(GRID_END);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
     // the grid stays: it is the hero's own, in its place
     loader.querySelectorAll('.loader__logo, .loader__sphere').forEach((el) =>
       el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SPHERE_FADE, easing: ease, fill: 'forwards' })
     );
-    // the hero starts halfway through the sphere's fade, and the loader clears off it quickly,
-    // so its frame and hairlines are seen drawing in
-    await timeout(SPHERE_FADE / 2);
+    await timeout(GRID_END - FADE);
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();
