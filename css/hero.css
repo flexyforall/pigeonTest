@@ -183,9 +183,9 @@ h1, h2, p { margin: 0; }
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(300 * var(--px));
-  height: calc(300 * var(--px));
-  margin: calc(-150 * var(--px)) 0 0 calc(-150 * var(--px));
+  width: calc(407 * var(--px));
+  height: calc(407 * var(--px));
+  margin: calc(-203.5 * var(--px)) 0 0 calc(-203.5 * var(--px));
   border-radius: 50%;
   /* no edge to read: the tint falls off gradually all the way from the centre */
   background: radial-gradient(
