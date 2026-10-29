@@ -1033,9 +1033,10 @@ body { background: var(--c-page); }
   color: var(--c-ink);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
 }
-.svc.is-active .svc__card { opacity: 1; visibility: visible; transition: opacity 0.6s ease 0.3s, visibility 0s; }
+/* it shows at once; its copy comes in piece by piece (js/services.js) */
+.svc.is-active .svc__card { opacity: 1; visibility: visible; transition: visibility 0s; }
 
 /* the line drawing, fading into the card's grey at its left and bottom */
 .svc__art {
