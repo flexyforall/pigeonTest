@@ -1600,7 +1600,9 @@ body { background: var(--c-page); }
   box-shadow: inset 0 -1px var(--c-rule), inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
 }
 .quote__person > * + * { box-shadow: inset 1px 0 var(--c-rule); }
-.quote__avatar { flex: none; width: calc(72 * var(--px)); height: calc(72 * var(--px)); object-fit: cover; }
+/* the photo's cell clips it, so the next one comes in within it */
+.quote__photo { flex: none; width: calc(72 * var(--px)); height: calc(72 * var(--px)); overflow: hidden; }
+.quote__avatar { display: block; width: 100%; height: 100%; object-fit: cover; }
 .quote__who {
   display: flex;
   flex: 1 0 0;
