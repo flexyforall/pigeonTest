@@ -460,10 +460,13 @@
     // the glow keeps to the shape of the illustration on show
     const fit = () => {
       const img = bgs.find((b) => b.dataset.bg === current);
-      if (!img || area.dataset.state === current) return;
-      area.dataset.state = current;
+      if (!img) return;
+      // the box follows the picture's size every time (it changes with the window)
       area.style.setProperty('--glow-w', getComputedStyle(img).width);
-      glow.style.setProperty('--glow-mask', `url("${img.currentSrc || img.src}")`);
+      const src = img.currentSrc || img.src;
+      if (area.dataset.src === src) return;
+      area.dataset.src = src;
+      glow.style.setProperty('--glow-mask', `url("${src}")`);
     };
     fit();
     hero.addEventListener('pointerenter', fit);

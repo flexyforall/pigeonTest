@@ -6,15 +6,17 @@
 // (object-fit: cover; object-position: left top).
 (() => {
   [
-    ['.cta__pattern', '.cta__panel'],
-    ['.connectivity__pattern', '.connectivity__panel'],
-  ].forEach(([imgSel, areaSel]) => {
+    // the CTA's grid keeps the design's cell size and grows to fill its box; the connectivity
+    // title's covers its box, scaling with the panel as it grows
+    ['.cta__pattern', '.cta__panel', 'tile'],
+    ['.connectivity__pattern', '.connectivity__panel', 'cover'],
+  ].forEach(([imgSel, areaSel, fit]) => {
     const img = document.querySelector(imgSel);
     const panel = img && img.closest(areaSel);
-    if (panel) attach(img, panel);
+    if (panel) attach(img, panel, fit);
   });
 
-function attach(img, panel) {
+function attach(img, panel, fit) {
   // the grid, in the pattern's 1388 × 979 design pixels
   const W = 1388;
   const H = 979;
@@ -45,12 +47,18 @@ function attach(img, panel) {
   const ctx = canvas.getContext('2d');
 
   let scale = 1;
+  let cols = COLS;
+  let rows = ROWS;
   function size() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = canvas.clientWidth;
-    scale = Math.max(w / W, canvas.clientHeight / H); // cover, from the top left
+    const h = canvas.clientHeight;
+    // one design pixel (css/hero.css --px), or cover, from the top left
+    scale = fit === 'tile' ? Math.min(1.25, Math.max(1, window.innerWidth / 1440)) : Math.max(w / W, h / H);
+    cols = Math.max(COLS, Math.ceil(w / scale / DX) + 1);
+    rows = Math.max(ROWS, Math.ceil(h / scale / DY) + 1);
     canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(canvas.clientHeight * dpr);
+    canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
     draw();
   }
@@ -59,11 +67,11 @@ function attach(img, panel) {
   const cur = { x: 0, y: 0, on: 0 };
 
   function draw() {
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, cols * DX + X0, rows * DY + Y0);
     const s2 = 2 * REACH * REACH;
     const t2 = 2 * TINT_REACH * TINT_REACH;
-    for (let j = 0; j < ROWS; j++) {
-      for (let i = 0; i < COLS; i++) {
+    for (let j = 0; j < rows; j++) {
+      for (let i = 0; i < cols; i++) {
         let x = X0 + i * DX;
         let y = Y0 + j * DY;
         let f = 0;

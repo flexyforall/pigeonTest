@@ -149,13 +149,14 @@ h1, h2, p { margin: 0; }
   overflow: hidden;
 }
 
-/* the grid of cells behind the content (1514 × 1276, centred on the content box) */
+/* the grid of cells behind the content (Figma's 1514 × 1276, centred on the content box),
+   carried on by 20 whole cells (75px) each way, so it also fills wide and tall screens */
 .hero__pattern {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: calc(1514 * var(--px));
-  height: calc(1276 * var(--px));
+  width: calc((1514 + 40 * 75) * var(--px));
+  height: calc((1276 + 40 * 75) * var(--px));
   transform: translate(-50%, -50%);
   background: url("../assets/patterns/hero-grid.svg") 0 0 / calc(75 * var(--px)) calc(75 * var(--px));
   pointer-events: none;

@@ -414,7 +414,7 @@ body { background: var(--c-page); }
   flex-direction: column;
   align-items: center;
   gap: calc(60 * var(--px));
-  max-width: 1840px;
+  max-width: 1760px; /* the width of the other sections' frames, so the rules line up */
   margin: 0 auto;
   padding-top: calc(160 * var(--px));
   border-left: 1px solid var(--c-rule);
@@ -1306,8 +1306,8 @@ body { background: var(--c-page); }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: calc(1514 * var(--px));
-  height: calc(1276 * var(--px));
+  width: calc((1514 + 40 * 75) * var(--px)); /* carried on by whole cells, as in the hero */
+  height: calc((1276 + 40 * 75) * var(--px));
   transform: translate(-50%, -50%);
   background: url("../assets/patterns/hero-grid.svg") 0 0 / calc(75 * var(--px)) calc(75 * var(--px));
 }
@@ -1743,8 +1743,10 @@ body { background: var(--c-page); }
   position: absolute;
   top: calc(-247.5 * var(--px));
   left: calc(-17 * var(--px));
-  width: calc(1388 * var(--px));
-  height: calc(979 * var(--px));
+  /* Figma's 1388 × 979, or as much more as the panel needs on wide screens (js/plus-grid.js
+     draws as many cells as fit, at the design's size) */
+  width: max(calc(1388 * var(--px)), calc(100% + 34 * var(--px)));
+  height: max(calc(979 * var(--px)), calc(100% + 495 * var(--px)));
   max-width: none;
 }
 .cta__head {
