@@ -19,6 +19,7 @@
   const ARM = 4.99; // half the plus
   const BAR = 0.587; // its stroke
   const ALPHA = 0.1;
+  const GLOW = 0.08; // how much brighter the pluses nearest the pointer get
 
   const REACH = 110; // falloff of the pull around the pointer (design px)
   const PULL = 0.14; // share of the way to the pointer a plus leans at most
@@ -60,7 +61,7 @@
           y += dy * PULL * f;
         }
         const arm = ARM * (1 + 0.35 * f);
-        ctx.fillStyle = `rgba(255, 255, 255, ${ALPHA + 0.3 * f})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${ALPHA + GLOW * f})`;
         ctx.fillRect(x - arm, y - BAR / 2, arm * 2, BAR);
         ctx.fillRect(x - BAR / 2, y - arm, BAR, arm * 2);
       }
