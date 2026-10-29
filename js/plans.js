@@ -81,9 +81,11 @@
     // an absolute URL: a relative one would resolve against the stylesheet that uses it
     const floor = new URL(img.getAttribute('src').replace(/\.svg$/, '-floor.png'), document.baseURI).href;
     layer.style.setProperty('--mask', `url("${floor}")`);
-    // load the masks up front: a mask still loading hides the fill, so a wave played before
-    // its mask is in would only show as it fades out
-    new Image().src = floor;
+    // load the masks ahead (once the page has loaded): a mask still loading hides the fill, so
+    // a wave played before its mask is in would only show as it fades out
+    const preload = () => (new Image().src = floor);
+    if (document.readyState === 'complete') preload();
+    else window.addEventListener('load', preload, { once: true });
     zones.forEach((z, i) => {
       const ap = z.querySelector('i');
       const wave = document.createElement('span');

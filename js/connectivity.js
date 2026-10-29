@@ -151,12 +151,23 @@
     return synced;
   }
 
+  // the clips wait for the page to have loaded, so they don't hold up its first showing
+  const fetchClips = () =>
+    videos.forEach((video) => {
+      if (!video || video.preload === 'auto') return;
+      video.preload = 'auto';
+      video.load();
+    });
+  if (document.readyState === 'complete') fetchClips();
+  else window.addEventListener('load', fetchClips, { once: true });
+
   // Browsers (iOS Safari above all) may not fetch a paused muted video until it has played once,
   // so each clip is nudged into play and straight back to pause as the section approaches.
   const primer = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return;
       primer.disconnect();
+      fetchClips();
       videos.forEach((video) => {
         if (!video) return;
         const play = video.play();

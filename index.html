@@ -5,11 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PigeonM — WiFi for business, residential and mobile</title>
   <script>document.documentElement.classList.add('js', 'is-locked');</script>
-  <style>html { background: #040707; }</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400..700&display=swap" rel="stylesheet">
+  <!-- the loader's dark page from the very first paint -->
+  <style>html, body { margin: 0; background: #101111; }</style>
   <link rel="preload" as="image" href="assets/img/hero-business.webp" imagesrcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x">
+  <script src="js/hero.js" defer></script>
+  <script src="js/sections.js" defer></script>
+  <script src="js/connectivity.js" defer></script>
+  <script src="js/dither.js" defer></script>
+  <script src="js/plans.js" defer></script>
+  <script src="js/services.js" defer></script>
+  <script src="js/testimonials.js" defer></script>
+  <script src="js/faq.js" defer></script>
+  <script src="js/grid.js" defer></script>
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/sections.css">
 </head>
@@ -126,11 +133,11 @@
 
 <section class="logos" aria-label="Trusted by">
   <ul class="logos__list">
-    <li class="logos__item"><img src="assets/logos/turner.png" width="136" height="44" alt="Turner"></li>
-    <li class="logos__item"><img src="assets/logos/forto.png" width="157" height="40" alt="Forto"></li>
-    <li class="logos__item"><img src="assets/logos/huus.png" width="100" height="90" alt="HUUS"></li>
-    <li class="logos__item"><img src="assets/logos/vph.png" width="180" height="65" alt="vph GmbH &amp; Co. KG"></li>
-    <li class="logos__item"><img src="assets/logos/hive.png" width="160" height="45" alt="Hive"></li>
+    <li class="logos__item"><img loading="lazy" src="assets/logos/turner.png" width="136" height="44" alt="Turner"></li>
+    <li class="logos__item"><img loading="lazy" src="assets/logos/forto.png" width="157" height="40" alt="Forto"></li>
+    <li class="logos__item"><img loading="lazy" src="assets/logos/huus.png" width="100" height="90" alt="HUUS"></li>
+    <li class="logos__item"><img loading="lazy" src="assets/logos/vph.png" width="180" height="65" alt="vph GmbH &amp; Co. KG"></li>
+    <li class="logos__item"><img loading="lazy" src="assets/logos/hive.png" width="160" height="45" alt="Hive"></li>
   </ul>
 </section>
 
@@ -141,8 +148,8 @@
   </div>
   <div class="benefits__row">
     <article class="benefit">
-      <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="benefit__fade" src="assets/patterns/fade-1.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-1.svg" alt="" aria-hidden="true">
       <svg class="benefit__icon" width="50" height="50" viewBox="0 0 50 50" aria-hidden="true"><use href="#icon-plan"/></svg>
       <div class="benefit__text">
         <h3 class="benefit__title">Sized to your space</h3>
@@ -150,8 +157,8 @@
       </div>
     </article>
     <article class="benefit">
-      <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="benefit__fade" src="assets/patterns/fade-2.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-2.svg" alt="" aria-hidden="true">
       <svg class="benefit__icon" width="50" height="50" viewBox="0 0 50 50" aria-hidden="true"><use href="#icon-globe"/></svg>
       <div class="benefit__text">
         <h3 class="benefit__title">Online in 150 countries</h3>
@@ -159,8 +166,8 @@
       </div>
     </article>
     <article class="benefit">
-      <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="benefit__fade" src="assets/patterns/fade-3.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-3.svg" alt="" aria-hidden="true">
       <svg class="benefit__icon" width="50" height="50" viewBox="0 0 50 50" aria-hidden="true"><use href="#icon-shield"/></svg>
       <div class="benefit__text">
         <h3 class="benefit__title">Uptime you can verify</h3>
@@ -246,28 +253,28 @@
       <div class="connectivity__track">
         <div class="connectivity__panel" data-panel="title">
           <div class="connectivity__media">
-            <img class="connectivity__pattern" src="assets/patterns/connectivity-grid.svg" width="1388" height="979" alt="" aria-hidden="true">
+            <img loading="lazy" class="connectivity__pattern" src="assets/patterns/connectivity-grid.svg" width="1388" height="979" alt="" aria-hidden="true">
           </div>
           <p class="section-title connectivity__title">Connectivity without boundaries.</p>
         </div>
         <div class="connectivity__panel" data-panel="fixed-site">
           <div class="connectivity__media">
-            <video class="connectivity__img" src="assets/connectivity/fixed-site.mp4" data-line="1.0 3.2" poster="assets/connectivity/fixed-site.jpg" muted playsinline preload="auto" tabindex="-1" aria-label="Fixed sites: an office building"></video>
+            <video class="connectivity__img" src="assets/connectivity/fixed-site.mp4" data-line="1.0 3.2" poster="assets/connectivity/fixed-site.jpg" muted playsinline preload="none" tabindex="-1" aria-label="Fixed sites: an office building"></video>
           </div>
         </div>
         <div class="connectivity__panel" data-panel="land-mobility">
           <div class="connectivity__media">
-            <video class="connectivity__img" src="assets/connectivity/land-mobility.mp4" data-line="0.8 3.6" poster="assets/connectivity/land-mobility.jpg" muted playsinline preload="auto" tabindex="-1" aria-label="Land mobility: a van on a dirt road"></video>
+            <video class="connectivity__img" src="assets/connectivity/land-mobility.mp4" data-line="0.8 3.6" poster="assets/connectivity/land-mobility.jpg" muted playsinline preload="none" tabindex="-1" aria-label="Land mobility: a van on a dirt road"></video>
           </div>
         </div>
         <div class="connectivity__panel" data-panel="maritime">
           <div class="connectivity__media">
-            <video class="connectivity__img" src="assets/connectivity/maritime.mp4" data-line="0.65 3.5" poster="assets/connectivity/maritime.jpg" muted playsinline preload="auto" tabindex="-1" aria-label="Maritime: a cargo ship at sea"></video>
+            <video class="connectivity__img" src="assets/connectivity/maritime.mp4" data-line="0.65 3.5" poster="assets/connectivity/maritime.jpg" muted playsinline preload="none" tabindex="-1" aria-label="Maritime: a cargo ship at sea"></video>
           </div>
         </div>
         <div class="connectivity__panel" data-panel="aviation">
           <div class="connectivity__media">
-            <video class="connectivity__img" src="assets/connectivity/aviation.mp4" data-line="0.6 3.25" poster="assets/connectivity/aviation.jpg" muted playsinline preload="auto" tabindex="-1" aria-label="Aviation: an airliner above the clouds"></video>
+            <video class="connectivity__img" src="assets/connectivity/aviation.mp4" data-line="0.6 3.25" poster="assets/connectivity/aviation.jpg" muted playsinline preload="none" tabindex="-1" aria-label="Aviation: an airliner above the clouds"></video>
           </div>
         </div>
       </div>
@@ -309,7 +316,7 @@
       <div class="plans__panel" role="tabpanel" id="plan-small-office" aria-labelledby="tab-small-office">
         <div class="plans__info">
           <div class="plans__texts">
-            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
             <div class="plans__copy">
               <div class="plans__heading">
                 <h3 class="plans__title">Small Office</h3>
@@ -322,7 +329,7 @@
         </div>
         <div class="plans__illus" aria-hidden="true">
           <div class="plans__plan">
-            <img src="assets/plans/small-office.svg" width="680" height="438" alt="">
+            <img loading="lazy" src="assets/plans/small-office.svg" width="680" height="438" alt="">
             <span class="plans__label" style="--x: 131; --y: 117">Meeting room</span>
             <span class="plans__label" style="--x: 316; --y: 101">Private room</span>
             <span class="plans__label" style="--x: 553; --y: 100">Server</span>
@@ -337,7 +344,7 @@
       <div class="plans__panel" role="tabpanel" id="plan-retail" aria-labelledby="tab-retail" hidden>
         <div class="plans__info">
           <div class="plans__texts">
-            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
             <div class="plans__copy">
               <div class="plans__heading">
                 <h3 class="plans__title">Retail Showroom</h3>
@@ -350,7 +357,7 @@
         </div>
         <div class="plans__illus" aria-hidden="true">
           <div class="plans__plan">
-            <img src="assets/plans/retail.svg" width="680" height="435" alt="">
+            <img loading="lazy" src="assets/plans/retail.svg" width="680" height="435" alt="">
             <span class="plans__label" style="--x: 261; --y: 246">Sales floor</span>
             <span class="plans__label" style="--x: 147; --y: 88">Stock room</span>
             <span class="plans__label" style="--x: 348; --y: 86">Back office</span>
@@ -364,7 +371,7 @@
       <div class="plans__panel" role="tabpanel" id="plan-clinic" aria-labelledby="tab-clinic" hidden>
         <div class="plans__info">
           <div class="plans__texts">
-            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
             <div class="plans__copy">
               <div class="plans__heading">
                 <h3 class="plans__title">Medical Clinic</h3>
@@ -377,7 +384,7 @@
         </div>
         <div class="plans__illus" aria-hidden="true">
           <div class="plans__plan">
-            <img src="assets/plans/clinic.svg" width="680" height="436" alt="">
+            <img loading="lazy" src="assets/plans/clinic.svg" width="680" height="436" alt="">
             <span class="plans__label" style="--x: 93; --y: 99">Exam room</span>
             <span class="plans__label" style="--x: 212; --y: 99">Exam room</span>
             <span class="plans__label" style="--x: 334; --y: 99">Exam room</span>
@@ -393,7 +400,7 @@
       <div class="plans__panel" role="tabpanel" id="plan-restaurant" aria-labelledby="tab-restaurant" hidden>
         <div class="plans__info">
           <div class="plans__texts">
-            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
             <div class="plans__copy">
               <div class="plans__heading">
                 <h3 class="plans__title">Restaurant</h3>
@@ -406,7 +413,7 @@
         </div>
         <div class="plans__illus" aria-hidden="true">
           <div class="plans__plan">
-            <img src="assets/plans/restaurant.svg" width="680" height="431.2" alt="">
+            <img loading="lazy" src="assets/plans/restaurant.svg" width="680" height="431.2" alt="">
             <span class="plans__label" style="--x: 292; --y: 245">Dining Area</span>
             <span class="plans__label" style="--x: 261; --y: 102">Kitchen</span>
             <span class="plans__label" style="--x: 542; --y: 196">Bar</span>
@@ -419,7 +426,7 @@
       <div class="plans__panel" role="tabpanel" id="plan-warehouse" aria-labelledby="tab-warehouse" hidden>
         <div class="plans__info">
           <div class="plans__texts">
-            <img class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
+            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
             <div class="plans__copy">
               <div class="plans__heading">
                 <h3 class="plans__title">Warehouse</h3>
@@ -432,7 +439,7 @@
         </div>
         <div class="plans__illus" aria-hidden="true">
           <div class="plans__plan">
-            <img src="assets/plans/warehouse.svg" width="680" height="453.33" alt="">
+            <img loading="lazy" src="assets/plans/warehouse.svg" width="680" height="453.33" alt="">
             <span class="plans__label" style="--x: 74; --y: 76.67">Break</span>
             <span class="plans__label" style="--x: 257; --y: 156.67">Storage zone</span>
             <span class="plans__label" style="--x: 298; --y: 303.67">Shipping doc</span>
@@ -455,8 +462,8 @@
     </div>
     <ol class="steps__row">
     <li class="step">
-      <img class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
       <span class="step__num" aria-hidden="true">01</span>
       <div class="step__text">
         <h3 class="step__title">Site survey</h3>
@@ -464,8 +471,8 @@
       </div>
     </li>
     <li class="step">
-      <img class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
       <span class="step__num" aria-hidden="true">02</span>
       <div class="step__text">
         <h3 class="step__title">Install</h3>
@@ -473,8 +480,8 @@
       </div>
     </li>
     <li class="step">
-      <img class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
       <span class="step__num" aria-hidden="true">03</span>
       <div class="step__text">
         <h3 class="step__title">We run it</h3>
@@ -497,10 +504,10 @@
       <li class="svc is-active" role="presentation">
         <button class="svc__tab" type="button" role="tab" id="svc-tab-internet" aria-controls="svc-internet" aria-selected="true">
           <span class="svc__name">Internet</span>
-          <img class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
+          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
         </button>
         <div class="svc__card" role="tabpanel" id="svc-internet" aria-labelledby="svc-tab-internet">
-          <span class="svc__art" style="--r: -431.5; --t: -197.5; --w: 1452; --h: 817"><img src="assets/services/internet.jpg" width="1452" height="817" alt=""></span>
+          <span class="svc__art" style="--r: -431.5; --t: -197.5; --w: 1452; --h: 817"><img loading="lazy" src="assets/services/internet.jpg" width="1452" height="817" alt=""></span>
           <p class="svc__label">Internet</p>
           <div class="svc__body">
             <div class="svc__texts">
@@ -520,10 +527,10 @@
       <li class="svc" role="presentation">
         <button class="svc__tab" type="button" role="tab" id="svc-tab-managed-it" aria-controls="svc-managed-it" aria-selected="false" tabindex="-1">
           <span class="svc__name">Managed IT</span>
-          <img class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
+          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
         </button>
         <div class="svc__card" role="tabpanel" id="svc-managed-it" aria-labelledby="svc-tab-managed-it">
-          <span class="svc__art" style="--r: -342.5; --t: -146.5; --w: 1157; --h: 651"><img src="assets/services/managed-it.jpg" width="1157" height="651" alt=""></span>
+          <span class="svc__art" style="--r: -342.5; --t: -146.5; --w: 1157; --h: 651"><img loading="lazy" src="assets/services/managed-it.jpg" width="1157" height="651" alt=""></span>
           <p class="svc__label">Managed IT</p>
           <div class="svc__body">
             <div class="svc__texts">
@@ -543,10 +550,10 @@
       <li class="svc" role="presentation">
         <button class="svc__tab" type="button" role="tab" id="svc-tab-security" aria-controls="svc-security" aria-selected="false" tabindex="-1">
           <span class="svc__name">Security Cameras</span>
-          <img class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
+          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
         </button>
         <div class="svc__card" role="tabpanel" id="svc-security" aria-labelledby="svc-tab-security">
-          <span class="svc__art" style="--r: -431.5; --t: -187.5; --w: 1342; --h: 755"><img src="assets/services/security.jpg" width="1342" height="755" alt=""></span>
+          <span class="svc__art" style="--r: -431.5; --t: -187.5; --w: 1342; --h: 755"><img loading="lazy" src="assets/services/security.jpg" width="1342" height="755" alt=""></span>
           <p class="svc__label">Security Cameras</p>
           <div class="svc__body">
             <div class="svc__texts">
@@ -566,10 +573,10 @@
       <li class="svc" role="presentation">
         <button class="svc__tab" type="button" role="tab" id="svc-tab-wifi-calling" aria-controls="svc-wifi-calling" aria-selected="false" tabindex="-1">
           <span class="svc__name">WiFi Calling</span>
-          <img class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
+          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
         </button>
         <div class="svc__card" role="tabpanel" id="svc-wifi-calling" aria-labelledby="svc-tab-wifi-calling">
-          <span class="svc__art" style="--r: -418.5; --t: -121.5; --w: 1267; --h: 713"><img src="assets/services/wifi-calling.jpg" width="1267" height="713" alt=""></span>
+          <span class="svc__art" style="--r: -418.5; --t: -121.5; --w: 1267; --h: 713"><img loading="lazy" src="assets/services/wifi-calling.jpg" width="1267" height="713" alt=""></span>
           <p class="svc__label">WiFi Calling</p>
           <div class="svc__body">
             <div class="svc__texts">
@@ -589,10 +596,10 @@
       <li class="svc" role="presentation">
         <button class="svc__tab" type="button" role="tab" id="svc-tab-support" aria-controls="svc-support" aria-selected="false" tabindex="-1">
           <span class="svc__name">Customer Support</span>
-          <img class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
+          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
         </button>
         <div class="svc__card" role="tabpanel" id="svc-support" aria-labelledby="svc-tab-support">
-          <span class="svc__art" style="--r: -456.5; --t: -86.5; --w: 1348; --h: 759"><img src="assets/services/support.jpg" width="1348" height="759" alt=""></span>
+          <span class="svc__art" style="--r: -456.5; --t: -86.5; --w: 1348; --h: 759"><img loading="lazy" src="assets/services/support.jpg" width="1348" height="759" alt=""></span>
           <p class="svc__label">Customer Support</p>
           <div class="svc__body">
             <div class="svc__texts">
@@ -647,40 +654,40 @@
       <div class="solana__head">
         <h2 class="section-title solana__title" id="solana-title">Network performance you can verify</h2>
         <p class="solana__desc">We don't just say we're reliable. Every key network event is recorded<br>on Solana, so you can check it yourself.</p>
-        <a class="solana__link" href="#solana">Learn about Solana <img src="assets/icons/arrow-right-mint.svg" width="20" height="20" alt="" aria-hidden="true"></a>
+        <a class="solana__link" href="#solana">Learn about Solana <img loading="lazy" src="assets/icons/arrow-right-mint.svg" width="20" height="20" alt="" aria-hidden="true"></a>
       </div>
       <div class="solana__record">
-        <img class="solana__logo" src="assets/icons/solana.svg" width="56" height="48.79" alt="Solana">
+        <img loading="lazy" class="solana__logo" src="assets/icons/solana.svg" width="56" height="48.79" alt="Solana">
         <div class="solana__texts">
           <p class="solana__hash">Latest record 4xKp…9fQe</p>
           <p class="solana__time">12 min ago</p>
         </div>
-        <a class="solana__open" href="#solana" aria-label="Open the record on Solana"><img src="assets/icons/square-arrow.svg" width="24" height="24" alt=""></a>
+        <a class="solana__open" href="#solana" aria-label="Open the record on Solana"><img loading="lazy" src="assets/icons/square-arrow.svg" width="24" height="24" alt=""></a>
       </div>
     </div>
     <div class="benefits__row solana__row">
       <article class="benefit">
-        <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-        <img class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-        <img class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
         <div class="benefit__text">
           <h3 class="benefit__title">Tamper-Evident Records</h3>
           <p class="benefit__desc">Blockchain fingerprints reveal report changes.</p>
         </div>
       </article>
       <article class="benefit">
-        <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-        <img class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-        <img class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
         <div class="benefit__text">
           <h3 class="benefit__title">Independent Verification</h3>
           <p class="benefit__desc">Verify our network records yourself, anytime.</p>
         </div>
       </article>
       <article class="benefit">
-        <img class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-        <img class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-        <img class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
         <div class="benefit__text">
           <h3 class="benefit__title">Updated Every Hour</h3>
           <p class="benefit__desc">Network data proofs are recorded on Solana every hour.</p>
@@ -719,11 +726,11 @@
         </div>
       </dl>
       <ul class="about__logos" aria-label="Trusted by">
-        <li><img src="assets/logos/turner.png" width="136" height="44" alt="Turner"></li>
-        <li><img src="assets/logos/forto.png" width="157" height="40" alt="Forto"></li>
-        <li><img src="assets/logos/huus.png" width="100" height="90" alt="HUUS"></li>
-        <li><img src="assets/logos/vph.png" width="180" height="65" alt="vph GmbH &amp; Co. KG"></li>
-        <li><img src="assets/logos/hive.png" width="160" height="45" alt="Hive"></li>
+        <li><img loading="lazy" src="assets/logos/turner.png" width="136" height="44" alt="Turner"></li>
+        <li><img loading="lazy" src="assets/logos/forto.png" width="157" height="40" alt="Forto"></li>
+        <li><img loading="lazy" src="assets/logos/huus.png" width="100" height="90" alt="HUUS"></li>
+        <li><img loading="lazy" src="assets/logos/vph.png" width="180" height="65" alt="vph GmbH &amp; Co. KG"></li>
+        <li><img loading="lazy" src="assets/logos/hive.png" width="160" height="45" alt="Hive"></li>
       </ul>
     </div>
   </div>
@@ -744,13 +751,13 @@
           <div class="quote__card">
             <p class="quote__tags"><span data-quote="tag"></span><i aria-hidden="true"></i><span data-quote="aps"></span></p>
             <blockquote class="quote__text" data-quote="text"></blockquote>
-            <img class="quote__mark" src="assets/icons/quotes.svg" width="60" height="60" alt="" aria-hidden="true">
+            <img loading="lazy" class="quote__mark" src="assets/icons/quotes.svg" width="60" height="60" alt="" aria-hidden="true">
           </div>
           <figcaption class="quote__person">
-            <img class="quote__avatar" data-quote="avatar" src="assets/img/avatar-maria.jpg" width="72" height="72" alt="">
+            <img loading="lazy" class="quote__avatar" data-quote="avatar" src="assets/img/avatar-maria.jpg" width="72" height="72" alt="">
             <span class="quote__who"><b data-quote="name"></b><span data-quote="role"></span></span>
-            <button class="quote__nav" type="button" data-step="-1" aria-label="Previous story"><img src="assets/icons/arrow-left.svg" width="24" height="24" alt=""></button>
-            <button class="quote__nav" type="button" data-step="1" aria-label="Next story"><img src="assets/icons/arrow-right.svg" width="24" height="24" alt=""></button>
+            <button class="quote__nav" type="button" data-step="-1" aria-label="Previous story"><img loading="lazy" src="assets/icons/arrow-left.svg" width="24" height="24" alt=""></button>
+            <button class="quote__nav" type="button" data-step="1" aria-label="Next story"><img loading="lazy" src="assets/icons/arrow-right.svg" width="24" height="24" alt=""></button>
           </figcaption>
         </figure>
       </div>
@@ -816,9 +823,9 @@
 <section class="cta" aria-labelledby="cta-title">
   <div class="cta__frame">
     <div class="cta__panel">
-      <img class="cta__pattern" src="assets/patterns/connectivity-grid.svg" width="1388" height="979" alt="" aria-hidden="true">
+      <img loading="lazy" class="cta__pattern" src="assets/patterns/connectivity-grid.svg" width="1388" height="979" alt="" aria-hidden="true">
       <div class="cta__head">
-        <span class="cta__icon" aria-hidden="true"><img src="assets/icons/logo-mark.svg" width="68.41" height="61.88" alt=""></span>
+        <span class="cta__icon" aria-hidden="true"><img loading="lazy" src="assets/icons/logo-mark.svg" width="68.41" height="61.88" alt=""></span>
         <h2 class="section-title cta__title" id="cta-title">Ready to cover every corner<br>of your business?</h2>
         <p class="cta__desc">Tell us about your space. We'll confirm availability, plan your access<br>points and schedule the install.</p>
         <a class="btn cta__btn" href="#start"><span>Get started</span></a>
@@ -838,7 +845,7 @@
   <div class="footer__frame">
     <div class="footer__top">
       <div class="footer__brand">
-        <a class="footer__logo" href="/" aria-label="PigeonM — home"><img src="assets/icons/logo-dark.svg" width="159" height="39.78" alt=""></a>
+        <a class="footer__logo" href="/" aria-label="PigeonM — home"><img loading="lazy" src="assets/icons/logo-dark.svg" width="159" height="39.78" alt=""></a>
         <p class="footer__tagline">Linking your dreams and ambitions with the limitless possibilities of the digital world.</p>
       </div>
       <nav class="footer__menu" aria-label="Contacts">
@@ -868,9 +875,9 @@
         </ul>
       </nav>
       <ul class="footer__socials" aria-label="Social">
-        <li><a href="#instagram" aria-label="Instagram"><img src="assets/icons/instagram.svg" width="24" height="24" alt=""></a></li>
-        <li><a href="#facebook" aria-label="Facebook"><img src="assets/icons/facebook.svg" width="22" height="22" alt=""></a></li>
-        <li><a href="#x" aria-label="X"><img src="assets/icons/x.svg" width="24" height="24" alt=""></a></li>
+        <li><a href="#instagram" aria-label="Instagram"><img loading="lazy" src="assets/icons/instagram.svg" width="24" height="24" alt=""></a></li>
+        <li><a href="#facebook" aria-label="Facebook"><img loading="lazy" src="assets/icons/facebook.svg" width="22" height="22" alt=""></a></li>
+        <li><a href="#x" aria-label="X"><img loading="lazy" src="assets/icons/x.svg" width="24" height="24" alt=""></a></li>
       </ul>
     </div>
     <p class="footer__legal">© 2024-2025 Pigeon M. All rights reserved <i>|</i> <a href="#cookies">Cookie Policy</a> <i>|</i> <a href="#terms">Terms and Conditions</a> <i>|</i> <a href="#privacy">Privacy Policy</a></p>
@@ -905,14 +912,5 @@
   </svg>
 </template>
 
-<script src="js/hero.js" defer></script>
-<script src="js/sections.js" defer></script>
-<script src="js/connectivity.js" defer></script>
-<script src="js/dither.js" defer></script>
-<script src="js/plans.js" defer></script>
-<script src="js/services.js" defer></script>
-<script src="js/testimonials.js" defer></script>
-<script src="js/faq.js" defer></script>
-<script src="js/grid.js" defer></script>
 </body>
 </html>
