@@ -73,8 +73,7 @@ img { display: block; }
 h1, h2, p { margin: 0; }
 
 /* ===== Loader (Figma 302:3618) ===== */
-.loader,
-.loader-lines { display: none; }
+.loader { display: none; }
 .js .loader {
   position: fixed;
   inset: 0;
@@ -113,24 +112,6 @@ h1, h2, p { margin: 0; }
   filter: brightness(0.94);
   mix-blend-mode: lighten;
 }
-/* the line down the middle, then the two it parts into (border/primaryInverseBg) */
-.js .loader-lines {
-  position: fixed;
-  inset: 0;
-  z-index: 101;
-  display: block;
-  pointer-events: none;
-}
-.loader-lines i {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  background: #1f1f1f;
-  transform: scaleY(0);
-}
-
 /* ===== Hero shell ===== */
 .hero {
   position: relative;
