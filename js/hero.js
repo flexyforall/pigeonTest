@@ -452,12 +452,13 @@
   }
 
   /* ---------- loader ---------- */
-  // The sphere turns until the page is ready (and for SPIN at least); then the hero starts drawing
-  // itself in underneath while the loader fades off it, the sphere a little ahead, so the one
-  // runs into the other with no pause between.
+  // The sphere turns until the page is ready (and for SPIN at least), then fades; halfway through
+  // the hero starts drawing itself in underneath and the loader clears off it, so the one runs
+  // into the other with no pause between and the hero's lines are seen drawing.
   const loader = document.querySelector('.loader');
   const SPIN = 2000;
-  const FADE = 1000;
+  const SPHERE_FADE = 700;
+  const FADE = 350; // the loader's own fade, once the hero has started
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const firstBg = bgs.find((b) => b.dataset.bg === current);
@@ -476,8 +477,11 @@
     await Promise.all([ready, timeout(SPIN)]);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
     [...loader.children].forEach((el) =>
-      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE * 0.6, easing: ease, fill: 'forwards' })
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SPHERE_FADE, easing: ease, fill: 'forwards' })
     );
+    // the hero starts halfway through the sphere's fade, and the loader clears off it quickly,
+    // so its frame and hairlines are seen drawing in
+    await timeout(SPHERE_FADE / 2);
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();
