@@ -1792,7 +1792,7 @@ body { background: var(--c-page); }
 /* ===== Footer (Figma 285:5837) ===== */
 .footer { color: var(--c-ink); }
 .footer__frame { margin: 0 max(40px, calc((100% - 1760px) / 2)); }
-.footer__top { display: flex; align-items: stretch; }
+.footer__top { display: flex; align-items: stretch; height: calc(340 * var(--px)); }
 /* cells share their rules: each draws its left and top, the frame its right and bottom */
 .footer__top > *,
 .footer__socials li,
@@ -1847,7 +1847,7 @@ body { background: var(--c-page); }
   display: flex;
   flex: none;
   flex-direction: column;
-  width: calc(92 * var(--px));
+  width: calc(113 * var(--px)); /* three square cards make the row's height */
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1896,7 +1896,7 @@ body { background: var(--c-page); }
   .faq__band { background: none; }
   .cta__stats { flex-wrap: wrap; }
   .cta__stat { flex: 1 0 50%; }
-  .footer__top { flex-wrap: wrap; }
+  .footer__top { flex-wrap: wrap; height: auto; }
   .footer__brand { width: 100%; gap: 32px; }
   .footer__menu { flex: 1 0 50%; }
   .footer__socials { flex-direction: row; width: 100%; height: 64px; }
