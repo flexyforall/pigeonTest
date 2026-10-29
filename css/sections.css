@@ -1275,8 +1275,8 @@ body { background: var(--c-page); }
   .network__stats { flex-wrap: wrap; }
   .stat { flex: 1 0 50%; }
 }
-/* the services' cards change width as they open, so their rules stay their own */
-.grid-drawn .services__row { --c-rule: #e2eae7; }
+/* the services' cards change width and the FAQ items height as they open, so their rules stay their own */
+.grid-drawn :is(.services__row, .faq__list) { --c-rule: #e2eae7; }
 
 /* ===== Proof on Solana ("Network performance you can verify", Figma 281:4447) ===== */
 .solana { background: var(--c-white); }

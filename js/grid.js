@@ -60,8 +60,9 @@
     const sy = window.scrollY;
     document.querySelectorAll(SCOPE).forEach((section) => {
       [section, ...section.querySelectorAll('*')].forEach((el) => {
-        // the services' accordion moves its rules about, so it keeps drawing them itself
-        if (el.closest('.services__row')) return;
+        // the services' and FAQ accordions move their rules about, so they keep drawing them
+        // themselves, there from the start
+        if (el.closest('.services__row, .faq__list')) return;
         const b = el.getBoundingClientRect();
         if (!b.width || !b.height) return;
         const r = { left: b.left + sx, right: b.right + sx, top: b.top + sy, bottom: b.bottom + sy, width: b.width, height: b.height };
