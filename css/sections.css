@@ -293,6 +293,19 @@ body { background: var(--c-page); }
   scale: var(--zoom, 1);
 }
 
+/* the clip redrawn dithered (js/dither.js), one cell per CSS pixel; it takes over from the video
+   once it has drawn a frame */
+.connectivity__media .dither {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  visibility: hidden;
+}
+.connectivity__media.is-dithered .dither { visibility: visible; }
+.connectivity__media.is-dithered .connectivity__img { opacity: 0; }
+
 /* "+" grid behind the title; it covers the panel from the top-left, as in Figma, and shrinks with it */
 .connectivity__pattern {
   position: absolute;
