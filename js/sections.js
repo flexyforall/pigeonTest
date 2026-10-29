@@ -273,7 +273,15 @@
         countUp($('.about__value', stat), d);
         fadeUp($('.about__texts', stat), d + 100);
       });
-      $$('.about__logos li', section).forEach((el, i) => fadeUp(el, 600 + i * 90, 1000));
+      // the logos come in as the logos row after the hero does, once their own row is in view
+      const logos = $('.about__logos', section);
+      logos.classList.add('is-waiting');
+      new IntersectionObserver((entries, io) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        logos.classList.remove('is-waiting');
+        $$('li', logos).forEach((el, i) => fadeUp(el, i * 90, 1000));
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(logos);
     },
 
     testimonials(section) {
