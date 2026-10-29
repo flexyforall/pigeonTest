@@ -42,8 +42,9 @@
   }
   show(stories[0]);
 
-  // the hero's switch timing (js/hero.js SWITCH_TIMING)
-  const T = { delay: 60, word: 800, stagger: 30, text: 120, fade: 700 };
+  // the hero's switch timing (js/hero.js SWITCH_TIMING), with a tighter stagger: the quote has
+  // far more words than a headline, so it is in within about 1.2s
+  const T = { delay: 60, word: 700, stagger: 12, text: 120, fade: 700 };
   const from = (el, keyframe, opts) =>
     el.animate([keyframe, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { easing: EASE_OUT, fill: 'backwards', ...opts });
 
