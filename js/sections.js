@@ -68,6 +68,29 @@
   const fadeUp = (el, delay = 0, duration = 900) =>
     from(el, { opacity: 0, transform: 'translateY(16px)', filter: 'blur(6px)' }, { duration, delay });
 
+  // counts a figure up from zero to what it reads ("2,450", "100%", "12 min"), keeping its
+  // thousands commas and whatever follows the number
+  function countUp(el, delay = 0, duration = 1600) {
+    const m = el.textContent.match(/^([^\d]*)([\d,]+)(.*)$/);
+    if (!m) return;
+    const [, before, digits, after] = m;
+    const target = Number(digits.replace(/,/g, ''));
+    const commas = digits.includes(',');
+    const show = (n) => {
+      const v = Math.round(n);
+      el.textContent = before + (commas ? v.toLocaleString('en-US') : String(v)) + after;
+    };
+    show(0);
+    const start = performance.now() + delay;
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    const tick = (now) => {
+      const t = Math.min(1, Math.max(0, (now - start) / duration));
+      show(target * ease(t));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
   /* ---------- reveals ---------- */
   const REVEALS = {
     logos(section) {
@@ -205,7 +228,10 @@
     network(section) {
       from($('.network__media', section), { opacity: 0 }, { duration: 1400 });
       fadeUp($('.network__texts', section), 200);
-      $$('.stat', section).forEach((el, i) => fadeUp(el, 400 + i * 100));
+      $$('.stat', section).forEach((el, i) => {
+        fadeUp(el, 400 + i * 100);
+        countUp($('.stat__value', el), 400 + i * 100);
+      });
     },
   };
 
