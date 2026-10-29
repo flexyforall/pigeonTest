@@ -149,7 +149,7 @@
       const WIPE = 1300; // ms: the mint block's wipe (slow enough for the band to be seen)
       const RUN = WIPE; // ms: the band's run across the cards, in step with the block
       const DELAY = 150;
-      const ease = 'cubic-bezier(0.5, 0, 0.3, 1)';
+      const ease = 'cubic-bezier(0.45, 0, 0.2, 1)'; // soft at both ends
       const row = $('.steps__row', section);
       const band = $('.steps__sweep', section);
       const cards = $$('.step', section);
@@ -182,34 +182,32 @@
           ],
           { ...opts, fill: 'both' }
         );
-        // every card but the first is uncovered right behind that edge: its reveal runs over the
-        // stretch of the band's way that crosses it (keyframe offsets are in the band's progress)
+        // every card but the first fades in as the band crosses it, and the grid fades off every
+        // card but the last right behind the band (keyframe offsets are in the band's progress)
         cards.slice(1).forEach((card) => {
           const a = card.offsetLeft / width;
-          const b = (card.offsetLeft + card.offsetWidth) / width;
+          const b = Math.min(1, (card.offsetLeft + card.offsetWidth * 0.8) / width);
           card.animate(
             [
-              { clipPath: 'inset(0 100% 0 0)', offset: 0 },
-              { clipPath: 'inset(0 100% 0 0)', offset: a },
-              { clipPath: 'inset(0 0% 0 0)', offset: b },
-              { clipPath: 'inset(0 0% 0 0)', offset: 1 },
+              { opacity: 0, offset: 0 },
+              { opacity: 0, offset: a },
+              { opacity: 1, offset: b, easing: 'ease-out' },
+              { opacity: 1, offset: 1 },
             ],
             opts
           );
         });
-        // the grid clears off every card but the last right behind the band's tail
         const lag = bw / width;
         cards.slice(0, -1).forEach((card) => {
           const grid = $('.step__grid', card);
-          const w = card.offsetWidth;
-          const a = Math.min(1, card.offsetLeft / width + lag);
-          const b = Math.min(1, (card.offsetLeft + w) / width + lag);
+          const a = Math.min(1, card.offsetLeft / width + lag * 0.5);
+          const b = Math.min(1, (card.offsetLeft + card.offsetWidth) / width + lag);
           grid.animate(
             [
-              { clipPath: 'inset(0 0 0 0px)', offset: 0 },
-              { clipPath: 'inset(0 0 0 0px)', offset: a },
-              { clipPath: `inset(0 0 0 ${w}px)`, offset: b },
-              { clipPath: `inset(0 0 0 ${w}px)`, offset: 1 },
+              { opacity: 1, offset: 0 },
+              { opacity: 1, offset: a },
+              { opacity: 0, offset: b },
+              { opacity: 0, offset: 1 },
             ],
             { ...opts, fill: 'forwards' }
           );

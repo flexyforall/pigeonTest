@@ -398,7 +398,7 @@ body { background: var(--c-page); }
 .about__logos.is-waiting li { visibility: hidden; }
 .solana__row.is-waiting .benefit > * { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
-.steps.is-dim .step:not(:first-child) { clip-path: inset(0 100% 0 0); }
+.steps.is-dim .step:not(:first-child) { opacity: 0; }
 .steps.is-dim .steps__sweep { opacity: 0; }
 .is-pending .plans__indicator { opacity: 0; }
 
@@ -860,10 +860,10 @@ body { background: var(--c-page); }
   width: calc(420 * var(--px));
   background: #59b293; /* icon/accentForLight */
   -webkit-mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px repeat-x,
-    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 80%, #000 97%, transparent);
+    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.5) 70%, #000 88%, transparent);
   -webkit-mask-composite: source-in;
   mask: url("../assets/patterns/plus-grid-mask.svg") 0 0 / 691px 503px repeat-x,
-    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 80%, #000 97%, transparent);
+    linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.5) 70%, #000 88%, transparent);
   mask-composite: intersect;
   opacity: 0;
   pointer-events: none;
