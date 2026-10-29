@@ -252,15 +252,15 @@
       fadeUp($('.solana__desc', section), 300);
       fadeUp($('.solana__link', section), 400);
       fadeUp($('.solana__record', section), 550, 1000);
-      $$('.benefit', section).forEach((card, i) => {
-        const d = 500 + i * 120;
-        $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
-          from(el, { opacity: 0 }, { duration: 1400, delay: d })
-        );
-        from($('.benefit__icon', card), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: d + 100 });
-        rise($('.benefit__title', card), d + 200, { word: 900, stagger: 40 });
-        fadeUp($('.benefit__desc', card), d + 400);
-      });
+      // the cards below the dark panel come in as the benefit cards do, once their own row is in view
+      const row = $('.solana__row', section);
+      row.classList.add('is-waiting');
+      new IntersectionObserver((entries, io) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        row.classList.remove('is-waiting');
+        benefitCards(row);
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(row);
     },
 
     // heading and mint block, then the mission, the figures (counting up) and the logos
@@ -302,6 +302,19 @@
       $$('.cta__stat', section).forEach((el, i) => fadeUp(el, 500 + i * 100));
     },
   };
+
+  // benefit-style cards: grid and fade come in, then the icon, the title rising, the line below
+  function benefitCards(root, delay = 0) {
+    $$('.benefit', root).forEach((card, i) => {
+      const d = delay + i * 120;
+      $$('.benefit__grid, .benefit__fade', card).forEach((el) =>
+        from(el, { opacity: 0 }, { duration: 1400, delay: d })
+      );
+      from($('.benefit__icon', card), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: d + 100 });
+      rise($('.benefit__title', card), d + 200, { word: 900, stagger: 40 });
+      fadeUp($('.benefit__desc', card), d + 400);
+    });
+  }
 
   // the heading rises word by word while its mint block wipes in behind the last words
   function heading(section, mark) {
