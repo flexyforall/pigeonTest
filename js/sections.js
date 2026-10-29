@@ -187,6 +187,24 @@
         });
       }
     },
+
+    // heading and mint block as in the other sections, then the open card fades up
+    services(section) {
+      rise($('.section-title', section));
+      from($('.services__mark', section), { clipPath: 'inset(0 100% 0 0)' }, {
+        duration: 900,
+        delay: 350,
+        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+      });
+      fadeUp($('.services__row', section), 400, 1000);
+    },
+
+    // the globe fades in, the copy rises beside it, the figures follow one after another
+    network(section) {
+      from($('.network__media', section), { opacity: 0 }, { duration: 1400 });
+      fadeUp($('.network__texts', section), 200);
+      $$('.stat', section).forEach((el, i) => fadeUp(el, 400 + i * 100));
+    },
   };
 
   const sections = Object.keys(REVEALS)

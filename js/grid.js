@@ -10,7 +10,7 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const wide = window.matchMedia('(min-width: 961px)');
 
-  const SCOPE = '.benefits, .divider, .plans, .steps';
+  const SCOPE = '.benefits, .divider, .plans, .steps, .services, .network';
   const FRONT = 0.9; // the drawing front, as a share of the screen height from its top
   const SWEEP = 420; // px of scroll a horizontal line takes to draw across
 
@@ -58,6 +58,8 @@
     const sy = window.scrollY;
     document.querySelectorAll(SCOPE).forEach((section) => {
       [section, ...section.querySelectorAll('*')].forEach((el) => {
+        // the services' accordion moves its rules about, so it keeps drawing them itself
+        if (el.closest('.services__row')) return;
         const b = el.getBoundingClientRect();
         if (!b.width || !b.height) return;
         const r = { left: b.left + sx, right: b.right + sx, top: b.top + sy, bottom: b.bottom + sy, width: b.width, height: b.height };
