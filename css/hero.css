@@ -89,27 +89,14 @@ h1, h2, p { margin: 0; }
   height: auto;
 }
 /* the hero's grid of cells, laid out exactly as in the hero's content box, so it carries straight
-   on into the hero; it is uncovered from the centre outwards as the sphere turns */
-@property --grid-reveal {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
+   on into the hero; it is uncovered from the centre outwards over the whole of the loader, done
+   as the loader ends (--grid-reveal, the soft circle's radius, set by js/hero.js) */
 .loader__grid {
   position: absolute;
   inset: calc(56 * var(--px)) calc(40 * var(--px)) 0;
   overflow: hidden;
-  --grid-reveal: 0px;
-  -webkit-mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal) - 240px), transparent var(--grid-reveal));
-  mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal) - 240px), transparent var(--grid-reveal));
-  animation: loader-grid 2.2s cubic-bezier(0.45, 0, 0.25, 1) 0.2s both;
-}
-@keyframes loader-grid {
-  /* far enough for the soft edge to clear the box's corners */
-  to { --grid-reveal: calc(55vmax + 240px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .loader__grid { animation: none; --grid-reveal: 200vmax; }
+  -webkit-mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal, 0px) - 240px), transparent var(--grid-reveal, 0px));
+  mask: radial-gradient(circle at 50% 50%, #000 calc(var(--grid-reveal, 0px) - 240px), transparent var(--grid-reveal, 0px));
 }
 
 /* the turning sphere, 188 × 183 in the middle of the screen, its edges melting into the page */

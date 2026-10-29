@@ -473,8 +473,31 @@
 
   const removeLoader = () => loader?.remove();
 
+  // The grid's reveal runs the whole length of the loader and completes as it ends. How long the
+  // loader lasts is only known once the page is ready, so until then the reveal eases towards
+  // HOLD of the way, slowly enough never to get there; once the end is known it runs on from
+  // wherever it is to the full reveal, landing as the loader goes.
+  const grid = loader?.querySelector('.loader__grid');
+  const HOLD = 0.8;
+  const reveal = { from: 0, to: HOLD, start: performance.now(), duration: SPIN * 1.6, p: 0 };
+  const smooth = (t) => 1 - Math.pow(1 - t, 2);
+  function gridFrame(now) {
+    if (!grid || !grid.isConnected) return;
+    const t = Math.min(1, (now - reveal.start) / reveal.duration);
+    reveal.p = reveal.from + (reveal.to - reveal.from) * smooth(t);
+    const box = grid.getBoundingClientRect();
+    const full = Math.hypot(box.width, box.height) / 2 + 240; // the soft edge clears the corners
+    grid.style.setProperty('--grid-reveal', `${(reveal.p * full).toFixed(1)}px`);
+    requestAnimationFrame(gridFrame);
+  }
+  if (grid && !reduceMotion) requestAnimationFrame(gridFrame);
+  const finishGrid = (duration) => Object.assign(reveal, { from: reveal.p, to: 1, start: performance.now(), duration });
+
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
+    // the grid completes as the loader goes: the sphere's fade, its second half overlapping the
+    // loader's own
+    finishGrid(SPHERE_FADE / 2 + FADE);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
     // the grid stays: it is the hero's own, in its place
     loader.querySelectorAll('.loader__logo, .loader__sphere').forEach((el) =>
