@@ -476,7 +476,8 @@
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
-    [...loader.children].forEach((el) =>
+    // the grid stays: it is the hero's own, in its place
+    loader.querySelectorAll('.loader__logo, .loader__sphere').forEach((el) =>
       el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SPHERE_FADE, easing: ease, fill: 'forwards' })
     );
     // the hero starts halfway through the sphere's fade, and the loader clears off it quickly,

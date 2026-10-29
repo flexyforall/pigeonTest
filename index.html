@@ -26,6 +26,8 @@
 <!-- Loader (Figma 302:3618): the sphere turns, then fades away and the hero draws itself in
      (js/hero.js) -->
 <div class="loader" aria-hidden="true">
+  <!-- the hero's grid, in its place, drawing in from the centre while the sphere turns -->
+  <span class="loader__grid"><span class="hero__pattern"></span></span>
   <img class="loader__logo" src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
   <div class="loader__sphere">
     <video muted loop playsinline autoplay preload="auto" poster="assets/img/loader-sphere.jpg" tabindex="-1">
