@@ -1,7 +1,7 @@
 // The call to action's "+" grid (Figma 285:5210, as assets/patterns/connectivity-grid.svg) is
 // drawn on a canvas so it can answer the pointer: while it moves over the panel, the pluses
-// around it lean in towards it, a little larger and brighter the nearer they are, and settle
-// back when it leaves.
+// around it lean in towards it, a little larger and brighter the nearer they are, and take on
+// the hero's mint glow in a wide soft spot; they settle back when it leaves.
 (() => {
   const img = document.querySelector('.cta__pattern');
   const panel = document.querySelector('.cta__panel');
@@ -20,6 +20,11 @@
   const BAR = 0.587; // its stroke
   const ALPHA = 0.1;
   const GLOW = 0.08; // how much brighter the pluses nearest the pointer get
+  // the hero's mint glow (css/hero.css .hero__glow), on the pluses: they take its colour, and a
+  // little more light, in a wide soft spot around the pointer
+  const TINT = [160, 240, 212];
+  const TINT_REACH = 190; // falloff of the tint (design px; ~the hero glow's 814px spot)
+  const TINT_GLOW = 0.2;
 
   const REACH = 110; // falloff of the pull around the pointer (design px)
   const PULL = 0.14; // share of the way to the pointer a plus leans at most
@@ -48,20 +53,25 @@
   function draw() {
     ctx.clearRect(0, 0, W, H);
     const s2 = 2 * REACH * REACH;
+    const t2 = 2 * TINT_REACH * TINT_REACH;
     for (let j = 0; j < ROWS; j++) {
       for (let i = 0; i < COLS; i++) {
         let x = X0 + i * DX;
         let y = Y0 + j * DY;
         let f = 0;
+        let g = 0;
         if (cur.on > 0.001) {
           const dx = cur.x - x;
           const dy = cur.y - y;
-          f = cur.on * Math.exp(-(dx * dx + dy * dy) / s2);
+          const d2 = dx * dx + dy * dy;
+          f = cur.on * Math.exp(-d2 / s2);
+          g = cur.on * Math.exp(-d2 / t2);
           x += dx * PULL * f;
           y += dy * PULL * f;
         }
         const arm = ARM * (1 + 0.35 * f);
-        ctx.fillStyle = `rgba(255, 255, 255, ${ALPHA + GLOW * f})`;
+        const c = (i) => Math.round(255 + (TINT[i] - 255) * g);
+        ctx.fillStyle = `rgba(${c(0)}, ${c(1)}, ${c(2)}, ${ALPHA + GLOW * f + TINT_GLOW * g})`;
         ctx.fillRect(x - arm, y - BAR / 2, arm * 2, BAR);
         ctx.fillRect(x - BAR / 2, y - arm, BAR, arm * 2);
       }
