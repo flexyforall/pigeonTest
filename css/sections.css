@@ -1648,6 +1648,8 @@ body { background: var(--c-page); }
 .faq__item + .faq__item { margin-top: -1px; }
 /* the open one: grey, with the accent corners of the active tabs */
 .faq__item.is-open { background: #f8f8f8; /* background/primaryGray */ }
+/* a closed one greys on hover, as the services' closed tabs do */
+.faq__item:not(.is-open):hover { background: #fafafa; background: color-mix(in srgb, var(--c-ink) 3%, var(--c-white)); }
 .faq__item::after {
   --t: 1.275px;
   --l: 6px;
