@@ -12,7 +12,8 @@
 
   const SCOPE = '.benefits, .divider, .plans, .steps, .services, .network, .solana, .about, .testimonials, .faq, .cta, .footer';
   const FRONT = 0.9; // the drawing front, as a share of the screen height from its top
-  const SWEEP = 420; // px of scroll a horizontal line takes to draw across
+  const SWEEP = 0.2; // share of the screen height a horizontal line takes to draw across: it
+  // sets off as it comes up over the screen's bottom edge and is in well before mid-screen
 
   const root = document.documentElement;
   const layer = document.createElement('div');
@@ -102,10 +103,11 @@
     // it reaches the very end of the page as the scroll does; it never runs ahead of the screen
     const tail = clamp(1 - (end - h - window.scrollY) / h);
     const front = window.scrollY + h * (FRONT + tail * (1 - FRONT));
+    const bottom = window.scrollY + h;
     lines.forEach((l) => {
       // a horizontal line near the end of the page has less room to sweep across in
-      const sweep = Math.max(1, Math.min(SWEEP, end - l.y));
-      const p = l.vertical ? clamp((front - l.y) / l.len) : clamp((front - l.y) / sweep);
+      const sweep = Math.max(1, Math.min(SWEEP * h, end - l.y));
+      const p = l.vertical ? clamp((front - l.y) / l.len) : clamp((bottom - l.y) / sweep);
       if (Math.abs(p - l.drawn) < 0.001) return;
       l.drawn = p;
       l.el.style.transform = l.vertical ? `scaleY(${p.toFixed(4)})` : `scaleX(${p.toFixed(4)})`;
