@@ -158,6 +158,8 @@
         rise($('.section-title', section));
         from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, { duration: WIPE, delay: DELAY, easing: ease });
         sweep();
+        // the button in the band below comes up as the band reaches the last card
+        from($('.steps__btn', section), { opacity: 0, transform: 'translateY(16px)', clipPath: 'inset(100% 0 0 0)' }, { duration: 900, delay: DELAY + RUN * 0.6 });
       }, { threshold: 0.25 }).observe(row);
 
       function sweep() {
@@ -273,7 +275,18 @@
 
     testimonials(section) {
       heading(section, '.testimonials__mark');
-      fadeUp($('.quote', section), 400, 1000);
+      // the card comes in as the benefit cards do, once it is in view: it rises softly, then its
+      // story writes in as on a switch (the quote word by word, the rest out of a blur)
+      waitForView($('.quote', section), (quote) => {
+        from($('.quote__card', quote), { opacity: 0, transform: 'translateY(24px)' }, { duration: 1200 });
+        from($('.quote__person', quote), { opacity: 0, transform: 'translateY(24px)' }, { duration: 1200, delay: 120 });
+        fadeUp($('.quote__tags', quote), 200);
+        from($('.quote__mark', quote), { opacity: 0, transform: 'translateY(10px)' }, { duration: 900, delay: 250 });
+        rise($('.quote__text', quote), 300, { word: 900, stagger: 14 });
+        from($('.quote__photo img', quote), { opacity: 0, transform: 'scale(1.08)' }, { duration: 1200, delay: 350 });
+        fadeUp($('.quote__who', quote), 450);
+        $$('.quote__nav', quote).forEach((el, i) => fadeUp(el, 550 + i * 80));
+      });
     },
 
     faq(section) {

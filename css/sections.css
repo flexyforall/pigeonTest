@@ -178,6 +178,23 @@ body { background: var(--c-page); }
   box-shadow: inset -1px 0 var(--c-rule);
 }
 .divider i:first-child { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule); }
+/* a cell holding a button: centred in it, its corner dots in the accent */
+.divider__cta {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 1px;
+  box-shadow: inset -1px 0 var(--c-rule);
+  --dot-cta: linear-gradient(#59b293, #59b293); /* icon/accentForLight */
+  background:
+    var(--dot-cta) left 9px top 8px / 4px 4px no-repeat,
+    var(--dot-cta) right 9px top 8px / 4px 4px no-repeat,
+    var(--dot-cta) left 9px bottom 8px / 4px 4px no-repeat,
+    var(--dot-cta) right 9px bottom 8px / 4px 4px no-repeat;
+}
+/* the plain white button (Figma "button" with no pattern) */
+.btn--plain { background: var(--c-white); }
 
 /* ===== Connectivity ===== */
 /* Scroll-driven (js/connectivity.js): the stage sticks while the section scrolls past.
@@ -375,7 +392,8 @@ body { background: var(--c-page); }
 .is-pending .plans__head,
 .is-pending .plan-tab > *,
 .is-pending .steps__head,
-.is-pending .step > * { visibility: hidden; }
+.is-pending .step > *,
+.is-pending .steps__btn { visibility: hidden; }
 .is-pending .services__head,
 .is-pending .services__row,
 .is-pending .network__media,
@@ -397,6 +415,7 @@ body { background: var(--c-page); }
 .network__stats.is-waiting .stat { visibility: hidden; }
 .about__logos.is-waiting li { visibility: hidden; }
 .benefits__row.is-waiting .benefit > * { visibility: hidden; }
+.quote.is-waiting { visibility: hidden; }
 /* the step cards before the grid has run across them (js/sections.js) */
 .steps.is-dim .step:not(:first-child) { opacity: 0; }
 .steps.is-dim .steps__sweep { opacity: 0; }

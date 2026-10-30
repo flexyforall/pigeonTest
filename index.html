@@ -497,7 +497,12 @@
       <li class="steps__sweep" aria-hidden="true"></li>
     </ol>
   </div>
-  <div class="divider divider--white" aria-hidden="true"><i></i><i></i><i></i></div>
+  <!-- the band closing the section holds the call to action in its middle cell (Figma 321:8569) -->
+  <div class="divider divider--white">
+    <i aria-hidden="true"></i>
+    <div class="divider__cta"><a class="btn btn--plain steps__btn" href="#start"><span>Get started</span></a></div>
+    <i aria-hidden="true"></i>
+  </div>
 </section>
 
 <section class="services" aria-labelledby="services-title">
