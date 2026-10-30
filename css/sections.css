@@ -178,7 +178,7 @@ body { background: var(--c-page); }
   box-shadow: inset -1px 0 var(--c-rule);
 }
 .divider i:first-child { box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule); }
-/* a cell holding a button: centred in it, its corner dots in the accent */
+/* a cell holding a button, centred in it */
 .divider__cta {
   display: flex;
   flex: 1 0 0;
@@ -186,6 +186,13 @@ body { background: var(--c-page); }
   justify-content: center;
   min-width: 1px;
   box-shadow: inset -1px 0 var(--c-rule);
+}
+/* its corner dots in the accent, kept above the hover fill */
+.divider__cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   --dot-cta: linear-gradient(#59b293, #59b293); /* icon/accentForLight */
   background:
     var(--dot-cta) left 9px top 8px / 4px 4px no-repeat,
@@ -193,8 +200,29 @@ body { background: var(--c-page); }
     var(--dot-cta) left 9px bottom 8px / 4px 4px no-repeat,
     var(--dot-cta) right 9px bottom 8px / 4px 4px no-repeat;
 }
-/* the plain white button (Figma "button" with no pattern) */
-.btn--plain { background: var(--c-white); }
+/* the whole cell is the button: it fills grey from the bottom on hover (as the FAQ rows grey) */
+.divider__cta {
+  position: relative;
+  isolation: isolate;
+  color: #101111; /* text/primary */
+  font-size: calc(16 * var(--px));
+  font-weight: 650;
+  line-height: calc(24 * var(--px));
+  text-decoration: none;
+  white-space: nowrap;
+}
+.divider__cta::before {
+  content: "";
+  position: absolute;
+  inset: 0 1px 0 0;
+  z-index: -1;
+  background: #f8f8f8; /* background/primaryGray */
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.45s var(--ease-out);
+}
+.divider__cta:hover::before { transform: scaleY(1); }
+.steps__btn { display: block; padding: calc(16 * var(--px)) calc(26 * var(--px)); }
 
 /* ===== Connectivity ===== */
 /* Scroll-driven (js/connectivity.js): the stage sticks while the section scrolls past.
