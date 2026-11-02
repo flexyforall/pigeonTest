@@ -683,13 +683,30 @@
   // (css/hero.css): the hero is just shown in its own state, ready, at the top.
   const root = document.documentElement;
   const pageTransitions = 'PageRevealEvent' in window;
+  // The page is kept at its top for a moment after it arrives, wherever the browser may still
+  // move it (Safari carries the last page's scroll over), unless the visitor starts scrolling.
+  function holdTop(ms = 1500) {
+    let held = true;
+    const release = () => { held = false; };
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((type) =>
+      window.addEventListener(type, release, { once: true, passive: true })
+    );
+    const until = performance.now() + ms;
+    const hold = () => {
+      if (!held) return;
+      if (window.scrollY !== 0) toTop();
+      if (performance.now() < until) requestAnimationFrame(hold);
+    };
+    toTop();
+    requestAnimationFrame(hold);
+  }
   function arriveSwept() {
     loadDeferredImages();
     moveIndicator(false);
     moveHighlight(false);
     hero.classList.add('is-ready');
     unlock();
-    toTop();
+    holdTop();
     if (current === 'home') playPlanet();
     // the line has swept by: it goes
     setTimeout(() => root.classList.remove('is-vt'), 1200);
@@ -706,12 +723,7 @@
     moveHighlight(false);
     hero.classList.add('is-ready');
     unlock();
-    toTop();
-    const shownAt = performance.now();
-    // the browser may still move the page once it has loaded: back to the top, if that is soon
-    window.addEventListener('load', () => {
-      if (performance.now() - shownAt < 1500) toTop();
-    }, { once: true });
+    holdTop();
     if (from === 'home') playPlanet();
     // then over to this page's own, behind the line
     if (from !== ownState) setTimeout(() => setState(ownState), 120);
@@ -720,7 +732,7 @@
   window.addEventListener('pageshow', (e) => {
     if (!e.persisted) return;
     const from = takeArrival();
-    toTop();
+    holdTop();
     if (from === null || reduceMotion) return;
     if (pageTransitions) {
       root.classList.add('is-vt');
