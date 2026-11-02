@@ -36,13 +36,13 @@
   </div>
 </div>
 
-<section class="hero" data-hero>
-  <!-- the content box's backdrop: the grid pattern and the planet turning over it, dithered like
-       the rest of the imagery (Figma 350:13952) -->
+<section class="hero is-home" data-hero data-state="home">
+  <!-- the content box's backdrop: the grid pattern, and over it the default hero's planet (Figma
+       350:13952) or an audience's dithered illustration (Figma 340:10854 / 340:10880 / 340:10906) -->
   <div class="hero__bg" aria-hidden="true">
     <span class="hero__pattern"></span>
     <!-- the planet and its shade, fitted to the copy together (js/hero.js) -->
-    <div class="hero__fit">
+    <div class="hero__fit is-active" data-bg="home">
     <div class="hero__planet">
       <div class="hero__planet-media">
         <video class="hero__planet-video" muted loop playsinline autoplay preload="auto" tabindex="-1" data-rate="0.6" data-dither-invert="1" data-dither-gain="2.4">
@@ -54,19 +54,31 @@
     <!-- a dark, blurred ellipse behind the copy, so the planet fades out under it -->
     <span class="hero__shade"></span>
     </div>
+    <img class="hero__bg-img" data-bg="business" data-src="assets/img/hero-business.webp"
+         data-srcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x" width="922" height="754" alt="">
+    <img class="hero__bg-img" data-bg="residential" data-src="assets/img/hero-residential.webp"
+         data-srcset="assets/img/hero-residential.webp 1x, assets/img/hero-residential@2x.webp 2x" width="944" height="754" alt="">
+    <img class="hero__bg-img" data-bg="mobile" data-src="assets/img/hero-mobile.webp"
+         data-srcset="assets/img/hero-mobile.webp 1x, assets/img/hero-mobile@2x.webp 2x" width="942" height="754" alt="">
+    <!-- a mint glow that follows the pointer over the illustration (Figma 302:3647), kept to the
+         illustration's own shape -->
+    <span class="hero__glow-area"><span class="hero__glow"></span></span>
+    <span class="hero__wipe"></span>
   </div>
 
   <div class="hero__frame">
     <!-- Header -->
     <header class="header">
-      <a class="header__logo" href="/" aria-label="PigeonM — home" data-intro="header">
+      <!-- the logo takes the hero back to its default -->
+      <a class="header__logo" href="/" aria-label="PigeonM — home" data-intro="header" data-target="home">
         <img src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
       </a>
 
-      <nav class="audience" aria-label="Audience" data-intro="header">
-        <a class="audience__tab" href="#business">Business</a>
-        <a class="audience__tab" href="#residential">Residential</a>
-        <a class="audience__tab" href="#mobile">Mobile</a>
+      <nav class="audience" role="tablist" aria-label="Audience" data-intro="header">
+        <span class="audience__indicator" aria-hidden="true"></span>
+        <button class="audience__tab" role="tab" aria-selected="false" data-target="business">Business</button>
+        <button class="audience__tab" role="tab" aria-selected="false" data-target="residential">Residential</button>
+        <button class="audience__tab" role="tab" aria-selected="false" data-target="mobile">Mobile</button>
       </nav>
 
       <div class="header__actions">
@@ -88,26 +100,68 @@
       </div>
     </header>
 
-    <!-- Content -->
+    <!-- Content: the default hero's copy, centred, and each audience's, on the left -->
     <div class="hero__content">
-      <div class="rating" data-intro="rating">
-        <span class="rating__score">
-          4.9
-          <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="16" height="16" alt=""></span>
-        </span>
-        <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
-        <span>Trusted nationwide</span>
-      </div>
-
-      <div class="panel">
+      <div class="panel panel--home is-active" data-panel="home">
+        <div class="rating">
+          <span class="rating__score">
+            4.9
+            <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="16" height="16" alt=""></span>
+          </span>
+          <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
+          <span>Trusted nationwide</span>
+        </div>
         <h1 class="panel__title" data-split>Stay connected at home, at work, and around the world.</h1>
         <p class="panel__text">Home and business internet, mobile service, and included global Wi-Fi. All managed through Pigeon M, with AI guidance along the way.</p>
+        <a class="btn btn--mint" href="#start"><span>Get started</span></a>
+      </div>
+
+      <div class="panel" data-panel="business" aria-hidden="true">
+        <div class="rating">
+          <span class="rating__score">
+            4.9
+            <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="16" height="16" alt=""></span>
+          </span>
+          <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
+          <span>Trusted nationwide</span>
+        </div>
+        <h2 class="panel__title" data-split>Business WiFi that covers every corner of your operation</h2>
+        <p class="panel__text">From offices and clinics to fleets, vessels and aircraft. We design, install and manage your network, sized to your space and fully supported.</p>
+        <a class="btn btn--mint" href="#start"><span>Get started</span></a>
+      </div>
+
+      <div class="panel" data-panel="residential" aria-hidden="true">
+        <div class="rating">
+          <span class="rating__score">
+            4.9
+            <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="16" height="16" alt=""></span>
+          </span>
+          <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
+          <span>Trusted nationwide</span>
+        </div>
+        <h2 class="panel__title" data-split>One network for your<br>entire building</h2>
+        <p class="panel__text">For owners, managers and developers. We design, install and manage WiFi across every unit and common area, so residents move in already connected.</p>
+        <a class="btn btn--mint" href="#start"><span>Connect your building</span></a>
+      </div>
+
+      <div class="panel" data-panel="mobile" aria-hidden="true">
+        <div class="rating">
+          <span class="rating__score">
+            4.9
+            <span class="icon icon--star" aria-hidden="true"><img src="assets/icons/star.svg" width="16" height="16" alt=""></span>
+          </span>
+          <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
+          <span>Trusted nationwide</span>
+        </div>
+        <h2 class="panel__title" data-split>WiFi that moves with<br>you around the world</h2>
+        <p class="panel__text">Stay connected automatically and securely through OpenRoaming WiFi networks in 150 countries. No passwords, no repeated sign-ins.</p>
         <a class="btn btn--mint" href="#start"><span>Get started</span></a>
       </div>
     </div>
 
     <!-- Audience cards -->
     <div class="cards">
+      <span class="cards__highlight" aria-hidden="true"></span>
       <a class="card" href="#business" data-target="business" data-intro="card">
         <span class="card__icon" aria-hidden="true"></span>
         <span class="card__label">For Business</span>
