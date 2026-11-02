@@ -9,9 +9,25 @@
   // the cards; the logo goes back to the default
   const STATES = ['home', 'business', 'residential', 'mobile'];
 
-  // the page stays put (html.is-locked, set in the head) until the hero has drawn itself in
+  // the page stays put (html.is-locked, set in the head) until the hero has drawn itself in.
+  // It always opens at its top, the hero, whichever page it comes from and wherever that was
+  // scrolled to: the browser's own restoring is off (in the head), and the top is set again
+  // once everything is in and when the page is shown from the history. Where the page is shown
+  // inside another one (a preview) that keeps its scroll, the hero is brought into view there too.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
+  const toTop = () => {
+    if (location.hash) return; // a link to a part of the page goes there
+    window.scrollTo(0, 0);
+    if (window.top !== window) hero.scrollIntoView({ block: 'start' });
+  };
+  toTop();
+  // (only while it is still held: never under someone already scrolling)
+  window.addEventListener('load', () => {
+    if (document.documentElement.classList.contains('is-locked')) toTop();
+  }, { once: true });
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) toTop();
+  });
   const unlock = () => document.documentElement.classList.remove('is-locked');
   setTimeout(unlock, 15000); // whatever happens, never for good
 

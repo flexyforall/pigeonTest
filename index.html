@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PigeonM — WiFi for business, residential and mobile</title>
-  <script>document.documentElement.classList.add('js', 'is-locked');</script>
+  <script>
+    document.documentElement.classList.add('js', 'is-locked');
+    // every page opens at its top, never where the last one was scrolled to (js/hero.js)
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  </script>
   <!-- the loader's dark page from the very first paint -->
   <style>html, body { margin: 0; background: #101111; }</style>
   <script src="js/hero.js" defer></script>
