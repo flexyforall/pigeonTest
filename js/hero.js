@@ -344,7 +344,8 @@
   }
 
   /* ---------- switch state ---------- */
-  async function setState(next) {
+  // `instant`: straight there, with no wipe (a page arriving in the state the last one was in)
+  async function setState(next, { instant = false } = {}) {
     if (next === current || busy || !STATES.includes(next)) return;
     busy = true;
 
@@ -366,7 +367,7 @@
       moveHighlight(!reduceMotion && !appear, next);
     };
 
-    if (reduceMotion) {
+    if (reduceMotion || instant) {
       bgs.forEach((b) => b.classList.toggle('is-active', b.dataset.bg === next));
       current = next;
       hero.dataset.state = next;
@@ -641,6 +642,45 @@
     hero.addEventListener('pointerleave', () => glow.classList.remove('is-on'));
   }
 
+  /* ---------- from page to page ---------- */
+  // Going to another of the site's pages, the hero's state is noted; the next page opens in that
+  // state with no loader, and wipes over to its own, as a switch within the hero does: so the
+  // home page's planet gives way to the Business illustration behind the line, and back.
+  const NAV_KEY = 'pm-nav';
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || link.target === '_blank') return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin || !/\.html$/.test(url.pathname) || url.pathname === location.pathname) return;
+    try {
+      sessionStorage.setItem(NAV_KEY, JSON.stringify({ from: current, t: Date.now() }));
+    } catch (err) {}
+  });
+  let arriveFrom = null;
+  try {
+    const nav = JSON.parse(sessionStorage.getItem(NAV_KEY));
+    sessionStorage.removeItem(NAV_KEY);
+    if (nav && Date.now() - nav.t < 10000 && STATES.includes(nav.from)) arriveFrom = nav.from;
+  } catch (err) {}
+  const arriving = arriveFrom !== null && !reduceMotion;
+
+  async function arrive() {
+    const own = current;
+    // the last page's state, at once, and the hero shown as it was there (once its picture and
+    // the fonts are in, which they mostly are, from that page)
+    loadDeferredImages();
+    if (arriveFrom !== own) await setState(arriveFrom, { instant: true });
+    const bg = bgs.find((b) => b.dataset.bg === arriveFrom);
+    await Promise.race([Promise.all([fontsReady, isImg(bg) ? bg.decode().catch(() => {}) : Promise.resolve()]), timeout(1500)]);
+    moveIndicator(false);
+    moveHighlight(false);
+    hero.classList.add('is-ready');
+    unlock();
+    if (arriveFrom === 'home') playPlanet();
+    // then over to this page's own, behind the line
+    if (arriveFrom !== own) setTimeout(() => setState(own), 120);
+  }
+
   /* ---------- loader ---------- */
   // The planet turns in the middle of the screen until the page is ready (and for SPIN at least),
   // then fades; halfway through the hero starts drawing itself in underneath and the loader clears
@@ -684,7 +724,7 @@
   // loader lasts is only known once the page is ready, so until then the reveal eases towards
   // HOLD of the way, slowly enough never to get there; once the end is known it runs on from
   // wherever it is to the full reveal, landing as the loader goes.
-  const grid = loader?.querySelector('.loader__grid');
+  const grid = arriving ? null : loader?.querySelector('.loader__grid');
   const HOLD = 0.8;
   const reveal = { from: 0, to: HOLD, start: performance.now(), duration: SPIN * 1.6, p: 0 };
   // a gentle start while it waits, an ease out on the run to the end
@@ -726,7 +766,10 @@
     removeLoader();
   }
 
-  if (reduceMotion || !loader) {
+  if (arriving) {
+    removeLoader();
+    arrive();
+  } else if (reduceMotion || !loader) {
     removeLoader();
     ready.then(() => intro());
   } else {

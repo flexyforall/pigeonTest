@@ -8,10 +8,16 @@
     document.documentElement.classList.add('js', 'is-locked');
     // every page opens at its top, never where the last one was scrolled to (js/hero.js)
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    // coming from another of the site's pages: no loader, the hero carries on from that page's
+    // (js/hero.js)
+    try {
+      const nav = JSON.parse(sessionStorage.getItem('pm-nav'));
+      if (nav && Date.now() - nav.t < 10000) document.documentElement.classList.add('is-nav');
+    } catch (e) {}
   </script>
   <!-- the loader's dark page from the very first paint -->
   <style>html, body { margin: 0; background: #101111; }</style>
-  <script src="js/hero.js?v=36b60ce7" defer></script>
+  <script src="js/hero.js?v=ce55c012" defer></script>
   <script src="js/sections.js?v=b0cf4c87" defer></script>
   <script src="js/connectivity.js?v=be5ec147" defer></script>
   <script src="js/dither.js?v=cad372d1" defer></script>
@@ -20,7 +26,7 @@
   <script src="js/faq.js?v=5b57e563" defer></script>
   <script src="js/plus-grid.js?v=1c6efb88" defer></script>
   <script src="js/grid.js?v=de0c2bf2" defer></script>
-  <link rel="stylesheet" href="css/hero.css?v=3aaf5d09">
+  <link rel="stylesheet" href="css/hero.css?v=79dc742f">
   <link rel="stylesheet" href="css/sections.css?v=01cfec4d">
 </head>
 <body>

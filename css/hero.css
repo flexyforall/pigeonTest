@@ -74,6 +74,8 @@ h1, h2, p { margin: 0; }
 
 /* ===== Loader (Figma 302:3618) ===== */
 .loader { display: none; }
+/* coming from another of the site's pages, there's no loader (js/hero.js) */
+.is-nav .loader { display: none !important; }
 .js .loader {
   position: fixed;
   inset: 0;
