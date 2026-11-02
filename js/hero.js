@@ -646,43 +646,68 @@
   }
 
   /* ---------- from page to page ---------- */
-  // Going to another of the site's pages, the hero's state is noted; the next page opens in that
-  // state with no loader, and wipes over to its own, as a switch within the hero does: so the
-  // home page's planet gives way to the Business illustration behind the line, and back.
+  // Leaving for another of the site's pages (by a link, or back and forward), the hero's state
+  // is noted; the next page opens in that state with no loader and wipes over to its own, as a
+  // switch within the hero does: the home page's planet gives way to the Business illustration
+  // behind the line, and back. The same goes for a page the browser brings back from its cache
+  // (Safari's back and forward): it is set back to its top and wipes over just the same. A reload
+  // of the same page is a fresh start, with the loader.
   const NAV_KEY = 'pm-nav';
+  const ownState = current; // this page's own state, the one it opens on
+  const note = () => {
+    try {
+      sessionStorage.setItem(NAV_KEY, JSON.stringify({ from: current, t: Date.now(), path: location.pathname }));
+    } catch (err) {}
+  };
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href]');
     if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || link.target === '_blank') return;
     const url = new URL(link.href, location.href);
     if (url.origin !== location.origin || !/\.html$/.test(url.pathname) || url.pathname === location.pathname) return;
-    try {
-      sessionStorage.setItem(NAV_KEY, JSON.stringify({ from: current, t: Date.now() }));
-    } catch (err) {}
+    note();
   });
-  let arriveFrom = null;
-  try {
-    const nav = JSON.parse(sessionStorage.getItem(NAV_KEY));
-    sessionStorage.removeItem(NAV_KEY);
-    if (nav && Date.now() - nav.t < 10000 && STATES.includes(nav.from)) arriveFrom = nav.from;
-  } catch (err) {}
+  window.addEventListener('pagehide', note);
+  // the last page's state, if the visitor has just come from another of the site's pages
+  const takeArrival = () => {
+    try {
+      const nav = JSON.parse(sessionStorage.getItem(NAV_KEY));
+      sessionStorage.removeItem(NAV_KEY);
+      if (nav && Date.now() - nav.t < 10000 && nav.path !== location.pathname && STATES.includes(nav.from)) return nav.from;
+    } catch (err) {}
+    return null;
+  };
+  const arriveFrom = takeArrival();
   const arriving = arriveFrom !== null && !reduceMotion;
 
-  async function arrive() {
-    const own = current;
+  async function arrive(from) {
     // the last page's state, at once, and the hero shown as it was there (once its picture and
     // the fonts are in, which they mostly are, from that page)
     loadDeferredImages();
-    if (arriveFrom !== own) await setState(arriveFrom, { instant: true });
-    const bg = bgs.find((b) => b.dataset.bg === arriveFrom);
+    if (from !== current) await setState(from, { instant: true });
+    const bg = bgs.find((b) => b.dataset.bg === from);
     await Promise.race([Promise.all([fontsReady, isImg(bg) ? bg.decode().catch(() => {}) : Promise.resolve()]), timeout(1500)]);
     moveIndicator(false);
     moveHighlight(false);
     hero.classList.add('is-ready');
     unlock();
-    if (arriveFrom === 'home') playPlanet();
+    toTop();
+    const shownAt = performance.now();
+    // the browser may still move the page once it has loaded: back to the top, if that is soon
+    window.addEventListener('load', () => {
+      if (performance.now() - shownAt < 1500) toTop();
+    }, { once: true });
+    if (from === 'home') playPlanet();
     // then over to this page's own, behind the line
-    if (arriveFrom !== own) setTimeout(() => setState(own), 120);
+    if (from !== ownState) setTimeout(() => setState(ownState), 120);
   }
+  // brought back from the browser's cache: to the top, and the same wipe over from the last page
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    const from = takeArrival();
+    toTop();
+    if (from === null || reduceMotion) return;
+    arrive(from);
+  });
 
   /* ---------- loader ---------- */
   // The planet turns in the middle of the screen until the page is ready (and for SPIN at least),
@@ -771,7 +796,7 @@
 
   if (arriving) {
     removeLoader();
-    arrive();
+    arrive(arriveFrom);
   } else if (reduceMotion || !loader) {
     removeLoader();
     ready.then(() => intro());

@@ -13,12 +13,12 @@
     // (js/hero.js)
     try {
       const nav = JSON.parse(sessionStorage.getItem('pm-nav'));
-      if (nav && Date.now() - nav.t < 10000) document.documentElement.classList.add('is-nav');
+      if (nav && Date.now() - nav.t < 10000 && nav.path !== location.pathname) document.documentElement.classList.add('is-nav');
     } catch (e) {}
   </script>
   <!-- the loader's dark page from the very first paint -->
   <style>html, body { margin: 0; background: #101111; }</style>
-  <script src="js/hero.js?v=e6793f56" defer></script>
+  <script src="js/hero.js?v=d99ce0c0" defer></script>
   <script src="js/sections.js?v=b0cf4c87" defer></script>
   <script src="js/connectivity.js?v=be5ec147" defer></script>
   <script src="js/dither.js?v=cad372d1" defer></script>
