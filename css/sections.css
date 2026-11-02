@@ -378,6 +378,9 @@ body { background: var(--c-page); }
   scale: var(--title-scale, 1);
   text-align: center;
   white-space: nowrap;
+  /* the text is painted by its background (below), which only reaches the box's edges: room for
+     the descenders (g, y, p) above and below alike, so it stays centred */
+  padding: 0.16em 0;
   /* white sweeps across the dim title as --fill goes 0 → 1 */
   --fill-at: calc(var(--fill, 1) * 110% - 5%);
   background: linear-gradient(90deg, var(--c-white) calc(var(--fill-at) - 4%), rgba(255, 255, 255, 0.25) calc(var(--fill-at) + 4%));
