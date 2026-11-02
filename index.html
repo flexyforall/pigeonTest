@@ -8,16 +8,20 @@
     document.documentElement.classList.add('js', 'is-locked');
     // every page opens at its top, never where the last one was scrolled to (js/hero.js)
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    // coming from another of the site's pages: no loader, the hero carries on from that page's
-    // (js/hero.js)
+    // coming from another of the site's pages: no loader; where the browser runs a transition
+    // between pages (is-vt), a line sweeps across the screen and leaves this page behind it,
+    // shown as it is (css/hero.css); elsewhere the hero carries on from the last page's (js/hero.js)
     try {
       const nav = JSON.parse(sessionStorage.getItem('pm-nav'));
-      if (nav && Date.now() - nav.t < 10000 && nav.path !== location.pathname) document.documentElement.classList.add('is-nav');
+      if (nav && Date.now() - nav.t < 10000 && nav.path !== location.pathname) {
+        document.documentElement.classList.add('is-nav');
+        if ('PageRevealEvent' in window) document.documentElement.classList.add('is-vt');
+      }
     } catch (e) {}
   </script>
   <!-- the loader's dark page from the very first paint -->
   <style>html, body { margin: 0; background: #101111; }</style>
-  <script src="js/hero.js?v=d99ce0c0" defer></script>
+  <script src="js/hero.js?v=3ae0644d" defer></script>
   <script src="js/sections.js?v=b0cf4c87" defer></script>
   <script src="js/connectivity.js?v=be5ec147" defer></script>
   <script src="js/dither.js?v=cad372d1" defer></script>
@@ -26,10 +30,12 @@
   <script src="js/faq.js?v=5b57e563" defer></script>
   <script src="js/plus-grid.js?v=1c6efb88" defer></script>
   <script src="js/grid.js?v=de0c2bf2" defer></script>
-  <link rel="stylesheet" href="css/hero.css?v=f5d5cf44">
+  <link rel="stylesheet" href="css/hero.css?v=f1444ae8">
   <link rel="stylesheet" href="css/sections.css?v=01cfec4d">
 </head>
 <body>
+<!-- the line that sweeps across the screen from page to page -->
+<span class="page-line" aria-hidden="true"></span>
 
 <!-- Loader: the hero's planet (the same clip, dithered alike) turns in the middle of the screen,
      then fades away and the hero draws itself in (js/hero.js) -->

@@ -679,6 +679,22 @@
   const arriveFrom = takeArrival();
   const arriving = arriveFrom !== null && !reduceMotion;
 
+  // With the browser's transition between pages the whole page is swept in behind a line
+  // (css/hero.css): the hero is just shown in its own state, ready, at the top.
+  const root = document.documentElement;
+  const pageTransitions = 'PageRevealEvent' in window;
+  function arriveSwept() {
+    loadDeferredImages();
+    moveIndicator(false);
+    moveHighlight(false);
+    hero.classList.add('is-ready');
+    unlock();
+    toTop();
+    if (current === 'home') playPlanet();
+    // the line has swept by: it goes
+    setTimeout(() => root.classList.remove('is-vt'), 1200);
+  }
+
   async function arrive(from) {
     // the last page's state, at once, and the hero shown as it was there (once its picture and
     // the fonts are in, which they mostly are, from that page)
@@ -706,6 +722,11 @@
     const from = takeArrival();
     toTop();
     if (from === null || reduceMotion) return;
+    if (pageTransitions) {
+      root.classList.add('is-vt');
+      setTimeout(() => root.classList.remove('is-vt'), 1200);
+      return;
+    }
     arrive(from);
   });
 
@@ -796,7 +817,8 @@
 
   if (arriving) {
     removeLoader();
-    arrive(arriveFrom);
+    if (root.classList.contains('is-vt')) arriveSwept();
+    else arrive(arriveFrom);
   } else if (reduceMotion || !loader) {
     removeLoader();
     ready.then(() => intro());

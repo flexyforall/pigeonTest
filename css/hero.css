@@ -76,6 +76,56 @@ h1, h2, p { margin: 0; }
 .loader { display: none; }
 /* coming from another of the site's pages, there's no loader (js/hero.js) */
 .is-nav .loader { display: none !important; }
+
+/* ===== From page to page =====
+   The browser keeps the last page on screen until this one is ready, then a hairline sweeps
+   across the whole screen from right to left and leaves this page behind it, as the hero's
+   own switch does. The page shows as it is from the start, hero and all. */
+@view-transition { navigation: auto; }
+.is-vt .hero { visibility: visible; }
+::view-transition-image-pair(root) { isolation: auto; }
+::view-transition-old(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) {
+  animation: page-in 1.1s cubic-bezier(0.6, 0, 0.3, 1) both;
+  mix-blend-mode: normal;
+}
+@keyframes page-in {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.page-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  width: 1px;
+  height: 100vh;
+  background: #6fc6a7; /* the accent, to read on the dark and the light pages alike */
+  box-shadow: 0 0 24px 2px rgba(111, 198, 167, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  view-transition-name: page-line;
+}
+.is-vt .page-line { opacity: 1; }
+/* the line runs with the page's edge, the same time and pace */
+/* (its fade at the ends is a separate animation, so the move keeps one curve, the page's) */
+::view-transition-group(page-line) {
+  animation:
+    page-line-move 1.1s cubic-bezier(0.6, 0, 0.3, 1) both,
+    page-line-fade 1.1s linear both;
+}
+::view-transition-new(page-line),
+::view-transition-old(page-line) { animation: none; }
+@keyframes page-line-move {
+  from { transform: translateX(100vw); }
+  to { transform: translateX(0); }
+}
+@keyframes page-line-fade {
+  0% { opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { opacity: 0; }
+}
 .js .loader {
   position: fixed;
   inset: 0;
