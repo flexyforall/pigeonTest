@@ -422,9 +422,12 @@
     e.preventDefault();
     setState('home');
   });
+  // a card for an audience with a page of its own (data-page) goes there, as its tab does; on
+  // that page itself it picks the audience in the hero
   cards.forEach((c) =>
     c.addEventListener('click', (e) => {
       if (!STATES.includes(c.dataset.target)) return;
+      if ('page' in c.dataset && c.getAttribute('aria-current') !== 'page') return;
       e.preventDefault();
       setState(c.dataset.target);
     })
