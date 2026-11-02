@@ -427,7 +427,7 @@ h1, h2, p { margin: 0; }
   transition: transform var(--wipe-duration) var(--wipe-ease), width var(--wipe-duration) var(--wipe-ease), opacity 0.5s ease;
 }
 /* the default hero has no audience picked: no pill, no lit card */
-.hero.is-home .audience__indicator,
+.header.is-home .audience__indicator,
 .hero.is-home .cards__highlight { opacity: 0; }
 
 

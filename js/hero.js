@@ -357,6 +357,8 @@
       // sliding in from wherever they were
       const appear = current === 'home';
       hero.classList.toggle('is-home', next === 'home');
+      // the header carries it too: it may be floating outside the hero
+      header.classList.toggle('is-home', next === 'home');
       tabs.forEach((t) => {
         const on = t.dataset.target === next;
         t.classList.toggle('is-active', on);
@@ -467,6 +469,7 @@
   // pictures), so inside the hero it would vanish with it.
   const header = $('.header');
   const headerHome = header.parentElement;
+  header.classList.toggle('is-home', current === 'home'); // no pill on the default hero
   const HEADER_H = () => header.offsetHeight;
   let lastY = 0;
   let floating = false;
