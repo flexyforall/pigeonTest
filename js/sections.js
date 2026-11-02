@@ -8,6 +8,42 @@
   const $ = (sel, root) => root.querySelector(sel);
   const $$ = (sel, root) => [...root.querySelectorAll(sel)];
 
+  // Runs `run` once `el` is in view: `threshold` of it showing above the screen's bottom
+  // `bottom` (a share of the screen). An IntersectionObserver does it, with the same check made
+  // on scroll and on a slow timer as well: Safari may not report to the observer for a while
+  // after arriving from another page, which left the sections below the hero empty.
+  const watchers = new Set();
+  function inView(el, threshold, bottom) {
+    const r = el.getBoundingClientRect();
+    const h = window.innerHeight * (1 - bottom);
+    const shown = Math.min(r.bottom, h) - Math.max(r.top, 0);
+    return r.height > 0 && shown > 0 && shown / r.height >= Math.min(threshold, h / r.height - 0.01);
+  }
+  function checkWatchers() {
+    watchers.forEach((w) => {
+      if (inView(w.el, w.threshold, w.bottom)) w.fire();
+    });
+  }
+  let checking = 0;
+  window.addEventListener('scroll', () => {
+    if (!checking) checking = requestAnimationFrame(() => { checking = 0; checkWatchers(); });
+  }, { passive: true });
+  setInterval(() => { if (watchers.size) checkWatchers(); }, 700);
+  function whenInView(el, run, { threshold = 0.5, bottom = 0.12 } = {}) {
+    const w = { el, threshold, bottom };
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) w.fire();
+    }, { rootMargin: `0px 0px -${bottom * 100}% 0px`, threshold });
+    w.fire = () => {
+      if (!watchers.has(w)) return;
+      watchers.delete(w);
+      io.disconnect();
+      run(el);
+    };
+    watchers.add(w);
+    io.observe(el);
+  }
+
   // The element's current CSS values for the properties in `keyframe` (see hero.js)
   const cssState = (el, keyframe) => {
     const cs = getComputedStyle(el);
@@ -151,16 +187,14 @@
       // together and keep pace
       section.classList.add('is-dim');
       section.classList.add('is-pending');
-      new IntersectionObserver((entries, io) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
+      whenInView(row, () => {
         section.classList.remove('is-dim', 'is-pending');
         rise($('.section-title', section));
         from($('.steps__mark', section), { clipPath: 'inset(0 100% 0 0)' }, { duration: WIPE, delay: DELAY, easing: ease });
         sweep();
         // the button in the band below comes up as the band reaches the last card
         from($('.steps__btn', section), { opacity: 0, transform: 'translateY(16px)', clipPath: 'inset(100% 0 0 0)' }, { duration: 900, delay: DELAY + RUN * 0.6 });
-      }, { threshold: 0.25 }).observe(row);
+      }, { threshold: 0.25, bottom: 0 });
 
       function sweep() {
         const width = row.clientWidth;
@@ -231,15 +265,13 @@
       // the figures wait for their own row to be well in view, so their count is seen
       const stats = $('.network__stats', section);
       stats.classList.add('is-waiting');
-      new IntersectionObserver((entries, io) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
+      whenInView(stats, () => {
         stats.classList.remove('is-waiting');
         $$('.stat', section).forEach((el, i) => {
           fadeUp(el, i * 100);
           countUp($('.stat__value', el), i * 100);
         });
-      }, { threshold: 0.7 }).observe(stats);
+      }, { threshold: 0.7, bottom: 0 });
     },
 
     // the dark panel's copy rises like the other headings, then the record and the cards follow
@@ -282,12 +314,10 @@
       // the logos come in as the logos row after the hero does, once their own row is in view
       const logos = $('.about__logos', section);
       logos.classList.add('is-waiting');
-      new IntersectionObserver((entries, io) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
+      whenInView(logos, () => {
         logos.classList.remove('is-waiting');
         $$('li', logos).forEach((el, i) => fadeUp(el, i * 90, 1000));
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(logos);
+      });
     },
 
     testimonials(section) {
@@ -323,12 +353,10 @@
   // runs `run(el)` once `el` is well in view; until then its content stays hidden (.is-waiting)
   function waitForView(el, run) {
     el.classList.add('is-waiting');
-    new IntersectionObserver((entries, io) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      io.disconnect();
+    whenInView(el, () => {
       el.classList.remove('is-waiting');
       run(el);
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.5 }).observe(el);
+    });
   }
 
   // benefit-style cards: grid and fade come in, then the icon, the title rising, the line below
@@ -374,28 +402,24 @@
     .map((name) => [name, document.querySelector(`.${name}`)])
     .filter(([, el]) => el);
 
-  // split once fonts are in, so word boxes are measured with the real face
-  const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+  // split once fonts are in, so word boxes are measured with the real face (but never held up
+  // for long by them)
+  const fontsReady = Promise.race([
+    document.fonts ? document.fonts.ready : Promise.resolve(),
+    new Promise((resolve) => setTimeout(resolve, 800)),
+  ]);
 
   sections.forEach(([, section]) => {
     section.classList.add('is-pending');
     $$('.section-title, .benefit__title, .plan-tab__name', section).forEach(splitWords);
   });
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        observer.unobserve(entry.target);
-        const [name, section] = sections.find(([, s]) => s === entry.target);
-        fontsReady.then(() => {
-          // drop the hidden state first so `from` reads the real end values
-          section.classList.remove('is-pending');
-          REVEALS[name](section);
-        });
-      });
-    },
-    { rootMargin: '0px 0px -12% 0px', threshold: 0.15 }
+  sections.forEach(([name, section]) =>
+    whenInView(section, () =>
+      fontsReady.then(() => {
+        // drop the hidden state first so `from` reads the real end values
+        section.classList.remove('is-pending');
+        REVEALS[name](section);
+      }), { threshold: 0.15 })
   );
-  sections.forEach(([, section]) => observer.observe(section));
 })();

@@ -163,10 +163,17 @@
       draws.forEach((draw) => draw());
       requestAnimationFrame(loop);
     };
-    new IntersectionObserver(([entry]) => {
+    const set = (on) => {
       const was = running;
-      running = entry.isIntersecting;
+      running = on;
       if (running && !was) requestAnimationFrame(loop);
-    }).observe(section);
+    };
+    new IntersectionObserver(([entry]) => set(entry.isIntersecting)).observe(section);
+    // the same off the scroll: Safari may not report to the observer for a while after
+    // arriving from another page
+    window.addEventListener('scroll', () => {
+      const r = section.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < window.innerHeight) set(true);
+    }, { passive: true });
   });
 })();
