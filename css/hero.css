@@ -400,11 +400,13 @@ h1, h2, p { margin: 0; }
 .icon--star img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ===== Content ===== */
-/* centred in the content box, 640 wide, 280 below its top (Figma 350:13960) */
+/* centred in the content box, 640 wide, 280 below its top (Figma 350:13960); on a screen lower
+   than the design's (sizes follow the width, the hero the height) it moves up to keep the
+   design's 60 above the tabs: the block is 300 tall, the tabs 114 */
 .hero__content {
   position: absolute;
   left: 50%;
-  top: calc((56 + 280) * var(--px));
+  top: min(calc((56 + 280) * var(--px)), calc(100% - (114 + 60 + 300) * var(--px)));
   width: calc(640 * var(--px));
   margin-left: calc(-320 * var(--px));
   z-index: 1;
