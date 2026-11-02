@@ -393,8 +393,13 @@
   }
 
   // a tab for an audience with a page of its own (data-page) simply goes there
-  tabs.forEach((t) => t.addEventListener('click', () => {
-    if (!('page' in t.dataset)) setState(t.dataset.target);
+  tabs.forEach((t) => t.addEventListener('click', (e) => {
+    if ('page' in t.dataset) {
+      // on that page itself it picks the audience in the hero, as the other tabs do
+      if (t.getAttribute('aria-current') !== 'page') return;
+      e.preventDefault();
+    }
+    setState(t.dataset.target);
   }));
   // on the home page the logo takes the hero back to its default; elsewhere it goes home
   $('.header__logo[data-target="home"]')?.addEventListener('click', (e) => {
@@ -463,7 +468,7 @@
     planet.defaultPlaybackRate = rate;
     planet.playbackRate = rate;
     if (reduceMotion) planet.removeAttribute('autoplay');
-    else planet.play().catch(() => {});
+    else if (current === 'home') planet.play().catch(() => {});
     new IntersectionObserver(([entry]) => {
       heroInView = entry.isIntersecting;
       if (heroInView && current === 'home') playPlanet();
@@ -487,7 +492,10 @@
     // the last of it, the cards, are in by then
     setTimeout(unlock, 2200);
 
-    from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
+    // the backdrop it opens on comes in: the planet, or an audience's illustration
+    const bg = bgs.find((b) => b.dataset.bg === current);
+    if (isImg(bg)) from(bg, { opacity: 0, transform: 'scale(1.12)' }, { duration: 2200 });
+    else from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
 
     // frame and hairlines draw in
     from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
@@ -586,14 +594,22 @@
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   // the planet's first frame, so it is there to be seen as the hero comes in
-  const planetReady = !planet || planet.readyState >= 2
-    ? Promise.resolve()
-    : new Promise((resolve) => {
-        planet.addEventListener('loadeddata', resolve, { once: true });
-        planet.addEventListener('error', resolve, { once: true });
-      });
+  // the backdrop it opens on, so it is there to be seen as the hero comes in: the planet's first
+  // frame, or (on an audience's page) its illustration
+  const firstBg = bgs.find((b) => b.dataset.bg === current);
+  const bgReady = isImg(firstBg)
+    ? (firstBg.complete ? Promise.resolve() : new Promise((resolve) => {
+        firstBg.addEventListener('load', resolve, { once: true });
+        firstBg.addEventListener('error', resolve, { once: true });
+      }))
+    : !planet || planet.readyState >= 2
+      ? Promise.resolve()
+      : new Promise((resolve) => {
+          planet.addEventListener('loadeddata', resolve, { once: true });
+          planet.addEventListener('error', resolve, { once: true });
+        });
   // wait for fonts so the split text is measured correctly
-  const ready = Promise.race([Promise.all([fontsReady, planetReady]), timeout(6000)]);
+  const ready = Promise.race([Promise.all([fontsReady, bgReady]), timeout(6000)]);
 
   const removeLoader = () => loader?.remove();
 

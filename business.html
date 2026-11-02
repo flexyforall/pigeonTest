@@ -18,6 +18,7 @@
   <script src="js/faq.js" defer></script>
   <script src="js/plus-grid.js" defer></script>
   <script src="js/grid.js" defer></script>
+  <link rel="preload" as="image" href="assets/img/hero-business.webp" imagesrcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x">
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/sections.css">
 </head>
@@ -37,13 +38,13 @@
   </div>
 </div>
 
-<section class="hero is-home" data-hero data-state="home">
+<section class="hero" data-hero data-state="business">
   <!-- the content box's backdrop: the grid pattern, and over it the default hero's planet (Figma
        350:13952) or an audience's dithered illustration (Figma 340:10854 / 340:10880 / 340:10906) -->
   <div class="hero__bg" aria-hidden="true">
     <span class="hero__pattern"></span>
     <!-- the planet and its shade, fitted to the copy together (js/hero.js) -->
-    <div class="hero__fit is-active" data-bg="home">
+    <div class="hero__fit" data-bg="home">
     <div class="hero__planet">
       <div class="hero__planet-media">
         <video class="hero__planet-video" muted loop playsinline autoplay preload="auto" tabindex="-1" data-rate="0.6" data-dither-invert="1" data-dither-gain="2.4">
@@ -55,8 +56,8 @@
     <!-- a dark, blurred ellipse behind the copy, so the planet fades out under it -->
     <span class="hero__shade"></span>
     </div>
-    <img class="hero__bg-img" data-bg="business" data-src="assets/img/hero-business.webp"
-         data-srcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x" width="922" height="754" alt="">
+    <img class="hero__bg-img is-active" data-bg="business" src="assets/img/hero-business.webp"
+         srcset="assets/img/hero-business.webp 1x, assets/img/hero-business@2x.webp 2x" width="922" height="754" alt="">
     <img class="hero__bg-img" data-bg="residential" data-src="assets/img/hero-residential.webp"
          data-srcset="assets/img/hero-residential.webp 1x, assets/img/hero-residential@2x.webp 2x" width="944" height="754" alt="">
     <img class="hero__bg-img" data-bg="mobile" data-src="assets/img/hero-mobile.webp"
@@ -77,7 +78,7 @@
       <nav class="audience" role="tablist" aria-label="Audience" data-intro="header">
         <span class="audience__indicator" aria-hidden="true"></span>
         <!-- Business has a page of its own -->
-        <a class="audience__tab" href="business.html" data-target="business" data-page>Business</a>
+        <a class="audience__tab is-active" href="business.html" data-target="business" data-page aria-current="page">Business</a>
         <button class="audience__tab" role="tab" aria-selected="false" data-target="residential">Residential</button>
         <button class="audience__tab" role="tab" aria-selected="false" data-target="mobile">Mobile</button>
       </nav>
@@ -103,7 +104,7 @@
 
     <!-- Content: the default hero's copy, centred, and each audience's, on the left -->
     <div class="hero__content">
-      <div class="panel panel--home is-active" data-panel="home">
+      <div class="panel panel--home" data-panel="home" aria-hidden="true">
         <div class="rating">
           <span class="rating__score">
             4.9
@@ -112,12 +113,12 @@
           <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
           <span>Trusted nationwide</span>
         </div>
-        <h1 class="panel__title" data-split>Stay connected at home, at work, and around the world.</h1>
+        <h2 class="panel__title" data-split>Stay connected at home, at work, and around the world.</h2>
         <p class="panel__text">Home and business internet, mobile service, and included global Wi-Fi. All managed through Pigeon M, with AI guidance along the way.</p>
         <a class="btn btn--mint" href="#start"><span>Get started</span></a>
       </div>
 
-      <div class="panel" data-panel="business" aria-hidden="true">
+      <div class="panel is-active" data-panel="business">
         <div class="rating">
           <span class="rating__score">
             4.9
@@ -126,9 +127,9 @@
           <img class="rating__divider" src="assets/icons/divider.svg" width="1" height="17" alt="" aria-hidden="true">
           <span>Trusted nationwide</span>
         </div>
-        <h2 class="panel__title" data-split>Business WiFi that covers every corner of your operation</h2>
+        <h1 class="panel__title" data-split>Business WiFi that covers every corner of your operation</h1>
         <p class="panel__text">From offices and clinics to fleets, vessels and aircraft. We design, install and manage your network, sized to your space and fully supported.</p>
-        <a class="btn btn--mint" href="business.html"><span>Get started</span></a>
+        <a class="btn btn--mint" href="#start"><span>Get started</span></a>
       </div>
 
       <div class="panel" data-panel="residential" aria-hidden="true">
@@ -163,7 +164,7 @@
     <!-- Audience cards -->
     <div class="cards">
       <span class="cards__highlight" aria-hidden="true"></span>
-      <a class="card" href="#business" data-target="business" data-intro="card">
+      <a class="card is-active" href="#business" data-target="business" data-intro="card">
         <span class="card__icon" aria-hidden="true"></span>
         <span class="card__label">For Business</span>
       </a>
