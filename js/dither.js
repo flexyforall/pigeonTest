@@ -1,4 +1,4 @@
-// The connectivity clips and the hero's planet are dithered like the rest of the site's imagery (the Figma "Dither"
+// The connectivity clips and the planet (the hero's, the loader's) are dithered like the rest of the site's imagery (the Figma "Dither"
 // effect: ordered Bayer 16×16, 3 levels per colour channel, one cell per CSS pixel). Each clip is
 // redrawn through a WebGL shader onto a canvas laid over it; the video itself stays in place,
 // invisible, and keeps being scrubbed by js/connectivity.js. Where WebGL is missing the clips
@@ -6,7 +6,7 @@
 // faint dots lifted, data-dither-gain) into light grey dots before the dither, and the canvas is
 // see-through between them.
 (() => {
-  const videos = [...document.querySelectorAll('.connectivity__img, .hero__planet-video')].filter((v) => v.tagName === 'VIDEO');
+  const videos = [...document.querySelectorAll('.connectivity__img, .hero__planet-video, .loader__planet-video')].filter((v) => v.tagName === 'VIDEO');
   if (!videos.length) return;
 
   const LEVELS = 3;
@@ -118,7 +118,7 @@
     let last = '';
 
     return function draw() {
-      if (video.readyState < 2 || !video.videoWidth) return;
+      if (!video.isConnected || video.readyState < 2 || !video.videoWidth) return;
       // one cell per pixel as shown, so a clip drawn smaller (the planet in the loader, on its
       // way into the hero) is dithered at that size rather than shrunk after
       const box = media.getBoundingClientRect();

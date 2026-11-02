@@ -236,8 +236,6 @@
   }
 
   /* ---------- intro ---------- */
-  let fromLoader = false; // the planet is already on show, having come over from the loader
-
   function intro() {
     hero.classList.add('is-ready');
 
@@ -248,7 +246,7 @@
     // the last of it, the cards, are in by then
     setTimeout(unlock, 2200);
 
-    if (!fromLoader) from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
+    from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
 
     // frame and hairlines draw in
     from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
@@ -278,19 +276,22 @@
   }
 
   /* ---------- loader ---------- */
-  // The hero's planet turns in the middle of the screen until the page is ready (and for SPIN at
-  // least): the hero's backdrop is lifted over the loader for it (.is-loading) and its globe set
-  // in the loader's pose. Then the globe glides up into its place as the loader clears off and the
-  // hero draws itself in, so the one runs into the other with no pause and no second planet.
+  // The planet turns in the middle of the screen until the page is ready (and for SPIN at least),
+  // then fades; halfway through the hero starts drawing itself in underneath and the loader clears
+  // off it, so the one runs into the other with no pause between and the hero's lines are seen
+  // drawing.
   const loader = document.querySelector('.loader');
   const SPIN = 1400;
-  const LOGO_FADE = 600;
+  const PLANET_FADE = 600;
   const FADE = 700; // the loader's own fade, over the hero's start
-  const GLIDE = 1600; // the planet's way up into the hero
-  const LOADER_SIZE = 188; // the globe's width in the loader, design px
-  const k = () => Math.min(1.25, Math.max(1, window.innerWidth / 1440)); // --px
-  const globe = $('.hero__globe');
   const GRID_END = 2000; // from the hand-over to the grid's full reveal, with the hero's intro
+
+  // the loader's planet turns as slowly as the hero's
+  const loaderPlanet = loader?.querySelector('.loader__planet-video');
+  if (loaderPlanet) {
+    loaderPlanet.defaultPlaybackRate = loaderPlanet.playbackRate = Number(loaderPlanet.dataset.rate) || 1;
+    loaderPlanet.play().catch(() => {});
+  }
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   // the planet's first frame, so it is there to be seen as the hero comes in
@@ -303,38 +304,7 @@
   // wait for fonts so the split text is measured correctly
   const ready = Promise.race([Promise.all([fontsReady, planetReady]), timeout(6000)]);
 
-  const removeLoader = () => {
-    loader?.remove();
-    hero.classList.remove('is-loading');
-  };
-
-  // the loader's pose: the planet's globe (in the loader all of the clip shows, from the globe's
-  // top 119 down its frame to where it fades out, about 580) centred on the screen, at the size
-  // of the loader's former sphere: 188 across (the globe is 603)
-  function loaderPose() {
-    globe.style.transform = 'none'; // measured in its own place
-    const box = globe.getBoundingClientRect();
-    const frame = $('.hero__planet').getBoundingClientRect();
-    const x = frame.left + frame.width / 2 - box.left;
-    const unit = frame.height / 472; // the design's px, as laid out (with the fit)
-    const y = frame.top + 349 * unit - box.top;
-    const dx = window.innerWidth / 2 - (box.left + x);
-    const dy = window.innerHeight / 2 - (box.top + y);
-    const scale = (LOADER_SIZE * k()) / (603 * unit);
-    globe.style.transformOrigin = `${x}px ${y}px`;
-    return `translate(${dx}px, ${dy}px) scale(${scale})`;
-  }
-  if (loader && globe && !reduceMotion) {
-    hero.classList.add('is-loading');
-    fromLoader = true;
-    globe.style.transform = loaderPose();
-    // it comes in softly once its first frame is there
-    globe.style.opacity = 0;
-    planetReady.then(() => {
-      globe.style.opacity = '';
-      globe.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 800, easing: 'ease-out' });
-    });
-  }
+  const removeLoader = () => loader?.remove();
 
   // The grid's reveal runs the whole length of the loader and completes as it ends. How long the
   // loader lasts is only known once the page is ready, so until then the reveal eases towards
@@ -370,23 +340,13 @@
 
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
-    // all at once: the planet glides up into its place as the hero starts drawing itself in and
-    // the loader clears off it, while the grid runs on to its edges in the hero, completing with
-    // the hero's intro
+    // all at once: the planet fades as the hero starts drawing itself in and the loader clears
+    // off it, while the grid runs on to its edges in the hero, completing with the hero's intro
     finishGrid(GRID_END);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
-    loader.querySelectorAll('.loader__logo').forEach((el) =>
-      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: LOGO_FADE, easing: ease, fill: 'forwards' })
+    loader.querySelectorAll('.loader__logo, .loader__planet').forEach((el) =>
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: PLANET_FADE, easing: ease, fill: 'forwards' })
     );
-    // from the pose the loader holds it in, wherever the window has been resized to meanwhile
-    const pose = loaderPose();
-    globe.style.transform = '';
-    const glide = { duration: GLIDE, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' };
-    globe.animate([{ transform: pose }, { transform: 'none' }], glide);
-    // the design's frame closes in on the globe and the shade comes up under the copy as it goes
-    const frame = $('.hero__planet');
-    frame.animate([{ clipPath: getComputedStyle(frame).clipPath }, { clipPath: 'inset(0px)' }], glide);
-    $('.hero__shade').animate([{ opacity: 0 }, { opacity: 1 }], glide);
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();
