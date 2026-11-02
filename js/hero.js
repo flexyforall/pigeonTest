@@ -205,15 +205,15 @@
   // The copy moves up on a screen lower than the design's (css .hero__content: sizes follow the
   // width, the hero the height), so the planet follows it by as much, keeping the copy at the
   // foot of its dome: lifted up to LIFT (so the dome's top stays clear of the header), then made
-  // smaller about its top for the rest.
-  const LIFT = 60;
+  // smaller about its top (65 down the box) for the rest.
+  const LIFT = 36;
   const fitBox = $('.hero__fit');
   function fitGlobe() {
     if (!fitBox) return;
-    const k = Math.min(1.25, Math.max(1, window.innerWidth / 1440)); // --px
-    const short = Math.max(0, 810 * k - hero.clientHeight);
-    const lift = Math.min(short, LIFT * k);
-    const scale = Math.max(0.7, 1 - (short - lift) / (280 * k));
+    const px = Math.min(1.25, Math.max(1, window.innerWidth / 1440)); // --px
+    const short = Math.max(0, 810 * px - hero.clientHeight);
+    const lift = Math.min(short, LIFT * px);
+    const scale = Math.max(0.6, 1 - (short - lift) / (215 * px)); // the copy is 215 below the top
     fitBox.style.setProperty('--globe-lift', `${lift.toFixed(1)}px`);
     fitBox.style.setProperty('--globe-scale', scale.toFixed(4));
   }
@@ -287,7 +287,8 @@
   const LOGO_FADE = 600;
   const FADE = 700; // the loader's own fade, over the hero's start
   const GLIDE = 1600; // the planet's way up into the hero
-  const LOADER_SCALE = 0.8;
+  const LOADER_SIZE = 188; // the globe's width in the loader, design px
+  const k = () => Math.min(1.25, Math.max(1, window.innerWidth / 1440)); // --px
   const globe = $('.hero__globe');
   const GRID_END = 2000; // from the hand-over to the grid's full reveal, with the hero's intro
 
@@ -307,18 +308,21 @@
     hero.classList.remove('is-loading');
   };
 
-  // the loader's pose: the planet's visible dome (from the globe's top to where it fades under the
-  // shade; its middle is about 42% down the frame) centred on the screen, a little smaller
+  // the loader's pose: the planet's globe (in the loader all of the clip shows, from the globe's
+  // top 119 down its frame to where it fades out, about 580) centred on the screen, at the size
+  // of the loader's former sphere: 188 across (the globe is 603)
   function loaderPose() {
     globe.style.transform = 'none'; // measured in its own place
     const box = globe.getBoundingClientRect();
     const frame = $('.hero__planet').getBoundingClientRect();
     const x = frame.left + frame.width / 2 - box.left;
-    const y = frame.top + frame.height * 0.42 - box.top;
+    const unit = frame.height / 472; // the design's px, as laid out (with the fit)
+    const y = frame.top + 349 * unit - box.top;
     const dx = window.innerWidth / 2 - (box.left + x);
     const dy = window.innerHeight / 2 - (box.top + y);
+    const scale = (LOADER_SIZE * k()) / (603 * unit);
     globe.style.transformOrigin = `${x}px ${y}px`;
-    return `translate(${dx}px, ${dy}px) scale(${LOADER_SCALE})`;
+    return `translate(${dx}px, ${dy}px) scale(${scale})`;
   }
   if (loader && globe && !reduceMotion) {
     hero.classList.add('is-loading');
@@ -377,7 +381,12 @@
     // from the pose the loader holds it in, wherever the window has been resized to meanwhile
     const pose = loaderPose();
     globe.style.transform = '';
-    globe.animate([{ transform: pose }, { transform: 'none' }], { duration: GLIDE, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' });
+    const glide = { duration: GLIDE, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' };
+    globe.animate([{ transform: pose }, { transform: 'none' }], glide);
+    // the design's frame closes in on the globe and the shade comes up under the copy as it goes
+    const frame = $('.hero__planet');
+    frame.animate([{ clipPath: getComputedStyle(frame).clipPath }, { clipPath: 'inset(0px)' }], glide);
+    $('.hero__shade').animate([{ opacity: 0 }, { opacity: 1 }], glide);
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();

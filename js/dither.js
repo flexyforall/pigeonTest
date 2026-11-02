@@ -119,8 +119,11 @@
 
     return function draw() {
       if (video.readyState < 2 || !video.videoWidth) return;
-      const w = Math.max(1, Math.round(media.clientWidth));
-      const h = Math.max(1, Math.round(media.clientHeight));
+      // one cell per pixel as shown, so a clip drawn smaller (the planet in the loader, on its
+      // way into the hero) is dithered at that size rather than shrunk after
+      const box = media.getBoundingClientRect();
+      const w = Math.max(1, Math.round(box.width));
+      const h = Math.max(1, Math.round(box.height));
       const zoom = parseFloat(video.style.getPropertyValue('--zoom')) || 1;
       const key = `${video.currentTime}|${w}|${h}|${zoom}`;
       if (key === last) return;
