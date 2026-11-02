@@ -69,14 +69,15 @@
   <div class="hero__frame">
     <!-- Header -->
     <header class="header">
-      <!-- the logo takes the hero back to its default -->
-      <a class="header__logo" href="/" aria-label="PigeonM — home" data-intro="header" data-target="home">
+      <!-- the logo goes to the home page; on it, it takes the hero back to its default -->
+      <a class="header__logo" href="index.html" aria-label="PigeonM — home" data-intro="header" data-target="home">
         <img src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
       </a>
 
       <nav class="audience" role="tablist" aria-label="Audience" data-intro="header">
         <span class="audience__indicator" aria-hidden="true"></span>
-        <button class="audience__tab" role="tab" aria-selected="false" data-target="business">Business</button>
+        <!-- Business has a page of its own -->
+        <a class="audience__tab" href="business.html" data-target="business" data-page>Business</a>
         <button class="audience__tab" role="tab" aria-selected="false" data-target="residential">Residential</button>
         <button class="audience__tab" role="tab" aria-selected="false" data-target="mobile">Mobile</button>
       </nav>
@@ -127,7 +128,7 @@
         </div>
         <h2 class="panel__title" data-split>Business WiFi that covers every corner of your operation</h2>
         <p class="panel__text">From offices and clinics to fleets, vessels and aircraft. We design, install and manage your network, sized to your space and fully supported.</p>
-        <a class="btn btn--mint" href="#start"><span>Get started</span></a>
+        <a class="btn btn--mint" href="business.html"><span>Get started</span></a>
       </div>
 
       <div class="panel" data-panel="residential" aria-hidden="true">

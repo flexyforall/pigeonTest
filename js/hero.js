@@ -392,8 +392,12 @@
     busy = false;
   }
 
-  tabs.forEach((t) => t.addEventListener('click', () => setState(t.dataset.target)));
-  $('.header__logo').addEventListener('click', (e) => {
+  // a tab for an audience with a page of its own (data-page) simply goes there
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    if (!('page' in t.dataset)) setState(t.dataset.target);
+  }));
+  // on the home page the logo takes the hero back to its default; elsewhere it goes home
+  $('.header__logo[data-target="home"]')?.addEventListener('click', (e) => {
     e.preventDefault();
     setState('home');
   });
