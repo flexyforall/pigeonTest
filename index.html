@@ -11,8 +11,7 @@
   <script src="js/sections.js" defer></script>
   <script src="js/connectivity.js" defer></script>
   <script src="js/dither.js" defer></script>
-  <script src="js/plans.js" defer></script>
-  <script src="js/services.js" defer></script>
+  <script src="js/connect.js" defer></script>
   <script src="js/testimonials.js" defer></script>
   <script src="js/faq.js" defer></script>
   <script src="js/plus-grid.js" defer></script>
@@ -331,347 +330,95 @@
   </div>
 </section>
 
-<section class="plans" aria-labelledby="plans-title">
-  <div class="plans__frame">
-    <div class="plans__head">
-      <span class="plans__mark" aria-hidden="true"></span>
-      <h2 class="section-title" id="plans-title">Coverage starts with your space.</h2>
+<!-- Reliability ("Reliability by design.", Figma 343:11928) -->
+<section class="reliability" aria-labelledby="reliability-title">
+  <div class="reliability__frame">
+    <div class="reliability__head">
+      <div class="reliability__title">
+        <span class="reliability__mark" aria-hidden="true"></span>
+        <h2 class="section-title" id="reliability-title">Reliability by design.</h2>
+      </div>
+      <p class="reliability__desc">Two internet connections and backup power work together to help keep your home or business online, even when disruptions happen.</p>
     </div>
-    <div class="plans__content">
-      <div class="plans__tabs" role="tablist" aria-label="Space type">
-        <span class="plans__indicator" aria-hidden="true"></span>
-        <button class="plan-tab is-active" role="tab" id="tab-small-office" aria-controls="plan-small-office" aria-selected="true" data-plan="small-office">
-          <span class="plan-tab__name">Small Office</span>
-          <span class="plan-tab__aps">1–2 APs</span>
-        </button>
-        <button class="plan-tab" role="tab" id="tab-retail" aria-controls="plan-retail" aria-selected="false" data-plan="retail">
-          <span class="plan-tab__name">Retail Showroom</span>
-          <span class="plan-tab__aps">2 APs</span>
-        </button>
-        <button class="plan-tab" role="tab" id="tab-clinic" aria-controls="plan-clinic" aria-selected="false" data-plan="clinic">
-          <span class="plan-tab__name">Medical Clinic</span>
-          <span class="plan-tab__aps">3 APs</span>
-        </button>
-        <button class="plan-tab" role="tab" id="tab-restaurant" aria-controls="plan-restaurant" aria-selected="false" data-plan="restaurant">
-          <span class="plan-tab__name">Restaurant</span>
-          <span class="plan-tab__aps">2 APs</span>
-        </button>
-        <button class="plan-tab" role="tab" id="tab-warehouse" aria-controls="plan-warehouse" aria-selected="false" data-plan="warehouse">
-          <span class="plan-tab__name">Warehouse</span>
-          <span class="plan-tab__aps">3–4 APs</span>
-        </button>
-      </div>
-      <div class="plans__panel" role="tabpanel" id="plan-small-office" aria-labelledby="tab-small-office">
-        <div class="plans__info">
-          <div class="plans__texts">
-            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
-            <div class="plans__copy">
-              <div class="plans__heading">
-                <h3 class="plans__title">Small Office</h3>
-                <p class="plans__tags"><span>5–20 employees</span><span class="plans__bullet" aria-hidden="true"></span><span>800–2,000 sq ft</span></p>
-              </div>
-              <p class="plans__desc">Every office is different. We build your network around the way you work, handling setup and support so your team can stay focused.</p>
-            </div>
-          </div>
-          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+    <!-- the illustration is still to come: a placeholder, as in the design -->
+    <div class="reliability__illus" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="82" height="82"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM6 17l3-4 2 3 3-4 4 5H6z"/></svg>
+    </div>
+    <div class="benefits__row solana__row reliability__row">
+      <article class="benefit">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <div class="benefit__text">
+          <h3 class="benefit__title">Dual connections</h3>
+          <p class="benefit__desc">Two internet connections reduce reliance<br>on a single line.</p>
         </div>
-        <div class="plans__illus" aria-hidden="true">
-          <div class="plans__plan">
-            <img loading="lazy" src="assets/plans/small-office.svg" width="680" height="438" alt="">
-            <span class="plans__label" style="--x: 131; --y: 117">Meeting room</span>
-            <span class="plans__label" style="--x: 316; --y: 101">Private room</span>
-            <span class="plans__label" style="--x: 553; --y: 100">Server</span>
-            <span class="plans__label" style="--x: 381; --y: 178">Hallway</span>
-            <span class="plans__label" style="--x: 174; --y: 280">Open space</span>
-            <span class="plans__label" style="--x: 499; --y: 289">Restroom</span>
-            <span class="plans__signal" style="--x: 58; --y: 50; --w: 284; --h: 333"><i style="--x: 29; --y: 292"></i></span>
-            <span class="plans__signal" style="--x: 342; --y: 50; --w: 280; --h: 333"><i style="--x: 242; --y: 25"></i></span>
-          </div>
+      </article>
+      <article class="benefit">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <div class="benefit__text">
+          <h3 class="benefit__title">Backup power</h3>
+          <p class="benefit__desc">Backup power helps keep network equipment<br>running during outages.</p>
         </div>
-      </div>
-      <div class="plans__panel" role="tabpanel" id="plan-retail" aria-labelledby="tab-retail" hidden>
-        <div class="plans__info">
-          <div class="plans__texts">
-            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
-            <div class="plans__copy">
-              <div class="plans__heading">
-                <h3 class="plans__title">Retail Showroom</h3>
-                <p class="plans__tags"><span>Customer-facing retail</span><span class="plans__bullet" aria-hidden="true"></span><span>1,500–4,000 sq ft</span></p>
-              </div>
-              <p class="plans__desc">Great shopping experiences depend on the details. Keep payments, staff devices, and customer WiFi running smoothly from the showroom floor to checkout.</p>
-            </div>
-          </div>
-          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
+      </article>
+      <article class="benefit">
+        <img loading="lazy" class="benefit__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
+        <img loading="lazy" class="benefit__icon" src="assets/icons/dot-wave.svg" width="50" height="50" alt="" aria-hidden="true">
+        <div class="benefit__text">
+          <h3 class="benefit__title">Built for reliability</h3>
+          <p class="benefit__desc">A more resilient network for your home, business,<br>and everyday life.</p>
         </div>
-        <div class="plans__illus" aria-hidden="true">
-          <div class="plans__plan">
-            <img loading="lazy" src="assets/plans/retail.svg" width="680" height="435" alt="">
-            <span class="plans__label" style="--x: 261; --y: 246">Sales floor</span>
-            <span class="plans__label" style="--x: 147; --y: 88">Stock room</span>
-            <span class="plans__label" style="--x: 348; --y: 86">Back office</span>
-            <span class="plans__label" style="--x: 510; --y: 201">Fitting room</span>
-            <span class="plans__label" style="--x: 568; --y: 88">WC</span>
-            <span class="plans__signal" style="--x: 55; --y: 48; --w: 571; --h: 188"><i style="--x: 265; --y: 65"></i></span>
-            <span class="plans__signal" style="--x: 55; --y: 236; --w: 571; --h: 151"><i style="--x: 530; --y: 111"></i></span>
-          </div>
-        </div>
-      </div>
-      <div class="plans__panel" role="tabpanel" id="plan-clinic" aria-labelledby="tab-clinic" hidden>
-        <div class="plans__info">
-          <div class="plans__texts">
-            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
-            <div class="plans__copy">
-              <div class="plans__heading">
-                <h3 class="plans__title">Medical Clinic</h3>
-                <p class="plans__tags"><span>Multi-room clinic</span><span class="plans__bullet" aria-hidden="true"></span><span>2,000–6,000 sq ft</span></p>
-              </div>
-              <p class="plans__desc">Patient care comes first. Give your staff and connected systems the reliable, secure network they need to keep daily operations running smoothly.</p>
-            </div>
-          </div>
-          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-        </div>
-        <div class="plans__illus" aria-hidden="true">
-          <div class="plans__plan">
-            <img loading="lazy" src="assets/plans/clinic.svg" width="680" height="436" alt="">
-            <span class="plans__label" style="--x: 93; --y: 99">Exam room</span>
-            <span class="plans__label" style="--x: 212; --y: 99">Exam room</span>
-            <span class="plans__label" style="--x: 334; --y: 99">Exam room</span>
-            <span class="plans__label" style="--x: 456; --y: 247">WC</span>
-            <span class="plans__label" style="--x: 528; --y: 315">Waiting</span>
-            <span class="plans__label" style="--x: 206; --y: 300">Lab / Imaging</span>
-            <span class="plans__signal" style="--x: 54; --y: 47; --w: 281; --h: 339"><i style="--x: 33; --y: 306"></i></span>
-            <span class="plans__signal" style="--x: 335; --y: 47; --w: 290; --h: 164"><i style="--x: 250; --y: 25"></i></span>
-            <span class="plans__signal" style="--x: 335; --y: 211; --w: 290; --h: 175"><i style="--x: 236; --y: 127"></i></span>
-          </div>
-        </div>
-      </div>
-      <div class="plans__panel" role="tabpanel" id="plan-restaurant" aria-labelledby="tab-restaurant" hidden>
-        <div class="plans__info">
-          <div class="plans__texts">
-            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
-            <div class="plans__copy">
-              <div class="plans__heading">
-                <h3 class="plans__title">Restaurant</h3>
-                <p class="plans__tags"><span>Dining + kitchen</span><span class="plans__bullet" aria-hidden="true"></span><span>2,500–5,000 sq ft</span></p>
-              </div>
-              <p class="plans__desc">From the first order to the final payment, keep your restaurant connected. Reliable WiFi for your team, your systems, and your guests.</p>
-            </div>
-          </div>
-          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-        </div>
-        <div class="plans__illus" aria-hidden="true">
-          <div class="plans__plan">
-            <img loading="lazy" src="assets/plans/restaurant.svg" width="680" height="431.2" alt="">
-            <span class="plans__label" style="--x: 292; --y: 245">Dining Area</span>
-            <span class="plans__label" style="--x: 261; --y: 102">Kitchen</span>
-            <span class="plans__label" style="--x: 542; --y: 196">Bar</span>
-            <span class="plans__label" style="--x: 442; --y: 96">Restroom</span>
-            <span class="plans__signal" style="--x: 57; --y: 46; --w: 287; --h: 338"><i style="--x: 38; --y: 30"></i></span>
-            <span class="plans__signal" style="--x: 344; --y: 46; --w: 279; --h: 338"><i style="--x: 236; --y: 295"></i></span>
-          </div>
-        </div>
-      </div>
-      <div class="plans__panel" role="tabpanel" id="plan-warehouse" aria-labelledby="tab-warehouse" hidden>
-        <div class="plans__info">
-          <div class="plans__texts">
-            <img loading="lazy" class="plans__icon" src="assets/icons/dot-star.svg" width="50" height="50" alt="">
-            <div class="plans__copy">
-              <div class="plans__heading">
-                <h3 class="plans__title">Warehouse</h3>
-                <p class="plans__tags"><span>Industrial storage</span><span class="plans__bullet" aria-hidden="true"></span><span>10,000–50,000 sq ft</span></p>
-              </div>
-              <p class="plans__desc">Keep your operation connected across large, demanding spaces. Reliable WiFi for inventory systems, scanners, and teams on the move.</p>
-            </div>
-          </div>
-          <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-        </div>
-        <div class="plans__illus" aria-hidden="true">
-          <div class="plans__plan">
-            <img loading="lazy" src="assets/plans/warehouse.svg" width="680" height="453.33" alt="">
-            <span class="plans__label" style="--x: 74; --y: 76.67">Break</span>
-            <span class="plans__label" style="--x: 257; --y: 156.67">Storage zone</span>
-            <span class="plans__label" style="--x: 298; --y: 303.67">Shipping doc</span>
-            <span class="plans__signal" style="--x: 53; --y: 42; --w: 127; --h: 158"><i style="--x: 17; --y: 14.67"></i></span>
-            <span class="plans__signal" style="--x: 53; --y: 200; --w: 127; --h: 155"><i style="--x: 17; --y: 125.67"></i></span>
-            <span class="plans__signal" style="--x: 180; --y: 42; --w: 220; --h: 313"><i style="--x: 96; --y: 86.67"></i></span>
-            <span class="plans__signal" style="--x: 400; --y: 42; --w: 229; --h: 313"><i style="--x: 112; --y: 23.67"></i></span>
-          </div>
-        </div>
-      </div>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="steps" aria-labelledby="steps-title">
-  <div class="steps__frame">
-    <div class="steps__head">
-      <span class="steps__mark" aria-hidden="true"></span>
-      <h2 class="section-title" id="steps-title">From setup to always on.</h2>
+<!-- Services ("Connectivity for every part of your life.", Figma 344:13312 and its states) -->
+<section class="connect" aria-labelledby="connect-title">
+  <div class="connect__frame">
+    <div class="connect__head">
+      <span class="connect__mark" aria-hidden="true"></span>
+      <h2 class="section-title" id="connect-title">Connectivity for every part of your life.</h2>
     </div>
-    <ol class="steps__row">
-    <li class="step">
-      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-      <span class="step__num" aria-hidden="true">01</span>
-      <div class="step__text">
-        <h3 class="step__title">Site survey</h3>
-        <p class="step__desc">We map your space</p>
+    <div class="connect__body">
+      <div class="connect__side">
+        <ul class="connect__list" role="tablist" aria-label="Services">
+          <li><button class="connect__item is-active" type="button" role="tab" aria-selected="true" data-connect="business">Business Internet</button></li>
+          <li><button class="connect__item" type="button" role="tab" aria-selected="false" data-connect="home">Home Internet</button></li>
+          <li><button class="connect__item" type="button" role="tab" aria-selected="false" data-connect="mobile">Mobile</button></li>
+          <li><button class="connect__item" type="button" role="tab" aria-selected="false" data-connect="partnerships">Partnerships</button></li>
+        </ul>
+        <div class="connect__copies">
+        <div class="connect__copy is-active" data-connect="business">
+          <p class="connect__desc">Internet built around your operations, from individual<br>workplaces to entire buildings.</p>
+          <a class="btn btn--dark btn--s" href="business.html"><span>Learn more</span></a>
+        </div>
+        <div class="connect__copy" data-connect="home" aria-hidden="true">
+          <p class="connect__desc">Reliable internet coverage designed for private homes<br>and entire residential buildings.</p>
+          <a class="btn btn--dark btn--s" href="#home-internet"><span>Learn more</span></a>
+        </div>
+        <div class="connect__copy" data-connect="mobile" aria-hidden="true">
+          <p class="connect__desc">Mobile lines, device activation, and global Wi-Fi access<br>through the Pigeon M app.</p>
+          <a class="btn btn--dark btn--s" href="#mobile"><span>Learn more</span></a>
+        </div>
+        <div class="connect__copy" data-connect="partnerships" aria-hidden="true">
+          <p class="connect__desc">Connectivity solutions for schools, organizations,<br>and communities.</p>
+          <a class="btn btn--dark btn--s" href="#partnerships"><span>Learn more</span></a>
+        </div>
+        </div>
       </div>
-    </li>
-    <li class="step">
-      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-      <span class="step__num" aria-hidden="true">02</span>
-      <div class="step__text">
-        <h3 class="step__title">Install</h3>
-        <p class="step__desc">We place every access point</p>
+      <div class="connect__media">
+      <img class="connect__img is-active" data-connect="business" src="assets/connect/business.webp" loading="lazy" width="760" height="560" alt="">
+      <img class="connect__img" data-connect="home" src="assets/connect/home.webp" loading="lazy" width="760" height="560" alt="">
+      <img class="connect__img" data-connect="mobile" src="assets/connect/mobile.webp" loading="lazy" width="760" height="560" alt="">
+      <img class="connect__img" data-connect="partnerships" src="assets/connect/partnerships.webp" loading="lazy" width="760" height="560" alt="">
       </div>
-    </li>
-    <li class="step">
-      <img loading="lazy" class="step__grid" src="assets/patterns/plus-grid.svg" width="691" height="503" alt="" aria-hidden="true">
-      <img loading="lazy" class="step__fade" src="assets/patterns/fade-white.svg" alt="" aria-hidden="true">
-      <span class="step__num" aria-hidden="true">03</span>
-      <div class="step__text">
-        <h3 class="step__title">We run it</h3>
-        <p class="step__desc">Monitoring and support 24/7</p>
-      </div>
-    </li>
-      <li class="steps__sweep" aria-hidden="true"></li>
-    </ol>
-  </div>
-  <!-- the band closing the section holds the call to action in its middle cell (Figma 321:8569) -->
-  <div class="divider divider--white">
-    <i aria-hidden="true"></i>
-    <a class="divider__cta" href="#start"><span class="steps__btn">Get started</span></a>
-    <i aria-hidden="true"></i>
-  </div>
-</section>
-
-<section class="services" aria-labelledby="services-title">
-  <div class="services__frame">
-    <div class="services__head">
-      <span class="services__mark" aria-hidden="true"></span>
-      <h2 class="section-title" id="services-title">Good connections go beyond WiFi</h2>
     </div>
-    <ul class="services__row" role="tablist" aria-label="Services">
-      <li class="svc is-active" role="presentation">
-        <button class="svc__tab" type="button" role="tab" id="svc-tab-internet" aria-controls="svc-internet" aria-selected="true">
-          <span class="svc__name">Internet</span>
-          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
-        </button>
-        <div class="svc__card" role="tabpanel" id="svc-internet" aria-labelledby="svc-tab-internet">
-          <span class="svc__art" style="--r: -431.5; --t: -197.5; --w: 1452; --h: 817"><img loading="lazy" src="assets/services/internet.jpg" width="1452" height="817" alt=""></span>
-          <p class="svc__label">Internet</p>
-          <div class="svc__body">
-            <div class="svc__texts">
-              <h3 class="svc__title">Speed is only part of the story</h3>
-              <p class="svc__desc">A plan sized to your space, so every room gets a strong signal. With speeds up to 10 Gbps available, coverage always comes first.</p>
-            </div>
-            <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-          </div>
-          <ul class="svc__items">
-            <li>WiFi router included</li>
-            <li>Unlimited data, no throttling</li>
-            <li>Free professional installation</li>
-            <li>No long-term contracts</li>
-          </ul>
-        </div>
-      </li>
-      <li class="svc" role="presentation">
-        <button class="svc__tab" type="button" role="tab" id="svc-tab-managed-it" aria-controls="svc-managed-it" aria-selected="false" tabindex="-1">
-          <span class="svc__name">Managed IT</span>
-          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
-        </button>
-        <div class="svc__card" role="tabpanel" id="svc-managed-it" aria-labelledby="svc-tab-managed-it">
-          <span class="svc__art" style="--r: -342.5; --t: -146.5; --w: 1157; --h: 651"><img loading="lazy" src="assets/services/managed-it.jpg" width="1157" height="651" alt=""></span>
-          <p class="svc__label">Managed IT</p>
-          <div class="svc__body">
-            <div class="svc__texts">
-              <h3 class="svc__title">Your IT should work without<br>a second thought</h3>
-              <p class="svc__desc">Technology should make work easier, not give you more to manage. From everyday technical issues to ongoing maintenance, we help keep your systems running smoothly.</p>
-            </div>
-            <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-          </div>
-          <ul class="svc__items">
-            <li>Network &amp; device assistance</li>
-            <li>IT troubleshooting</li>
-            <li>Cloud protection options</li>
-            <li>Ongoing maintenance</li>
-          </ul>
-        </div>
-      </li>
-      <li class="svc" role="presentation">
-        <button class="svc__tab" type="button" role="tab" id="svc-tab-security" aria-controls="svc-security" aria-selected="false" tabindex="-1">
-          <span class="svc__name">Security Cameras</span>
-          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
-        </button>
-        <div class="svc__card" role="tabpanel" id="svc-security" aria-labelledby="svc-tab-security">
-          <span class="svc__art" style="--r: -431.5; --t: -187.5; --w: 1342; --h: 755"><img loading="lazy" src="assets/services/security.jpg" width="1342" height="755" alt=""></span>
-          <p class="svc__label">Security Cameras</p>
-          <div class="svc__body">
-            <div class="svc__texts">
-              <h3 class="svc__title">Know what&#39;s happening<br>when you&#39;re not there</h3>
-              <p class="svc__desc">Keep an eye on your property with intelligent detection, cloud video storage, and sharp 4K footage — without having to watch every second.</p>
-            </div>
-            <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-          </div>
-          <ul class="svc__items">
-            <li>AI-powered detection</li>
-            <li>Cloud video storage</li>
-            <li>4K video resolution</li>
-            <li>2, 4 or 8-camera setups</li>
-          </ul>
-        </div>
-      </li>
-      <li class="svc" role="presentation">
-        <button class="svc__tab" type="button" role="tab" id="svc-tab-wifi-calling" aria-controls="svc-wifi-calling" aria-selected="false" tabindex="-1">
-          <span class="svc__name">WiFi Calling</span>
-          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
-        </button>
-        <div class="svc__card" role="tabpanel" id="svc-wifi-calling" aria-labelledby="svc-tab-wifi-calling">
-          <span class="svc__art" style="--r: -418.5; --t: -121.5; --w: 1267; --h: 713"><img loading="lazy" src="assets/services/wifi-calling.jpg" width="1267" height="713" alt=""></span>
-          <p class="svc__label">WiFi Calling</p>
-          <div class="svc__body">
-            <div class="svc__texts">
-              <h3 class="svc__title">A weak signal shouldn&#39;t<br>end the conversation</h3>
-              <p class="svc__desc">Stay reachable even where cellular reception falls short. Make and receive calls over WiFi while keeping the number your customers already know.</p>
-            </div>
-            <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-          </div>
-          <ul class="svc__items">
-            <li>Make &amp; receive calls over WiFi</li>
-            <li>Calling in weak-signal areas</li>
-            <li>Keep your existing number</li>
-            <li>Free number porting</li>
-          </ul>
-        </div>
-      </li>
-      <li class="svc" role="presentation">
-        <button class="svc__tab" type="button" role="tab" id="svc-tab-support" aria-controls="svc-support" aria-selected="false" tabindex="-1">
-          <span class="svc__name">Customer Support</span>
-          <img loading="lazy" class="svc__plus" src="assets/icons/plus.svg" width="24" height="24" alt="">
-        </button>
-        <div class="svc__card" role="tabpanel" id="svc-support" aria-labelledby="svc-tab-support">
-          <span class="svc__art" style="--r: -456.5; --t: -86.5; --w: 1348; --h: 759"><img loading="lazy" src="assets/services/support.jpg" width="1348" height="759" alt=""></span>
-          <p class="svc__label">Customer Support</p>
-          <div class="svc__body">
-            <div class="svc__texts">
-              <h3 class="svc__title">We&#39;re here long after the install</h3>
-              <p class="svc__desc">Getting connected is just the beginning. Whether you have a question or something needs fixing, our team is here around the clock to help keep your business moving.</p>
-            </div>
-            <a class="btn btn--dark" href="#start"><span>Get started</span></a>
-          </div>
-          <ul class="svc__items">
-            <li>Expert support 24/7</li>
-            <li>Priority business assistance</li>
-            <li>Dedicated account managers</li>
-            <li>Ongoing technical support</li>
-          </ul>
-        </div>
-      </li>
-    </ul>
   </div>
-  <div class="divider divider--white" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="divider divider--white divider--connect" aria-hidden="true"><i></i><i></i></div>
 </section>
 
 <section class="network" aria-labelledby="network-title">

@@ -10,7 +10,7 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const wide = window.matchMedia('(min-width: 961px)');
 
-  const SCOPE = '.benefits, .divider, .plans, .steps, .services, .network, .solana, .about, .testimonials, .faq, .cta, .footer';
+  const SCOPE = '.benefits, .divider, .plans, .steps, .services, .reliability, .connect, .network, .solana, .about, .testimonials, .faq, .cta, .footer';
   const FRONT = 0.9; // the drawing front, as a share of the screen height from its top
   const SWEEP = 0.2; // share of the screen height a horizontal line takes to draw across: it
   // sets off as it comes up over the screen's bottom edge and is in well before mid-screen

@@ -927,7 +927,7 @@ body { background: var(--c-page); }
 
 /* ===== Layout grid drawn in with the scroll (js/grid.js) ===== */
 /* the sections' own rules give way to the drawn ones */
-.grid-drawn :is(.benefits, .divider, .plans, .steps, .services, .network, .solana, .about, .testimonials, .faq, .cta, .footer) { --c-rule: transparent; }
+.grid-drawn :is(.benefits, .divider, .plans, .steps, .services, .reliability, .connect, .network, .solana, .about, .testimonials, .faq, .cta, .footer) { --c-rule: transparent; }
 .grid-lines {
   position: absolute;
   top: 0;
@@ -1958,4 +1958,228 @@ body { background: var(--c-page); }
   .footer__brand { width: 100%; gap: 32px; }
   .footer__menu { flex: 1 0 50%; }
   .footer__socials { flex-direction: row; width: 100%; height: 64px; }
+}
+
+/* ===== Reliability ("Reliability by design.", Figma 343:11928) ===== */
+/* on white: the framed column with a 160 band on top (dotted at its corners), then the heading
+   cell and the description beside it, the illustration, and the benefit cards */
+.reliability { background: var(--c-white); }
+.reliability__frame {
+  display: flex;
+  flex-direction: column;
+  margin: 0 max(40px, calc((100% - 1760px) / 2));
+  padding-top: calc(160 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) right 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px top calc(160 * var(--px) - 13px) / 4px 4px no-repeat,
+    var(--dot) right 9px top calc(160 * var(--px) - 13px) / 4px 4px no-repeat;
+}
+.reliability__head { display: flex; box-shadow: inset 0 1px var(--c-rule); }
+.reliability__title {
+  position: relative;
+  flex: 1 0 0;
+  min-width: 0;
+  padding: calc(60 * var(--px)) calc(40 * var(--px));
+  color: var(--c-ink);
+}
+.reliability__title .section-title { position: relative; }
+/* mint block behind "by design." */
+.reliability__mark {
+  position: absolute;
+  top: calc(59.5 * var(--px));
+  left: calc(213 * var(--px));
+  width: calc(193 * var(--px));
+  height: calc(46 * var(--px));
+  background: var(--c-mint);
+}
+.reliability__desc {
+  display: flex;
+  align-items: center;
+  width: calc(540 * var(--px));
+  margin: 0;
+  padding: calc(60 * var(--px)) calc(40 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule);
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink-muted);
+}
+/* a placeholder for the illustration to come, as in the design */
+.reliability__illus {
+  display: grid;
+  place-items: center;
+  height: calc(600 * var(--px));
+  background: #f8f8f8; /* background/primaryGray */
+  box-shadow: inset 0 1px var(--c-rule);
+  color: #c9cbcb;
+}
+.reliability__illus svg { width: calc(82 * var(--px)); height: calc(82 * var(--px)); }
+.reliability__row { box-shadow: inset 0 1px var(--c-rule), inset 0 -1px var(--c-rule); }
+
+/* ===== Services ("Connectivity for every part of your life.", Figma 344:13312) ===== */
+/* four services picked from a list on the left: the picked one grows into a heading with an accent
+   square, its description and link below, its picture on the right (js/connect.js) */
+.connect { background: var(--c-white); }
+.connect__frame {
+  display: flex;
+  flex-direction: column;
+  gap: calc(60 * var(--px));
+  margin: 0 max(40px, calc((100% - 1760px) / 2));
+  padding-top: calc(160 * var(--px));
+  box-shadow: inset 1px 0 var(--c-rule), inset -1px 0 var(--c-rule);
+  background:
+    var(--dot) left 9px top 9px / 4px 4px no-repeat,
+    var(--dot) right 9px top 9px / 4px 4px no-repeat,
+    var(--dot) left 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat,
+    var(--dot) right 9px top calc(260 * var(--px) - 13px) / 4px 4px no-repeat;
+}
+.connect__head {
+  position: relative;
+  padding: 0 40px;
+  color: var(--c-ink);
+  text-align: center;
+}
+.connect__head .section-title { position: relative; }
+/* mint block behind "part of your life." */
+.connect__mark {
+  position: absolute;
+  top: calc(-2 * var(--px));
+  left: calc(50% + 200 * var(--px));
+  width: calc(290 * var(--px));
+  height: calc(46 * var(--px));
+  transform: translateX(-50%);
+  background: var(--c-mint);
+}
+.connect__body {
+  display: flex;
+  height: calc(560 * var(--px));
+  box-shadow: inset 0 1px var(--c-rule);
+}
+.connect__side {
+  display: flex;
+  flex-direction: column;
+  width: calc(600 * var(--px));
+  flex: none;
+  box-shadow: inset -1px 0 var(--c-rule);
+}
+.connect__list {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(16 * var(--px));
+  margin: 0;
+  padding: calc(32 * var(--px));
+  list-style: none;
+}
+.connect__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--f-display);
+  font-size: calc(20 * var(--px));
+  font-weight: 700;
+  line-height: calc(24 * var(--px));
+  letter-spacing: calc(-0.2 * var(--px));
+  text-align: left;
+  color: rgba(16, 17, 17, 0.4); /* text/tertiary */
+  transition: font-size 0.5s var(--ease-out), line-height 0.5s var(--ease-out), color 0.4s ease;
+}
+.connect__item:hover { color: rgba(16, 17, 17, 0.7); }
+/* the accent square on the picked one */
+.connect__item::after {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: #59b293; /* icon/accentForLight */
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.4s ease, transform 0.5s var(--ease-out);
+}
+.connect__item.is-active {
+  font-size: calc(32 * var(--px));
+  font-weight: 600;
+  line-height: calc(36 * var(--px));
+  letter-spacing: calc(-0.48 * var(--px));
+  color: var(--c-ink);
+  cursor: default;
+}
+.connect__item.is-active::after { opacity: 1; transform: none; }
+.connect__copies { display: grid; box-shadow: inset 0 1px var(--c-rule), inset -1px 0 var(--c-rule); }
+.connect__copy {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(24 * var(--px));
+  padding: calc(32 * var(--px));
+}
+.connect__copy:not(.is-active) { visibility: hidden; }
+.connect__desc {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+  color: var(--c-ink);
+}
+/* the small dark button: 44 high, label/S */
+.btn--s {
+  height: calc(44 * var(--px));
+  padding: calc(12 * var(--px)) calc(20 * var(--px));
+  font-size: calc(14 * var(--px));
+  line-height: calc(20 * var(--px));
+}
+.connect__media {
+  position: relative;
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+/* the pictures, as Figma renders them (pixelated, then dithered) */
+.connect__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.connect__img.is-active { opacity: 1; z-index: 1; }
+/* the band below: two columns, in line with the list and the picture */
+.divider--connect i:first-child { flex: 0 0 calc(600 * var(--px)); }
+
+.is-pending .reliability__head,
+.is-pending .reliability__row .benefit > *,
+.is-pending .connect__head,
+.is-pending .connect__side > *,
+.is-pending .connect__media { visibility: hidden; }
+
+@media (max-width: 960px) {
+  .reliability__frame, .connect__frame { margin: 0 16px; padding-top: 64px; }
+  .reliability__head { flex-direction: column; }
+  .reliability__title { padding: 40px 20px; }
+  .reliability__desc { width: auto; padding: 24px 20px 40px; box-shadow: none; }
+  .reliability__illus { height: 300px; }
+  .connect__body { flex-direction: column; height: auto; }
+  .connect__side { width: auto; box-shadow: none; }
+  .connect__media { flex: none; height: 300px; }
+  .divider--connect i:first-child { flex: 1 0 0; }
+}
+@media (max-width: 960px) {
+  .reliability__mark, .connect__mark { display: none; } /* as the other headings here */
+  /* the dots at the corners of the top band only */
+  .reliability__frame, .connect__frame {
+    background:
+      var(--dot) left 9px top 9px / 4px 4px no-repeat,
+      var(--dot) right 9px top 9px / 4px 4px no-repeat,
+      var(--dot) left 9px top 51px / 4px 4px no-repeat,
+      var(--dot) right 9px top 51px / 4px 4px no-repeat;
+  }
+  .connect__frame { background-size: 4px 4px, 4px 4px, 0 0, 0 0; }
+  .connect__desc br { display: none; }
 }

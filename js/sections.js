@@ -252,6 +252,23 @@
       waitForView($('.solana__row', section), (row) => benefitCards(row));
     },
 
+    // heading and mint block with the description beside it, the illustration, then the cards
+    // as the benefit cards come in, once their own row is in view
+    reliability(section) {
+      heading(section, '.reliability__mark');
+      fadeUp($('.reliability__desc', section), 300);
+      from($('.reliability__illus', section), { opacity: 0 }, { duration: 1200, delay: 200 });
+      waitForView($('.reliability__row', section), (row) => benefitCards(row));
+    },
+
+    // heading and mint block, the list one item after another, then the copy and the picture
+    connect(section) {
+      heading(section, '.connect__mark');
+      $$('.connect__item', section).forEach((el, i) => fadeUp(el, 300 + i * 80));
+      fadeUp($('.connect__copy.is-active', section), 600);
+      from($('.connect__media', section), { opacity: 0, transform: 'scale(1.02)' }, { duration: 1400, delay: 300 });
+    },
+
     // heading and mint block, then the mission, the figures (counting up) and the logos
     about(section) {
       heading(section, '.about__mark');
