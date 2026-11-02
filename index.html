@@ -22,18 +22,13 @@
 </head>
 <body>
 
-<!-- Loader (Figma 302:3618): the sphere turns, then fades away and the hero draws itself in
-     (js/hero.js) -->
+<!-- Loader: the hero's own planet turns in the middle of the screen (the hero's backdrop is lifted
+     over the loader meanwhile), then glides up into its place as the loader clears and the hero
+     draws itself in (js/hero.js) -->
 <div class="loader" aria-hidden="true">
   <!-- the hero's grid, in its place, drawing in from the centre while the sphere turns -->
   <span class="loader__grid"><span class="hero__pattern"></span></span>
   <img class="loader__logo" src="assets/icons/logo.svg" width="107" height="26.8534" alt="">
-  <div class="loader__sphere">
-    <video muted loop playsinline autoplay preload="auto" poster="assets/img/loader-sphere.jpg" tabindex="-1">
-      <source src="assets/video/loader-sphere.webm" type="video/webm">
-      <source src="assets/video/loader-sphere.mp4" type="video/mp4">
-    </video>
-  </div>
 </div>
 
 <section class="hero" data-hero>
@@ -41,6 +36,8 @@
        the rest of the imagery (Figma 350:13952) -->
   <div class="hero__bg" aria-hidden="true">
     <span class="hero__pattern"></span>
+    <!-- the planet and its shade move together (the loader's pose, js/hero.js) -->
+    <div class="hero__globe"><div class="hero__fit">
     <div class="hero__planet">
       <div class="hero__planet-media">
         <video class="hero__planet-video" muted loop playsinline autoplay preload="auto" tabindex="-1" data-rate="0.6" data-dither-invert="1" data-dither-gain="2.4">
@@ -51,6 +48,7 @@
     </div>
     <!-- a dark, blurred ellipse behind the copy, so the planet fades out under it -->
     <span class="hero__shade"></span>
+    </div></div>
   </div>
 
   <div class="hero__frame">

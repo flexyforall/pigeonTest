@@ -106,29 +106,6 @@ h1, h2, p { margin: 0; }
 }
 
 /* the turning sphere, 188 × 183 in the middle of the screen, its edges melting into the page */
-.loader__sphere {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(188 * var(--px));
-  height: calc(183 * var(--px));
-  transform: translate(-50%, -50%);
-  -webkit-mask: radial-gradient(closest-side, #000 82%, transparent);
-  mask: radial-gradient(closest-side, #000 82%, transparent);
-}
-.loader__sphere {
-  /* the clip's own near-black isn't quite the page's: lightened over the page colour (and a touch
-     darker first, so all of its noise falls below it) its background becomes exactly #101111 */
-  background: var(--c-bg);
-}
-.loader__sphere video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.94);
-  mix-blend-mode: lighten;
-}
 /* ===== Hero shell ===== */
 .hero {
   position: relative;
@@ -160,6 +137,19 @@ h1, h2, p { margin: 0; }
   transform: translate(-50%, -50%);
   background: url("../assets/patterns/hero-grid.svg") 0 0 / calc(75 * var(--px)) calc(75 * var(--px));
   pointer-events: none;
+}
+
+/* while the loader runs, the hero's backdrop is lifted over it (the hero itself is still hidden),
+   so its planet turns there, in the pose js/hero.js gives the globe, and glides into place */
+.hero.is-loading .hero__bg { z-index: 101; visibility: visible; }
+.hero__globe { position: absolute; inset: 0; }
+/* on a screen lower than the design's the copy moves up (see .hero__content), and the planet with
+   it, so the copy keeps to the foot of the dome: lifted, and past a point made smaller (js/hero.js) */
+.hero__fit {
+  position: absolute;
+  inset: 0;
+  transform: translateY(calc(-1 * var(--globe-lift, 0px))) scale(var(--globe-scale, 1));
+  transform-origin: 50% 0;
 }
 
 /* the planet (Figma 350:13954): a frame of 842 × 472 centred on the content box, its top 54px

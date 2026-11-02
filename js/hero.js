@@ -202,6 +202,24 @@
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   /* ---------- the planet ---------- */
+  // The copy moves up on a screen lower than the design's (css .hero__content: sizes follow the
+  // width, the hero the height), so the planet follows it by as much, keeping the copy at the
+  // foot of its dome: lifted up to LIFT (so the dome's top stays clear of the header), then made
+  // smaller about its top for the rest.
+  const LIFT = 60;
+  const fitBox = $('.hero__fit');
+  function fitGlobe() {
+    if (!fitBox) return;
+    const k = Math.min(1.25, Math.max(1, window.innerWidth / 1440)); // --px
+    const short = Math.max(0, 810 * k - hero.clientHeight);
+    const lift = Math.min(short, LIFT * k);
+    const scale = Math.max(0.7, 1 - (short - lift) / (280 * k));
+    fitBox.style.setProperty('--globe-lift', `${lift.toFixed(1)}px`);
+    fitBox.style.setProperty('--globe-scale', scale.toFixed(4));
+  }
+  fitGlobe();
+  window.addEventListener('resize', fitGlobe);
+
   // it turns slowly and for good: the clip is a seamless loop, played below its own speed
   if (planet) {
     const rate = Number(planet.dataset.rate) || 1;
@@ -218,6 +236,8 @@
   }
 
   /* ---------- intro ---------- */
+  let fromLoader = false; // the planet is already on show, having come over from the loader
+
   function intro() {
     hero.classList.add('is-ready');
 
@@ -228,7 +248,7 @@
     // the last of it, the cards, are in by then
     setTimeout(unlock, 2200);
 
-    from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
+    if (!fromLoader) from($('.hero__planet'), { opacity: 0, transform: 'scale(1.08)' }, { duration: 2200 });
 
     // frame and hairlines draw in
     from($('.hero__frame'), { clipPath: 'inset(0 50% 0 50%)' }, {
@@ -258,13 +278,17 @@
   }
 
   /* ---------- loader ---------- */
-  // The sphere turns until the page is ready (and for SPIN at least), then fades; halfway through
-  // the hero starts drawing itself in underneath and the loader clears off it, so the one runs
-  // into the other with no pause between and the hero's lines are seen drawing.
+  // The hero's planet turns in the middle of the screen until the page is ready (and for SPIN at
+  // least): the hero's backdrop is lifted over the loader for it (.is-loading) and its globe set
+  // in the loader's pose. Then the globe glides up into its place as the loader clears off and the
+  // hero draws itself in, so the one runs into the other with no pause and no second planet.
   const loader = document.querySelector('.loader');
   const SPIN = 1400;
-  const SPHERE_FADE = 600;
+  const LOGO_FADE = 600;
   const FADE = 700; // the loader's own fade, over the hero's start
+  const GLIDE = 1600; // the planet's way up into the hero
+  const LOADER_SCALE = 0.8;
+  const globe = $('.hero__globe');
   const GRID_END = 2000; // from the hand-over to the grid's full reveal, with the hero's intro
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
@@ -278,7 +302,35 @@
   // wait for fonts so the split text is measured correctly
   const ready = Promise.race([Promise.all([fontsReady, planetReady]), timeout(6000)]);
 
-  const removeLoader = () => loader?.remove();
+  const removeLoader = () => {
+    loader?.remove();
+    hero.classList.remove('is-loading');
+  };
+
+  // the loader's pose: the planet's visible dome (from the globe's top to where it fades under the
+  // shade; its middle is about 42% down the frame) centred on the screen, a little smaller
+  function loaderPose() {
+    globe.style.transform = 'none'; // measured in its own place
+    const box = globe.getBoundingClientRect();
+    const frame = $('.hero__planet').getBoundingClientRect();
+    const x = frame.left + frame.width / 2 - box.left;
+    const y = frame.top + frame.height * 0.42 - box.top;
+    const dx = window.innerWidth / 2 - (box.left + x);
+    const dy = window.innerHeight / 2 - (box.top + y);
+    globe.style.transformOrigin = `${x}px ${y}px`;
+    return `translate(${dx}px, ${dy}px) scale(${LOADER_SCALE})`;
+  }
+  if (loader && globe && !reduceMotion) {
+    hero.classList.add('is-loading');
+    fromLoader = true;
+    globe.style.transform = loaderPose();
+    // it comes in softly once its first frame is there
+    globe.style.opacity = 0;
+    planetReady.then(() => {
+      globe.style.opacity = '';
+      globe.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 800, easing: 'ease-out' });
+    });
+  }
 
   // The grid's reveal runs the whole length of the loader and completes as it ends. How long the
   // loader lasts is only known once the page is ready, so until then the reveal eases towards
@@ -314,13 +366,18 @@
 
   async function runLoader() {
     await Promise.all([ready, timeout(SPIN)]);
-    // all at once: the sphere fades as the hero starts drawing itself in and the loader clears
-    // off it, while the grid runs on to its edges in the hero, completing with the hero's intro
+    // all at once: the planet glides up into its place as the hero starts drawing itself in and
+    // the loader clears off it, while the grid runs on to its edges in the hero, completing with
+    // the hero's intro
     finishGrid(GRID_END);
     const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
-    loader.querySelectorAll('.loader__logo, .loader__sphere').forEach((el) =>
-      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SPHERE_FADE, easing: ease, fill: 'forwards' })
+    loader.querySelectorAll('.loader__logo').forEach((el) =>
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: LOGO_FADE, easing: ease, fill: 'forwards' })
     );
+    // from the pose the loader holds it in, wherever the window has been resized to meanwhile
+    const pose = loaderPose();
+    globe.style.transform = '';
+    globe.animate([{ transform: pose }, { transform: 'none' }], { duration: GLIDE, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' });
     intro();
     await loader.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, easing: ease, fill: 'forwards' }).finished;
     removeLoader();
