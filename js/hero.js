@@ -458,19 +458,28 @@
   // Scrolling down, the header goes with the hero as it always has. Once it is out of sight,
   // scrolling back up brings it in from the top, fixed; scrolling down again sends it back up.
   // Back at the very top it is the hero's own again, in its place.
+  // While it floats it is moved out of the hero to the page's body: Safari clips a fixed element
+  // to an overflow-hidden ancestor that has a layer of its own (the hero, with its animated
+  // pictures), so inside the hero it would vanish with it.
   const header = $('.header');
+  const headerHome = header.parentElement;
   const HEADER_H = () => header.offsetHeight;
-  let lastY = window.scrollY;
+  let lastY = 0;
   let floating = false;
+
   const setFloating = (on) => {
     if (on === floating) return;
     floating = on;
+    if (on) document.body.append(header);
     header.classList.toggle('is-floating', on);
-    hero.classList.toggle('has-floating-header', on);
-    if (!on) header.classList.remove('is-shown');
+    if (!on) {
+      header.classList.remove('is-shown');
+      headerHome.prepend(header);
+    }
   };
   function onScroll() {
-    const y = window.scrollY;
+    // how far the hero's top has gone above the screen (whatever element scrolls the page)
+    const y = -hero.getBoundingClientRect().top;
     const dy = y - lastY;
     if (Math.abs(dy) < 3) return; // the small jitter of a trackpad
     lastY = y;
@@ -491,7 +500,7 @@
       if (y < HEADER_H()) setFloating(false);
     } else header.classList.add('is-shown');
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('scroll', onScroll, { passive: true, capture: true });
 
   /* ---------- the planet ---------- */
   // The copy moves up on a screen lower than the design's (css .hero__content: sizes follow the

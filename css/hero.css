@@ -341,8 +341,9 @@ h1, h2, p { margin: 0; }
 }
 .header.is-floating::after { left: calc(-40 * var(--px)); right: calc(-40 * var(--px)); }
 .header.is-floating.is-shown { transform: none; }
-/* while it floats, the hero's frame is lifted over the sections below it */
-.hero.has-floating-header .hero__frame { z-index: 60; }
+
+/* (it floats from the page's body, over everything) */
+.header.is-floating { z-index: 60; }
 
 .header__logo {
   position: absolute;
