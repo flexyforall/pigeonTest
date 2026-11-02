@@ -454,6 +454,45 @@
       b.decode().catch(() => {}); // decode ahead so the first switch doesn't wait on it
     });
 
+  /* ---------- the header, back on scrolling up ---------- */
+  // Scrolling down, the header goes with the hero as it always has. Once it is out of sight,
+  // scrolling back up brings it in from the top, fixed; scrolling down again sends it back up.
+  // Back at the very top it is the hero's own again, in its place.
+  const header = $('.header');
+  const HEADER_H = () => header.offsetHeight;
+  let lastY = window.scrollY;
+  let floating = false;
+  const setFloating = (on) => {
+    if (on === floating) return;
+    floating = on;
+    header.classList.toggle('is-floating', on);
+    hero.classList.toggle('has-floating-header', on);
+    if (!on) header.classList.remove('is-shown');
+  };
+  function onScroll() {
+    const y = window.scrollY;
+    const dy = y - lastY;
+    if (Math.abs(dy) < 3) return; // the small jitter of a trackpad
+    lastY = y;
+    if (document.documentElement.classList.contains('is-locked')) return;
+    if (!floating) {
+      // out of sight above and on the way back up: in it comes, from above
+      if (dy < 0 && y > HEADER_H()) {
+        setFloating(true);
+        header.getBoundingClientRect(); // the hidden state first, so it slides in
+        header.classList.add('is-shown');
+      }
+      return;
+    }
+    if (y <= 0) setFloating(false); // home: the hero's own header again
+    else if (dy > 0) {
+      header.classList.remove('is-shown');
+      // hidden, and its own place in the hero in view again: it can go back there
+      if (y < HEADER_H()) setFloating(false);
+    } else header.classList.add('is-shown');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
   /* ---------- the planet ---------- */
   // The copy moves up on a screen lower than the design's (css .hero__content: sizes follow the
   // width, the hero the height), so the planet follows it by as much, keeping the copy at the
