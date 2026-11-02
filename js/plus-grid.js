@@ -30,7 +30,7 @@ function attach(img, panel, fit) {
   const BAR = 0.587; // its stroke
   const ALPHA = 0.1;
   const GLOW = 0.08; // how much brighter the pluses nearest the pointer get
-  // the hero's mint glow (css/hero.css .hero__glow), on the pluses: they take its colour, and a
+  // the mint glow (the colour the hero's illustrations used to glow in), on the pluses: they take its colour, and a
   // little more light, in a wide soft spot around the pointer
   const TINT = [160, 240, 212];
   const TINT_REACH = 190; // falloff of the tint (design px; ~the hero glow's 814px spot)

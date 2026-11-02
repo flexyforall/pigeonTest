@@ -162,79 +162,49 @@ h1, h2, p { margin: 0; }
   pointer-events: none;
 }
 
-/* the audience's dithered illustration, standing on the cards at the right edge; the
-   images are the Figma renders with the sky cut out, so the grid shows through */
-.hero__bg-img {
+/* the planet (Figma 350:13954): a frame of 842 × 472 centred on the content box, its top 54px
+   above it, showing the top of the globe; the clip is the turning globe (the network section's,
+   slowed and looped), placed so its globe sits where the design's does (603px across, its top
+   65px into the box), and drawn over by a dither canvas (js/dither.js) */
+.hero__planet {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: calc(944 * var(--px));
-  height: calc(754 * var(--px));
-  opacity: 0;
+  left: 50%;
+  top: calc(-54 * var(--px));
+  width: calc(842 * var(--px));
+  height: calc(472 * var(--px));
+  margin-left: calc(-421.5 * var(--px));
+  overflow: hidden;
   pointer-events: none;
-  will-change: opacity, transform;
 }
-.hero__bg-img[data-bg="business"] { width: calc(922 * var(--px)); }
-.hero__bg-img[data-bg="mobile"] { width: calc(942 * var(--px)); }
-.hero__bg-img.is-active { opacity: 1; }
-
-/* the glow: a soft mint spot (after Figma's blurred disc) laid over the illustration in overlay, so it
-   only tints its lit parts; it follows the pointer while it is over the hero (js/hero.js) */
-.hero__glow {
+.hero__planet-media {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(814 * var(--px));
-  height: calc(814 * var(--px));
-  margin: calc(-407 * var(--px)) 0 0 calc(-407 * var(--px));
+  left: calc(-58.8 * var(--px));
+  top: calc(80.8 * var(--px));
+  width: calc(963 * var(--px));
+  height: calc(537 * var(--px));
+}
+/* the clip is light on white: until it is dithered (inverted onto the dark), it stays out of sight */
+.hero__planet-video { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+/* the dithered globe, see-through between its dots */
+.hero__planet .dither {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* a dark ellipse blurred at its edges behind the copy (Figma 350:13955, 788 × 351, 30 blur) */
+.hero__shade {
+  position: absolute;
+  left: 50%;
+  top: calc(204 * var(--px));
+  width: calc(788 * var(--px));
+  height: calc(351 * var(--px));
+  margin-left: calc(-394.5 * var(--px));
   border-radius: 50%;
-  /* no edge to read: the tint falls off gradually all the way from the centre; a touch more
-     saturated than the mint so it reads on the dithered greys */
-  background: radial-gradient(
-    circle closest-side,
-    rgba(160, 240, 212, 1),
-    rgba(160, 240, 212, 0.75) 25%,
-    rgba(160, 240, 212, 0.42) 50%,
-    rgba(160, 240, 212, 0.15) 75%,
-    rgba(160, 240, 212, 0)
-  );
-  mix-blend-mode: overlay;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2; /* above the illustrations, even the one lifted for a wipe */
-  transition: opacity 0.6s ease;
-  will-change: transform;
-}
-.hero__glow.is-on { opacity: 1; }
-/* the active illustration's box (set by js/hero.js) */
-.hero__glow-area {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: var(--glow-w, calc(922 * var(--px)));
-  height: calc(754 * var(--px));
-  pointer-events: none;
-  /* no z-index or overflow clip here: either would cut the glow off from the picture below */
-}
-/* the mask rides on the glow itself, held still against the area as the glow moves (a mask on
-   the area would cut the glow off from the picture it is laid over) */
-.hero__glow {
-  -webkit-mask: var(--glow-mask, none) var(--mx, 0px) var(--my, 0px) / var(--mw, 100%) var(--mh, 100%) no-repeat;
-  mask: var(--glow-mask, none) var(--mx, 0px) var(--my, 0px) / var(--mw, 100%) var(--mh, 100%) no-repeat;
-}
-
-/* hairline that leads the background wipe between audiences */
-.hero__wipe {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  z-index: 2;
-  width: 1px;
-  margin-left: -0.5px;
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0 24px 2px rgba(111, 198, 167, 0.35);
-  opacity: 0;
+  background: var(--c-bg);
+  filter: blur(calc(30 * var(--px)));
   pointer-events: none;
 }
 
@@ -324,34 +294,6 @@ h1, h2, p { margin: 0; }
   transition: opacity 0.3s ease;
 }
 .audience__tab:hover { opacity: 1; }
-.audience__tab.is-active { opacity: 1; }
-
-/* Active pill + 4 L-shaped accent corners (6px, 1.275px stroke) */
-.audience__indicator {
-  --t: 1.275px;
-  --l: 6px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--c-mint), var(--c-mint)) left top / var(--t) var(--l),
-    linear-gradient(var(--c-mint), var(--c-mint)) left top / var(--l) var(--t),
-    linear-gradient(var(--c-mint), var(--c-mint)) right top / var(--t) var(--l),
-    linear-gradient(var(--c-mint), var(--c-mint)) right top / var(--l) var(--t),
-    linear-gradient(var(--c-mint), var(--c-mint)) left bottom / var(--t) var(--l),
-    linear-gradient(var(--c-mint), var(--c-mint)) left bottom / var(--l) var(--t),
-    linear-gradient(var(--c-mint), var(--c-mint)) right bottom / var(--t) var(--l),
-    linear-gradient(var(--c-mint), var(--c-mint)) right bottom / var(--l) var(--t),
-    var(--c-fill);
-  background-repeat: no-repeat;
-}
-/* moves in step with the background wipe line (--wipe-* set from js/hero.js) */
-.audience__indicator.is-animated {
-  transition: transform var(--wipe-duration) var(--wipe-ease), width var(--wipe-duration) var(--wipe-ease);
-}
 
 /* Right-side actions */
 .header__actions {
@@ -458,17 +400,24 @@ h1, h2, p { margin: 0; }
 .icon--star img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ===== Content ===== */
+/* centred in the content box, 640 wide, 280 below its top (Figma 350:13960) */
 .hero__content {
   position: absolute;
-  left: calc(32 * var(--px));
-  top: calc(116 * var(--px));
-  width: calc(728 * var(--px));
+  left: 50%;
+  top: calc((56 + 280) * var(--px));
+  width: calc(640 * var(--px));
+  margin-left: calc(-320 * var(--px));
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .rating {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: calc(12 * var(--px));
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
@@ -478,17 +427,15 @@ h1, h2, p { margin: 0; }
 .rating__score { display: flex; align-items: center; gap: 4px; color: var(--c-white); }
 .rating__divider { width: 1px; height: 17px; }
 
-.hero__panels { display: grid; margin-top: calc(24 * var(--px)); }
-
 .panel {
-  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: calc(24 * var(--px));
+  width: 100%;
+  margin-top: calc(24 * var(--px));
 }
 .panel .btn { margin-top: calc(8 * var(--px)); } /* 32 between the copy and the button */
-.panel:not(.is-active) { visibility: hidden; pointer-events: none; }
 
 .panel__title {
   width: 100%;
@@ -512,7 +459,7 @@ h1, h2, p { margin: 0; }
 
 
 .panel__text {
-  width: calc(463 * var(--px));
+  width: 100%;
   font-family: var(--f-body);
   font-size: calc(14 * var(--px));
   line-height: calc(20 * var(--px));
@@ -542,19 +489,6 @@ h1, h2, p { margin: 0; }
   z-index: 3;
 }
 
-.cards__highlight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: var(--c-fill);
-  pointer-events: none;
-  z-index: 1;
-}
-.cards__highlight.is-animated {
-  transition: transform var(--wipe-duration) var(--wipe-ease), width var(--wipe-duration) var(--wipe-ease);
-}
-
 .card {
   position: relative;
   flex: 1 0 0;
@@ -563,14 +497,7 @@ h1, h2, p { margin: 0; }
   align-items: center;
   gap: calc(8 * var(--px));
   padding: calc(32 * var(--px)) calc(20 * var(--px));
-  /* the illustration runs on under the cards: the others hide it, the active one frosts it */
   background: var(--c-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: background-color var(--wipe-duration, 0s) var(--wipe-ease, ease);
-}
-.card.is-active {
-  background-color: rgba(16, 17, 17, 0);
   backdrop-filter: blur(70px);
   -webkit-backdrop-filter: blur(70px);
 }
@@ -586,7 +513,7 @@ h1, h2, p { margin: 0; }
   transition: opacity 0.4s ease;
   z-index: 1;
 }
-.card:not(.is-active):hover::after { opacity: 1; }
+.card:hover::after { opacity: 1; }
 
 .card__icon { width: 50px; height: 50px; flex: none; }
 .card__icon svg { display: block; overflow: visible; }
@@ -613,15 +540,15 @@ h1, h2, p { margin: 0; }
 @media (max-width: 860px) {
   .hero__frame { inset: 0 16px; }
   .hero__bg, .loader__grid { inset: 56px 16px 0; }
-  .hero__bg-img.is-active { opacity: 0.4; } /* behind the copy here */
+  .hero__planet { opacity: 0.4; } /* behind the copy here */
   .header__logo { left: 20px; }
   .header__lang { display: none; }
   .audience { left: auto; right: 112px; }
 
-  .hero__content { left: 20px; right: 20px; width: auto; top: 100px; }
+  .hero__content { left: 20px; right: 20px; width: auto; margin-left: 0; top: 160px; }
   .panel__title { font-size: 40px; line-height: 42px; letter-spacing: -0.8px; }
   .panel__title br { display: none; }
-  .panel__text { width: auto; max-width: 463px; }
+  .panel__text { max-width: 463px; }
 
   .cards { flex-direction: column; align-items: stretch; }
   .card { padding: 14px 20px; }

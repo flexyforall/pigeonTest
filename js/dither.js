@@ -1,10 +1,12 @@
-// The connectivity clips are dithered like the rest of the site's imagery (the Figma "Dither"
+// The connectivity clips and the hero's planet are dithered like the rest of the site's imagery (the Figma "Dither"
 // effect: ordered Bayer 16×16, 3 levels per colour channel, one cell per CSS pixel). Each clip is
 // redrawn through a WebGL shader onto a canvas laid over it; the video itself stays in place,
 // invisible, and keeps being scrubbed by js/connectivity.js. Where WebGL is missing the clips
-// simply show as they are.
+// simply show as they are. The planet's clip is dark dots on white: it is inverted (and its
+// faint dots lifted, data-dither-gain) into light grey dots before the dither, and the canvas is
+// see-through between them.
 (() => {
-  const videos = [...document.querySelectorAll('.connectivity__img')].filter((v) => v.tagName === 'VIDEO');
+  const videos = [...document.querySelectorAll('.connectivity__img, .hero__planet-video')].filter((v) => v.tagName === 'VIDEO');
   if (!videos.length) return;
 
   const LEVELS = 3;
@@ -39,15 +41,23 @@
     uniform vec2 videoSize; // the clip's own pixels
     uniform float zoom;     // the scroll-linked zoom on the clip
     uniform float levels;
+    uniform float invert;   // 1: dark on light becomes light on dark
+    uniform float gain;
     void main() {
       vec2 cell = floor(vec2(gl_FragCoord.x, size.y - gl_FragCoord.y));
       // object-fit: cover, centred, then the zoom
       float scale = max(size.x / videoSize.x, size.y / videoSize.y) * zoom;
       vec2 uv = (cell + 0.5 - size * 0.5) / (videoSize * scale) + 0.5;
       vec3 c = texture2D(video, clamp(uv, 0.0, 1.0)).rgb;
+      // inverted, the clip's near-white paper must come out as true black, not a faint dither
+      c = clamp((mix(c, 1.0 - c, invert) - 0.06 * invert) * gain, 0.0, 1.0);
+      // inverted, it is a grey picture: dithered in grey, without the clip's colour noise
+      c = mix(c, vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), invert);
       float t = (texture2D(matrix, (mod(cell, 16.0) + 0.5) / 16.0).r * 255.0 + 0.5) / 256.0;
       float l = levels - 1.0;
-      gl_FragColor = vec4(clamp(floor(c * l + t) / l, 0.0, 1.0), 1.0);
+      vec3 q = clamp(floor(c * l + t) / l, 0.0, 1.0);
+      // inverted, black is see-through (premultiplied: light dots laid over the backdrop)
+      gl_FragColor = mix(vec4(q, 1.0), vec4(q, q.r), invert);
     }
   `;
 
@@ -55,7 +65,8 @@
     const canvas = document.createElement('canvas');
     canvas.className = 'dither';
     canvas.setAttribute('aria-hidden', 'true');
-    const gl = canvas.getContext('webgl', { alpha: false, antialias: false, preserveDrawingBuffer: true });
+    const invert = !!video.dataset.ditherInvert;
+    const gl = canvas.getContext('webgl', { alpha: invert, antialias: false, preserveDrawingBuffer: true });
     if (!gl) return null;
 
     const shader = (type, src) => {
@@ -96,6 +107,8 @@
     gl.uniform1i(u('video'), 0);
     gl.uniform1i(u('matrix'), 1);
     gl.uniform1f(u('levels'), LEVELS);
+    gl.uniform1f(u('invert'), invert ? 1 : 0);
+    gl.uniform1f(u('gain'), Number(video.dataset.ditherGain) || 1);
     const uSize = u('size');
     const uVideoSize = u('videoSize');
     const uZoom = u('zoom');
@@ -131,20 +144,26 @@
     };
   }
 
-  const draws = videos.map(setup).filter(Boolean);
-  if (!draws.length) return;
-
-  // redraw while the section is on screen: each clip only when its frame, size or zoom changed
-  let running = false;
-  const loop = () => {
-    if (!running) return;
-    draws.forEach((draw) => draw());
-    requestAnimationFrame(loop);
-  };
-  const section = videos[0].closest('section') || document.body;
-  new IntersectionObserver(([entry]) => {
-    const was = running;
-    running = entry.isIntersecting;
-    if (running && !was) requestAnimationFrame(loop);
-  }).observe(section);
+  // redraw while a clip's section is on screen: each clip only when its frame, size or zoom changed
+  const groups = new Map();
+  videos.forEach((video) => {
+    const draw = setup(video);
+    if (!draw) return;
+    const section = video.closest('section') || document.body;
+    if (!groups.has(section)) groups.set(section, []);
+    groups.get(section).push(draw);
+  });
+  groups.forEach((draws, section) => {
+    let running = false;
+    const loop = () => {
+      if (!running) return;
+      draws.forEach((draw) => draw());
+      requestAnimationFrame(loop);
+    };
+    new IntersectionObserver(([entry]) => {
+      const was = running;
+      running = entry.isIntersecting;
+      if (running && !was) requestAnimationFrame(loop);
+    }).observe(section);
+  });
 })();
